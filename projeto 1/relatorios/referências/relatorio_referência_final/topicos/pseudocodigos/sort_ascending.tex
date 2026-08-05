@@ -1,0 +1,15 @@
+\begin{algorithm}[H]
+  \caption{Sort Ascending}
+    
+  \Entrada{ Um grafo $G = (V, E)$ sem pontes, a solução atual $T_{\text{curr}}$, o conjunto de vértices obrigatórios $O_{\text{D}}$, $Ordenacao = \{Grau, PageRank\}$.}
+  \Saida{O conjunto ordenado de $DB$.}
+    $DB \gets \{ v \in V \setminus O_{\text{D}} \mid d_T(v) + l(v) > d \}$    
+    
+    \uSe {$Ordenacao = \text{Degree}$}{
+        Ordenar $DB$ em ordem crescente pelo valor de $(d_T(v) + l(v))$\;
+    }
+    \SenaoSe {$Ordenacao = \text{PageRank}$}{
+        Ordenar $DB$ em ordem crescente pelo valor de $PageRank(v)$\;
+    }
+    \Retorna $DB$
+\end{algorithm}

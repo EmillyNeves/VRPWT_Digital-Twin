@@ -1,0 +1,16 @@
+\begin{algorithm}
+\caption{GRASP - Greedy Randomized Adaptive Search Procedure}
+\label{alg:grasp}
+\SetAlgoLined
+\Entrada{O grafo $G = (V, E)$, $MaxIter$, $\alpha \in [0, 1]$.}
+\Saida{Uma solução válida $T^*$.}
+    $T^* \gets \emptyset$; \label{lin:GRASP_Tstar_init}\\
+    \Para{$i = 1$ \textbf{até} $MaxIter$}{ \label{lin:GRASP_LoopInit}
+    $T_{inicial} \gets Construtivo(G, \alpha)$; \label{lin:GRASP_ConstrutivoRandomizado}\\
+    $T_{local} \gets Busca\_Local(T_{inicial})$; \label{lin:GRASP_BuscaLocal}\\
+    \Se{$T_{local}$ é melhor que $T^*$}{ \label{lin:GRASP_IfBetter}
+        $T^* \gets T_{local}$; \label{lin:GRASP_UpdateTstar}\\
+    }
+} \label{lin:GRASP_LoopEnd}
+\textbf{return} $T^*$\;
+\end{algorithm}

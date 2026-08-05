@@ -1,0 +1,11 @@
+\begin{algorithm}[H]
+  \caption{Find Other Edge}
+    \Entrada{O vértice $u$ e o vértice $v$ que formam a aresta $\{u, v\}$, uma árvore $T$, um grafo $G$, o conjunto de vértices obrigatórios $O_{\text{D}}$ e $ModoPertubacao = \{Grau, PageRank\}$.}
+    \Saida {Uma aresta $\{u', v'\}$.}
+        \eSe{$ModoPertubacao = \text{Degree}$}{
+            $\{u', v'\} = argmin_{\text{\{i,j\}}} \{d_{\text{G}}(i) + d_{\text{G}}(j) \mid i \in T_{\text{u}}\text{, }j \in T_{\text{v}} \text{ tal que } d_{\text{T}}(i) = d \text{ ou } d_{\text{T}}(j) = d,$ $\text{mas não ambos} \}\text{ e } \{u', v'\} \text{ não é marcado como proibido.}$\; 
+        }{
+            $\{u', v'\} = argmin_{\text{\{i,j\}}} \{PG_{\text{G}}(i) + PG_{\text{G}}(j) \mid i \in T_{\text{u}}\text{, }j \in T_{\text{v}} \text{ tal que } d_{\text{T}}(i) = d \text{ ou } d_{\text{T}}(j) = d,$ $\text{mas não ambos} \}\text{ e } \{u', v'\} \text{ não é marcado como proibido.}$\;        
+        }
+    \Retorna{$\{u', v'\}$.}
+\end{algorithm}

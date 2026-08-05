@@ -1,0 +1,86 @@
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\rowcolor{gray!30} \textbf{Informações} & \textbf{MS\_25} & \textbf{MS\_50} & \textbf{MS\_75} & \textbf{MS\_100} \\
+\hline
+Tempo total (s)             & \cellcolor{blue!20} \textbf{33085.53} & 34589.71 & 36391.41 & 38290.03 \\
+Exato       & \cellcolor{blue!20} \textbf{253}      & \textbf{252}      & \cellcolor{blue!20} \textbf{253}      & 252      \\
+Melhores Resultados         & 396      & 407      & 404      & \cellcolor{blue!20} \textbf{416}      \\
+\hline
+\end{tabular}
+\caption{Resultados comparativos para diferentes valores de MS}
+\label{tab:resultados_ms}
+\end{table}
+
+
+\begin{table}[ht]
+\footnotesize
+\centering
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \caption{\small Resultados mínimos em instâncias pequenas e médias.}
+        \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} \textbf{n'} & \textbf{m'} & \textbf{MS\_25} & \textbf{MS\_50} & \textbf{MS\_75} & \textbf{MS\_100} \\
+        \hline
+        20 & 41.8 & \cellcolor{blue!20} \textbf{0.76} & \cellcolor{blue!20} \textbf{0.76} & \cellcolor{blue!20} \textbf{0.76} & \cellcolor{blue!20} \textbf{0.76} \\
+        40 & 70.8 & 2.84 & \cellcolor{blue!20} \textbf{2.80} & \cellcolor{blue!20} \textbf{2.80} & 2.88 \\
+        60 & 95.0 & 6.52 & 6.60 & 6.56 & \cellcolor{blue!20} \textbf{6.48} \\
+        80 & 119.8 & 9.40 & 9.44 & \cellcolor{blue!20} \textbf{9.28} & 9.36 \\
+        100 & 144.0 & 13.48 & 13.48 & \cellcolor{blue!20} \textbf{13.44} & 13.56 \\
+        120 & 168.8 & \cellcolor{blue!20} \textbf{17.64} & 17.68 & \cellcolor{blue!20} \textbf{17.64} & \cellcolor{blue!20} \textbf{17.64} \\
+        140 & 193.0 & 21.20 & \cellcolor{blue!20} \textbf{21.12} & 21.16 & 21.24 \\
+        160 & 217.8 & 25.48 & \cellcolor{blue!20} \textbf{25.40} & \cellcolor{blue!20} \textbf{25.40} & \cellcolor{blue!20} \textbf{25.40} \\
+        180 & 242.0 & \cellcolor{blue!20} \textbf{29.52} & 29.60 & 29.56 & 29.56 \\
+        200 & 266.8 & \cellcolor{blue!20} \textbf{33.12} & \cellcolor{blue!20} \textbf{33.12} & \cellcolor{blue!20} \textbf{33.12} & \cellcolor{blue!20} \textbf{33.12} \\
+        250 & 321.0 & 45.48 & \cellcolor{blue!20} \textbf{45.28} & 45.32 & 45.40 \\
+        300 & 380.0 & \cellcolor{blue!20} \textbf{58.08} & 58.12 & 58.16 & 58.12 \\
+        350 & 434.8 & \cellcolor{blue!20} \textbf{69.40} & \cellcolor{blue!20} \textbf{69.40} & 69.60 & 69.44 \\
+        400 & 489.0 & \cellcolor{blue!20} \textbf{82.84} & 82.96 & 82.92 & \cellcolor{blue!20} \textbf{82.84} \\
+        450 & 548.0 & 94.56 & 94.52 & 94.44 & \cellcolor{blue!20} \textbf{94.40} \\
+        500 & 602.8 & 108.00 & \cellcolor{blue!20} \textbf{107.88} & 108.00 & 107.92 \\
+        \hline
+        \end{tabular}
+    \caption*{\small Fonte: Produção do próprio autor.}
+    \label{tab:construct-regressao-mediun}
+\end{minipage}%
+\hspace{0.05\textwidth} % Espaço entre as tabelas
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \caption{\small Resultados mínimos em instâncias grandes.}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} \textbf{n'} & \textbf{m'} & \textbf{MS\_25} & \textbf{MS\_50} & \textbf{MS\_75} & \textbf{MS\_100} \\
+        \hline
+        600 & 637 & 184.0 & \cellcolor{blue!20} \textbf{183.8} & 184.0 & \cellcolor{blue!20} \textbf{183.8} \\
+        600 & 674 & 168.4 & 168.2 & 168.6 & \cellcolor{blue!20} \textbf{168.0} \\
+        600 & 712 & 152.6 & \cellcolor{blue!20} \textbf{152.4} & 152.8 & 152.6 \\
+        600 & 749 & 141.2 & 141.2 & \cellcolor{blue!20} \textbf{140.4} & \cellcolor{blue!20} \textbf{140.4} \\
+        600 & 787 & \cellcolor{blue!20} \textbf{129.0} & 129.2 & \cellcolor{blue!20} \textbf{129.0} & 129.2 \\
+        700 & 740 & 214.8 & 215.0 & 214.8 & \cellcolor{blue!20} \textbf{214.6} \\
+        700 & 780 & 199.4 & 199.2 & 199.2 & \cellcolor{blue!20} \textbf{198.8} \\
+        700 & 821 & 182.4 & 182.6 & \cellcolor{blue!20} \textbf{182.0} & 182.2 \\
+        700 & 861 & 166.8 & \cellcolor{blue!20} \textbf{166.0} & 166.8 & 166.2 \\
+        700 & 902 & 157.6 & \cellcolor{blue!20} \textbf{157.0} & 157.4 & 157.2 \\
+        800 & 843 & \cellcolor{blue!20} \textbf{246.4} & \cellcolor{blue!20} \textbf{246.4} & 246.6 & \cellcolor{blue!20} \textbf{246.4} \\
+        800 & 886 & 229.0 & \cellcolor{blue!20} \textbf{228.8} & 229.0 & 229.0 \\
+        800 & 930 & 211.0 & 210.8 & \cellcolor{blue!20} \textbf{210.6} & \cellcolor{blue!20} \textbf{210.6} \\
+        800 & 973 & 197.0 & 197.2 & \cellcolor{blue!20} \textbf{196.6} & 197.2 \\
+        800 & 1017 & \cellcolor{blue!20} \textbf{179.4} & 179.6 & \cellcolor{blue!20} \textbf{179.4} & 179.6 \\
+        900 & 944 & \cellcolor{blue!20} \textbf{280.4} & \cellcolor{blue!20} \textbf{280.4} & \cellcolor{blue!20} \textbf{280.4} & \cellcolor{blue!20} \textbf{280.4} \\
+        900 & 989 & 261.0 & 261.2 & \cellcolor{blue!20} \textbf{260.8} & 261.0 \\
+        900 & 1034 & 244.0 & 243.6 & 243.8 & \cellcolor{blue!20} \textbf{243.2} \\
+        900 & 1079 & 227.0 & 226.4 & 226.4 & \cellcolor{blue!20} \textbf{226.0} \\
+        900 & 1124 & 209.8 & \cellcolor{blue!20} \textbf{209.2} & 209.6 & 210.0 \\
+        1000 & 1047 & \cellcolor{blue!20} \textbf{312.8} & \cellcolor{blue!20} \textbf{312.8} & \cellcolor{blue!20} \textbf{312.8} & 313.0 \\
+        1000 & 1095 & \cellcolor{blue!20} \textbf{291.6} & 292.0 & 292.2 & 291.8 \\
+        1000 & 1143 & 274.2 & 274.0 & 274.2 & \cellcolor{blue!20} \textbf{273.8} \\
+        1000 & 1191 & \cellcolor{blue!20} \textbf{253.6} & 254.2 & 254.2 & 254.2 \\
+        1000 & 1239 & 240.0 & 239.6 & 239.4 & \cellcolor{blue!20} \textbf{239.2} \\
+        \hline
+    \end{tabular}
+    \caption*{\small Fonte: Produção do próprio autor.}
+    \label{tab:construct-regressao-large}
+\end{minipage}
+\end{table}

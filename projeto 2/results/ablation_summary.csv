@@ -1,0 +1,11 @@
+config,neighborhoods,gap_mean_pct,time_mean_ms,n
+cumul:Relocate,relocate,15.639,13.4,56
+cumul:Relocate+Or-opt,"relocate,oropt",13.202,21.3,56
+cumul:Relocate+Or-opt+Swap,"relocate,oropt,swap",12.389,25.8,56
+cumul:Relocate+Or-opt+Swap+2-opt,"relocate,oropt,swap,twoopt",11.905,27.1,56
+cumul:Relocate+Or-opt+Swap+2-opt+Cross-exch.,"relocate,oropt,swap,twoopt,cross",11.071,33.1,56
+sem:Relocate,"oropt,swap,twoopt,cross",15.635,57.5,56
+sem:Or-opt,"relocate,swap,twoopt,cross",12.597,24.0,56
+sem:Swap,"relocate,oropt,twoopt,cross",11.184,33.0,56
+sem:2-opt,"relocate,oropt,swap,cross",11.533,32.1,56
+sem:Cross-exch.,"relocate,oropt,swap,twoopt",11.905,27.0,56

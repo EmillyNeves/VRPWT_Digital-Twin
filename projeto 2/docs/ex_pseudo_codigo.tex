@@ -1,0 +1,27 @@
+\begin{algorithm}[ht]
+\caption{Algoritmo Savings de Clarke and Wright Paralelo} \label{alg:saving}
+\begin{algorithmic}[1]
+\REQUIRE{Grafo $G=(V,E,W)$, vetor de demandas (ou volumes) $D = \{d_1,\dots, d_i, \dots d_{|V|}\}, \forall i \in V\setminus\{0\}$ e capacidade máxima do veículo $vol_{max}$} \\
+\ENSURE{Conjunto de rotas $R$} \\
+        \STATE{$S \leftarrow w_{i0} + w_{0j} - w_{ij}, \ \ \  i,j \in V\setminus\{0\} \mbox{ e }  w_{ij} \in W$}; \label{calculasaving}
+	    \STATE{\texttt{ordena\_saving\_decresc($S$)}}; \label{ordenasaving}
+	    \STATE{$solucao\_corrente \leftarrow [[0,1,0],\dots,[0,i,0],\dots,[0,|V|,0]], \forall i \in V\setminus\{0\}$}; \label{solucaocorrente} 
+	    \FORALL{$S_{ij} \in S$} \label{loopsaving}
+	        \IF{\texttt{capacidade\_atendida($i$, $j$, $solucao\_corrente$, $vol_{max}$)}} \label{restricaoum}
+	            \IF{\texttt{sao\_extremos\_de\_rotas\_diferentes($i$, $j$, $solucao\_corrente$)}} \label{restricaodois}
+	                \STATE{\texttt{mesclar\_rotas($i, j, solucao\_corrente$)}}; \label{mesclarrotas}
+	            \ENDIF \label{fimrestricaodois}
+	        \ENDIF \label{fimrestricaoum}
+	    \ENDFOR \label{fimloopsaving}
+	    
+	    \RETURN $solucao\_corrente$ \label{fimparalelo}
+     	
+\end{algorithmic}
+\end{algorithm}
+
+Na linha~\ref{Rvazio} o conjunto de rotas $R$ começa como um conjunto vazio. Na linha~\ref{criaNR} é criado um conjunto $NR$ de clientes não roteirizados. Esse conjunto conterá os clientes que não foram inseridos em uma rota. Quando um cliente é inserido em uma rota atendida por um veículo, ele se torna roteirizado e, consequentemente, é removido de $NR$. Na linha~\ref{criaNR} o conjunto $NR$ é inicializado com todos os clientes $V\setminus\{0\}$ ainda não roteirizados até o momento. O laço da linha~\ref{enquanto} à~\ref{fimenquanto} é executado enquanto existir clientes em $NR$, $NR \ne \emptyset$. Inicialmente todos os clientes estão fora de rotas e a cada iteração do laço é garantido que pelo menos um cliente seja roteirizado. %Assim que não houver mais clientes a roteirizar, o laço se encerra.
+
+Na linha~\ref{calculaCI} a função \texttt{maior\_distancia()} recebe como entrada o conjunto de clientes ainda não roteirizados $NR$ e o conjunto $W$ de custos das ligações (aqui também tratado como distância). A função compara os custos das ligações entre cada cliente e o armazém central e retorna o cliente com a maior distância de ligação ao armazém central, $v_{maior\_distancia}$. Na linha~\ref{insercao_0} é criada uma rota corrente tal que $rota\_corrente = [0, v_{maior\_distancia},0]$. Um cliente, ao ser inserido em uma rota, deve ser removido de $NR$, assim, $v_{maior\_distancia}$ é removido de $NR$ na linha~\ref{removeNR}.
+
+
+Um segundo laço  é iniciado na linha~\ref{enquanto2} que tem como critério de continuidade inserções viáveis de novos clientes na rota corrente. Uma inserção viável ocorre quando é possível inserir um cliente do conjunto $NR$ na rota corrente satisfazendo todas as restrições. A variável $insercao\_viavel$ definida na linha~\ref{insercaoviavel} como verdadeira armazena a informação da viabilidade de novas inserções dentro do laço das linhas~\ref{enquanto2} à~\ref{fimenquanto2}. Assim que esse laço inicia, $insercao\_viavel$ passa a ser falsa na linha~\ref{falsa} tornando-se novamente verdadeira na linha~\ref{insercaoviavel2} ao encontrar e efetivar uma inserção viável na rota corrente, dando, nesse caso, continuidade ao laço. Caso não ocorra nenhuma inserção viável, ela se mantém falsa e o laço é então encerrado.

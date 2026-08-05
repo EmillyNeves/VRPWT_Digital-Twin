@@ -1,0 +1,162 @@
+\section{Variable Neighborhood Descent (VND)}
+\label{sec:vnd}
+
+O \emph{Variable Neighborhood Descent} (VND) aplica descida local em uma sequência finita de vizinhanças e reinicia da primeira ao encontrar melhoria \cite{hansen2001variable}. No VRPTW, essa estratégia permite combinar movimentos baratos (intra-rota) com movimentos estruturais (inter-rotas), mantendo controle sobre factibilidade temporal e custo.
+
+\subsection{Estratégia implementada}
+
+A implementação adota o padrão clássico com política \emph{first improvement}:
+\begin{itemize}
+  \item para uma vizinhança $\mathcal{N}_k$, a busca encerra assim que encontra o primeiro movimento factível com melhora;
+  \item quando há melhora, o algoritmo volta para $\mathcal{N}_1$;
+  \item quando não há melhora, avança para $\mathcal{N}_{k+1}$.
+\end{itemize}
+
+\begin{algorithm}[htbp]
+\caption{VND com \emph{first improvement}}
+\label{alg:vnd}
+\begin{algorithmic}[1]
+\Require solução inicial $S$, vizinhanças ordenadas $\mathcal{N}_1,\ldots,\mathcal{N}_K$
+\Ensure ótimo local $S^*$ para o conjunto de vizinhanças
+\State $k \leftarrow 1$
+\While{$k \le K$}
+  \If{\textsc{FirstImprove}$(S,\mathcal{N}_k)$}
+    \State $k \leftarrow 1$
+  \Else
+    \State $k \leftarrow k + 1$
+  \EndIf
+\EndWhile
+\State \Return $S$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Texto complementar ao pseudocódigo.}
+No código, a rotina \textsc{FirstImprove} é especializada por operador (não é uma função genérica). Em todos os casos, a lógica é a mesma: enumerar movimentos candidatos, testar factibilidade e aceitar o primeiro que satisfaça a regra de melhora. O teste de factibilidade inclui capacidade e janelas de tempo via recálculo de cronograma da(s) rota(s) afetada(s), de modo que nenhum movimento inviável é aplicado. A comparação de qualidade é lexicográfica: primeiro custo total, depois número de rotas. Assim, as linhas 2--7 do Algoritmo~\ref{alg:vnd} representam exatamente o comportamento implementado em \texttt{src/heuristics/local\_search.cpp}: \emph{melhorou} $\Rightarrow$ reinicia; \emph{não melhorou} $\Rightarrow$ troca de vizinhança.
+
+\paragraph{Conformidade DIMACS e desempate secundário.}
+Em estrita conformidade com o 12º Desafio DIMACS, a função objetivo primária do framework é a minimização da distância total (\texttt{--objective cost}). Como critério secundário de aceitação (desempate lexicográfico), um movimento com variação de custo dentro da tolerância numérica $\varepsilon$ só é aceito se reduzir o número de rotas. Essa regra preserva o foco primário em distância e, ao mesmo tempo, aumenta a robustez estrutural das soluções ao eliminar rotas residuais sem alterar o orçamento de busca.
+
+\subsection{Conjunto de vizinhanças ativas}
+\label{subsec:vnd_neighborhoods}
+
+A versão final usa quatro vizinhanças:
+\begin{enumerate}
+  \item \texttt{relocate\_intra}: desloca um cliente para outra posição da mesma rota;
+  \item \texttt{swap\_intra}: troca duas posições na mesma rota;
+  \item \texttt{relocate\_inter}: move um cliente de uma rota para outra;
+  \item \texttt{or\_opt}: move bloco consecutivo de tamanho 2 ou 3 (intra e inter-rotas).
+\end{enumerate}
+
+A ordem no código é fixa:
+\[
+\mathcal{N}_1=\texttt{relocate\_intra},\;
+\mathcal{N}_2=\texttt{swap\_intra},\;
+\mathcal{N}_3=\texttt{relocate\_inter},\;
+\mathcal{N}_4=\texttt{or\_opt}.
+\]
+
+Um movimento $m$ que transforma $S$ em $S'$ só é aceito se:
+\[
+\text{factível}(S') \;\land\;
+\Big(f(S') < f(S)-\varepsilon \;\;\lor\;\; (|R(S')|<|R(S)| \land |f(S')-f(S)|\le\varepsilon)\Big),
+\]
+em que $f(\cdot)$ é o custo total e $|R(\cdot)|$ é o número de rotas.
+
+\subsection{Representação visual das vizinhanças}
+\label{subsec:vnd_figuras}
+
+As figuras abaixo mostram exemplos didáticos de cada operador ativo (antes/depois). O mesmo desenho foi gerado em duas versões: PNG (usada no PDF) e SVG vetorial (em \texttt{artigo/figs/svg/}), para uso em apresentações sem perda de qualidade.
+
+\begin{figure}[htbp]
+\centering
+\IfFileExists{figs/png/vnd_relocate_intra.png}{
+  \includegraphics[width=0.96\linewidth]{figs/png/vnd_relocate_intra.png}
+}{
+  \fbox{\parbox{0.92\linewidth}{Figura ausente: execute \texttt{python3 artigo/figs/generate\_vnd\_figures.py}.}}
+}
+\caption{\texttt{relocate\_intra}: um cliente é removido de sua posição original e reinserido em outra posição da mesma rota.}
+\label{fig:vnd_relocate_intra}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\IfFileExists{figs/png/vnd_swap_intra.png}{
+  \includegraphics[width=0.96\linewidth]{figs/png/vnd_swap_intra.png}
+}{
+  \fbox{\parbox{0.92\linewidth}{Figura ausente: execute \texttt{python3 artigo/figs/generate\_vnd\_figures.py}.}}
+}
+\caption{\texttt{swap\_intra}: dois clientes trocam de posição dentro da mesma rota.}
+\label{fig:vnd_swap_intra}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\IfFileExists{figs/png/vnd_relocate_inter.png}{
+  \includegraphics[width=0.96\linewidth]{figs/png/vnd_relocate_inter.png}
+}{
+  \fbox{\parbox{0.92\linewidth}{Figura ausente: execute \texttt{python3 artigo/figs/generate\_vnd\_figures.py}.}}
+}
+\caption{\texttt{relocate\_inter}: um cliente sai da rota de origem e é inserido na melhor posição factível de outra rota.}
+\label{fig:vnd_relocate_inter}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\IfFileExists{figs/png/vnd_or_opt.png}{
+  \includegraphics[width=0.96\linewidth]{figs/png/vnd_or_opt.png}
+}{
+  \fbox{\parbox{0.92\linewidth}{Figura ausente: execute \texttt{python3 artigo/figs/generate\_vnd\_figures.py}.}}
+}
+\caption{\texttt{or\_opt}: bloco consecutivo (tamanho 2 ou 3) é deslocado de forma íntegra para nova posição factível.}
+\label{fig:vnd_or_opt}
+\end{figure}
+
+\subsection{Seleção de 4 vizinhanças a partir de 8 candidatas}
+
+A redução de 8 para 4 vizinhanças foi baseada em campanha empírica com 56 instâncias e 10 sementes (560 execuções), usando ganho acumulado de custo por operador. A Tabela~\ref{tab:vnd_impact_global} resume o ranking global.
+
+\IfFileExists{tables/vnd_neighborhood_results.tex}{
+\input{tables/vnd_neighborhood_results.tex}
+}{
+\begin{table}[htbp]
+\centering
+\caption{Impacto global das vizinhanças do VND (560 execuções).}
+\label{tab:vnd_impact_global}
+\begin{tabular}{lrrrr}
+\hline
+Vizinhança & Share (\%) & $\Delta$ custo total & Aplicações & Taxa de aplicação (\%) \\
+\hline
+relocate\_intra & 47.14 & 63842.0 & 19050 & 53.53 \\
+relocate\_inter & 22.90 & 31012.0 & 7700 & 81.22 \\
+or\_opt & 22.15 & 29997.0 & 5330 & 35.99 \\
+swap\_intra & 2.37 & 3207.0 & 1110 & 6.71 \\
+two\_opt\_star\_inter & 2.15 & 2913.0 & 590 & 50.43 \\
+swap\_inter & 1.68 & 2270.0 & 610 & 34.27 \\
+two\_opt\_intra & 1.49 & 2016.0 & 620 & 4.02 \\
+cross\_exchange & 0.13 & 181.0 & 20 & 3.45 \\
+\hline
+\end{tabular}
+\end{table}
+}
+
+As quatro vizinhanças mantidas cobrem 94.55\% do ganho total observado. Com isso, o VND final reduz custo computacional e mantém praticamente todo o potencial de melhoria do conjunto completo.
+
+\subsection{Resultados por tipo de instância}
+
+Para detalhar o comportamento por família do benchmark Solomon, a Tabela~\ref{tab:vnd_impact_c}, a Tabela~\ref{tab:vnd_impact_r} e a Tabela~\ref{tab:vnd_impact_rc} apresentam os resultados das vizinhanças implementadas separadamente para instâncias C, R e RC.
+
+\IfFileExists{tables/vnd_neighborhood_results_by_family.tex}{
+\input{tables/vnd_neighborhood_results_by_family.tex}
+}{
+\begin{table}[htbp]
+\centering
+\caption{Resultados por tipo de instância (pendente de geração).}
+\begin{tabular}{lc}
+\hline
+Status & Observação \\
+\hline
+Pendente & Execute \texttt{python3 scripts/build\_vnd\_neighborhood\_tables\_by\_family.py}. \\
+\hline
+\end{tabular}
+\end{table}
+}

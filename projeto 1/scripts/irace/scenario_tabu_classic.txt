@@ -1,0 +1,6 @@
+parameterFile = "./scripts/irace/parameters_tabu_classic.txt"
+trainInstancesFile = "./scripts/tuning_set.txt"
+targetRunner = "./scripts/irace/target_runner.py"
+logFile = "./results/irace/tabu_classic/irace.Rdata"
+maxExperiments = 1000
+deterministic = 1

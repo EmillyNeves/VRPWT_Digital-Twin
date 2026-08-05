@@ -1,0 +1,126 @@
+\section{Formulação do VRPTW e Heurística Solomon I1}
+\label{sec:vrptw_i1}
+
+\subsection{Modelo do problema}
+
+Considere um grafo completo $G=(V,E)$ com $V=\{0\}\cup N$, onde $0$ é o depósito e
+$N=\{1,\ldots,n\}$ é o conjunto de clientes.
+Cada cliente $i\in N$ possui:
+\begin{itemize}
+  \item demanda $q_i$;
+  \item janela de tempo $[a_i,b_i]$;
+  \item tempo de serviço $s_i$.
+\end{itemize}
+
+A frota é homogênea, com capacidade $Q$ e no máximo $m$ veículos.
+No padrão Solomon, a distância entre dois nós $i$ e $j$ é dada por distância euclidiana truncada em uma casa decimal \cite{solomon1987algorithms}:
+\[
+ d_{ij}=\left\lfloor 10\cdot \sqrt{(x_i-x_j)^2+(y_i-y_j)^2}\right\rfloor/10.
+\]
+
+Para uma rota $r=(0,r_1,\ldots,r_k,0)$, o cronograma é calculado de forma recursiva:
+\begin{align}
+ t^{arr}_{r_h} &= t^{dep}_{r_{h-1}} + d_{r_{h-1},r_h}, \\
+ t^{start}_{r_h} &= \max\{t^{arr}_{r_h}, a_{r_h}\}, \\
+ t^{dep}_{r_h} &= t^{start}_{r_h} + s_{r_h}.
+\end{align}
+
+Uma solução é factível se:
+\begin{enumerate}
+  \item cada cliente é atendido exatamente uma vez;
+  \item cada rota respeita capacidade $Q$;
+  \item cada atendimento satisfaz $t^{start}_i \le b_i + \varepsilon$;
+  \item o número de rotas não ultrapassa $m$.
+\end{enumerate}
+
+O objetivo adotado é minimizar custo total de deslocamento:
+\[
+ \min \sum_{r\in R}\sum_{(i,j)\in r} d_{ij}.
+\]
+
+\subsection{Solomon I1 implementado}
+\label{subsec:solomon_i1_impl}
+
+A solução inicial usada em todo o pipeline é produzida por uma versão clássica do I1 com seed determinística e inserção paralela sobre as rotas abertas.
+As escolhas fixas do trabalho são:
+\[
+\alpha_1=1,\quad \alpha_2=0,\quad \lambda=1,\quad \mu=1.
+\]
+
+Mesmo com $\alpha_2=0$, a verificação temporal continua obrigatória: o termo temporal deixa de pesar no escore, mas continua atuando como restrição de factibilidade.
+
+\subsubsection{Critério de inserção $c_1$}
+
+Ao testar inserção do cliente $u$ entre nós adjacentes $(i,j)$ de uma rota, define-se:
+\begin{align}
+ c_{11}(i,u,j) &= d_{iu} + d_{uj} - \mu d_{ij}, \\
+ c_{12}(i,u,j) &= b_j^{new} - b_j^{old}, \\
+ c_1(i,u,j) &= \alpha_1 c_{11}(i,u,j) + \alpha_2 c_{12}(i,u,j).
+\end{align}
+
+Na implementação, $b_j^{old}$ e $b_j^{new}$ são os tempos de início de serviço de $j$ antes e depois da inserção, obtidos pelo recálculo do cronograma da rota base e da rota candidata.
+
+\subsubsection{Critério de seleção global $c_2$}
+
+Para cada cliente não roteirizado $u$, primeiro identifica-se sua melhor inserção (menor $c_1$).
+Depois calcula-se:
+\[
+ c_2(u)=\lambda d_{0u}-c_1(u).
+\]
+O cliente inserido na iteração é o de maior $c_2$.
+Em empate de $c_2$, a implementação desempata por menor $c_1$.
+
+\subsubsection{Política de abertura de rota}
+
+Se nenhuma inserção factível for encontrada nas rotas atuais, o algoritmo abre nova rota com o cliente mais distante do depósito (\emph{farthest seed}), desde que ainda exista veículo disponível.
+
+\begin{algorithm}[htbp]
+\caption{Solomon I1}
+\label{alg:i1}
+\begin{algorithmic}[1]
+\Require instância VRPTW e parâmetros $(\alpha_1,\alpha_2,\lambda,\mu,\varepsilon)$
+\Ensure solução inicial $S$
+\State $S\leftarrow\emptyset$, $NR\leftarrow N$
+\While{$NR\neq\emptyset$}
+  \If{$S=\emptyset$}
+    \State seleciona seed mais distante do depósito e abre rota $(0,u,0)$
+    \State remove $u$ de $NR$
+    \State \textbf{continue}
+  \EndIf
+  \State busca melhor inserção global (todas as rotas, posições e clientes em $NR$)
+  \If{existe inserção factível}
+    \State escolhe $u^*=\argmax c_2(u)$ e aplica inserção correspondente
+    \State $NR\leftarrow NR\setminus\{u^*\}$
+  \Else
+    \If{$|S|<m$}
+      \State abre nova rota com seed farthest
+      \State remove seed de $NR$
+    \Else
+      \State \textbf{break}
+    \EndIf
+  \EndIf
+\EndWhile
+\State recomputa $S$ e remove rotas triviais
+\State \Return $S$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Texto complementar ao pseudocódigo.}
+A etapa da linha 8 (``melhor inserção global'') é o núcleo da implementação: para cada cliente não roteirizado, o código percorre todas as rotas e todas as posições de inserção, computa o menor $c_1$ factível desse cliente e só então aplica o desempate global por maior $c_2$.
+Isso evita decisões miopes por rota e aproxima o comportamento descrito por Solomon para o I1 clássico.
+
+No nível de estrutura de dados, cada rota é representada por uma sequência ordenada de clientes com custo, carga e cronograma associados.
+Quando um candidato $(i,u,j)$ é testado, o algoritmo cria uma rota temporária, insere $u$, executa \texttt{recompute} e valida simultaneamente capacidade e janelas.
+Somente candidatos factíveis entram na competição por $c_1$ e $c_2$.
+Se nenhum candidato for viável, a linha 14 abre nova rota (se houver veículo disponível); caso contrário, a construção encerra.
+
+\subsection{Papel do I1 no estudo comparativo}
+
+Neste trabalho, o I1 é o baseline comum para VND, GRASP e Tabu.
+Essa decisão metodológica separa claramente duas camadas:
+\begin{itemize}
+  \item qualidade da construção inicial;
+  \item capacidade de melhoria da busca local/meta-heurística.
+\end{itemize}
+
+Com isso, diferenças de desempenho observadas entre algoritmos são atribuídas principalmente ao mecanismo de busca, e não a inicializações heterogêneas.

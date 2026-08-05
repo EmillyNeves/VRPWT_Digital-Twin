@@ -1,0 +1,227 @@
+\paragraph{Nota sobre escopo.} Esta seção (HGS) é mantida apenas como revisão/possível trabalho futuro. O repositório \textbf{não} implementa HGS e, por isso, o arquivo \texttt{genetico.tex} não é incluído em \texttt{main.tex} na versão atual do relatório.
+
+\section{Busca Genética Híbrida (HGS) para VRPTW}
+\label{sec:hgs}
+
+O Hybrid Genetic Search (HGS) proposto por Vidal et al. \cite{vidal2012hybrid,vidal2013} representa um dos métodos mais eficazes para problemas de roteamento de veículos, consolidando-se como referência no estado da arte para o VRPTW. A abordagem distingue-se por combinar princípios de algoritmos genéticos com busca local intensiva, gerenciamento explícito de diversidade populacional, e mecanismos de reinício automático, resultando em um método robusto capaz de alcançar soluções de qualidade excepcional.
+
+\subsection{Princípios Fundamentais}
+
+O HGS baseia-se em três pilares conceituais que o diferenciam de algoritmos genéticos tradicionais:
+
+\paragraph{Educação Lamarckiana.} Ao contrário de abordagens puramente Darwinianas, onde as características adquiridas durante a vida de um indivíduo não são herdadas, o HGS aplica busca local intensiva (educação) a cada novo indivíduo gerado, e as melhorias obtidas são incorporadas ao genoma antes de inseri-lo na população. Este mecanismo Lamarckiano acelera drasticamente a convergência em relação a algoritmos genéticos clássicos \cite{vidal2013}.
+
+\paragraph{Gerenciamento de Diversidade.} O método utiliza um critério de aptidão enviesado (\emph{biased fitness}) que pondera tanto o custo da solução quanto sua contribuição à diversidade populacional. Soluções com baixo custo mas similares a outras já presentes na população recebem penalização, favorecendo a manutenção de diversidade genética e prevenindo convergência prematura \cite{vidal2012hybrid}.
+
+\paragraph{Reinício Adaptativo.} Quando a população estagna (ausência de melhorias por um número determinado de gerações), o algoritmo executa um procedimento de reinício que preserva a elite e perturba os demais indivíduos, restaurando a diversidade e permitindo exploração de novas regiões do espaço de soluções.
+
+\subsection{Representação e Decodificação}
+
+No HGS, cada indivíduo é representado como uma permutação de clientes $\pi = [c_1, c_2, \ldots, c_n]$, onde $n = |V \setminus \{0\}|$ é o número de clientes. Esta representação é independente do número de rotas, oferecendo flexibilidade para explorar soluções com diferentes números de veículos.
+
+A conversão de uma permutação $\pi$ em uma solução viável $S = \{r_1, r_2, \ldots, r_m\}$ é realizada pelo procedimento \textsc{Split}, também conhecido como \emph{split algorithm} \cite{prins2004simple}. O Algoritmo~\ref{alg:split} apresenta a versão gulosa do \textsc{Split}, que percorre a permutação sequencialmente e agrupa clientes em rotas respeitando as restrições de capacidade e janelas de tempo.
+
+\begin{algorithm}[H]
+\caption{Decodificador Split Guloso}
+\label{alg:split}
+\begin{algorithmic}[1]
+\Require Permutação de clientes $\pi = [c_1, \ldots, c_n]$, capacidade do veículo $Q$, janelas de tempo $T = \{[a_i, e_i]\}_{i \in V}$, matriz de distâncias $W$
+\Ensure Solução viável $S = \{r_1, \ldots, r_m\}$
+
+    \State $S \leftarrow \emptyset$ \label{ln:split_init_sol}
+    \State $r \leftarrow [0]$ \label{ln:split_init_route}
+    \State $q_r \leftarrow 0$ \label{ln:split_init_load}
+    
+    \For{$i \leftarrow 1$ \textbf{até} $n$} \label{ln:split_loop_start}
+        \State $c \leftarrow \pi[i]$ \label{ln:split_get_customer}
+        \State $r' \leftarrow r \cup \{c\}$ \label{ln:split_temp_route}
+        \State $q' \leftarrow q_r + d_c$ \label{ln:split_temp_load}
+        
+        \If{$q' \leq Q$ \AND \textsc{TempoViavel}$(r', T, W)$} \label{ln:split_check_feasible}
+            \State $r \leftarrow r'$ \label{ln:split_accept}
+            \State $q_r \leftarrow q'$ \label{ln:split_update_load}
+        \Else \label{ln:split_else}
+            \If{$|r| > 1$} \label{ln:split_check_nonempty}
+                \State $S \leftarrow S \cup \{r \cup \{0\}\}$ \label{ln:split_close_route}
+            \EndIf
+            \State $r \leftarrow [0, c]$ \label{ln:split_new_route}
+            \State $q_r \leftarrow d_c$ \label{ln:split_new_load}
+        \EndIf
+    \EndFor \label{ln:split_loop_end}
+    
+    \If{$|r| > 1$} \label{ln:split_final_check}
+        \State $S \leftarrow S \cup \{r \cup \{0\}\}$ \label{ln:split_final_close}
+    \EndIf
+    
+    \State \Return $S$ \label{ln:split_return}
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Descrição do Decodificador Split}
+
+Na linha~\ref{ln:split_init_sol}, o conjunto de rotas $S$ é inicializado vazio. A rota corrente $r$ é inicializada como $[0]$ (contendo apenas o depósito, linha~\ref{ln:split_init_route}), e a carga acumulada $q_r$ é inicializada com zero (linha~\ref{ln:split_init_load}).
+
+O laço principal (linhas~\ref{ln:split_loop_start}--\ref{ln:split_loop_end}) percorre a permutação $\pi$ sequencialmente. Para cada cliente $c = \pi[i]$ (linha~\ref{ln:split_get_customer}), o algoritmo tenta adicioná-lo à rota corrente construindo uma rota temporária $r' = r \cup \{c\}$ (linha~\ref{ln:split_temp_route}) com carga $q' = q_r + d_c$ (linha~\ref{ln:split_temp_load}).
+
+A viabilidade de $r'$ é verificada na linha~\ref{ln:split_check_feasible}: primeiro verifica-se a restrição de capacidade ($q' \leq Q$), e em seguida a função \textsc{TempoViavel}$(r', T, W)$ verifica se a inserção de $c$ preserva a viabilidade temporal de todos os clientes na rota. Esta função recalcula os tempos de chegada, espera e início de serviço para toda a sequência $r'$, garantindo que $a_i \leq t^{\text{start}}_i \leq e_i$ para cada cliente $i \in r'$.
+
+Se a inserção é viável, a rota corrente é atualizada para $r'$ (linha~\ref{ln:split_accept}) e a carga para $q'$ (linha~\ref{ln:split_update_load}). Caso contrário (linha~\ref{ln:split_else}), a rota corrente não comporta mais clientes: se ela contém pelo menos um cliente ($|r| > 1$, linha~\ref{ln:split_check_nonempty}), a rota completa $r \cup \{0\}$ é adicionada a $S$ (linha~\ref{ln:split_close_route}), e uma nova rota contendo apenas o depósito e o cliente $c$ é iniciada (linhas~\ref{ln:split_new_route}--\ref{ln:split_new_load}).
+
+Ao final do laço, se a última rota corrente contém clientes (linha~\ref{ln:split_final_check}), ela é fechada e adicionada a $S$ (linha~\ref{ln:split_final_close}). O algoritmo retorna a solução completa $S$ (linha~\ref{ln:split_return}).
+
+\subsection{Estrutura Principal do HGS}
+
+O Algoritmo~\ref{alg:hgs} apresenta a estrutura principal do Hybrid Genetic Search. O método mantém uma população $\mathcal{P}$ de soluções que evolui ao longo das gerações através de operadores genéticos (seleção, cruzamento) combinados com busca local intensiva.
+
+\begin{algorithm}[H]
+\caption{Busca Genética Híbrida para VRPTW}
+\label{alg:hgs}
+\begin{algorithmic}[1]
+\Require Grafo $G=(V,E,W)$, vetor de demandas $D$, capacidade $Q$, janelas de tempo $T$, tamanho da população $N_p$, tamanho da elite $N_e$, número de vizinhos próximos $N_c$, peso de diversidade $\delta$, limite de reinício $I_{\text{reinicio}}$, número máximo de gerações $N_{\max}$
+\Ensure Melhor solução $s^*$ encontrada
+
+    \State $\mathcal{P} \leftarrow$ \textsc{GeraPopulacaoInicial}$(G, D, Q, T, N_p)$ \label{ln:hgs_init_pop}
+    \State $s^* \leftarrow \arg\min_{s \in \mathcal{P}} f(s)$ \label{ln:hgs_init_best}
+    \State $\mathcal{N} \leftarrow$ \textsc{CalculaVizinhancas}$(V, W, k)$ \label{ln:hgs_calc_neighbors}
+    \State $n_{\text{estag}} \leftarrow 0$ \label{ln:hgs_init_stag}
+    \State $g \leftarrow 0$ \label{ln:hgs_init_gen}
+    
+    \While{$g < N_{\max}$} \label{ln:hgs_main_loop}
+        \State $g \leftarrow g + 1$ \label{ln:hgs_inc_gen}
+        
+        \If{$n_{\text{estag}} \geq I_{\text{reinicio}}$} \label{ln:hgs_check_restart}
+            \State $\mathcal{P} \leftarrow$ \textsc{Reiniciar}$(\mathcal{P}, N_e, G, D, Q, T)$ \label{ln:hgs_restart}
+            \State $n_{\text{estag}} \leftarrow 0$ \label{ln:hgs_reset_stag}
+        \EndIf
+        
+        \State $(p_1, p_2) \leftarrow$ \textsc{SelecionaPais}$(\mathcal{P}, N_c, \delta)$ \label{ln:hgs_select_parents}
+        
+        \State $\pi_o \leftarrow$ \textsc{OrderCrossover}$(p_1, p_2)$ \label{ln:hgs_crossover}
+        \State $s_o \leftarrow$ \textsc{Split}$(\pi_o, Q, T, W)$ \label{ln:hgs_split}
+        
+        \State $s_o \leftarrow$ \textsc{BuscaLocal}$(s_o, Q, T, W, \mathcal{N})$ \label{ln:hgs_local_search}
+        
+        \State $\mathcal{P} \leftarrow \mathcal{P} \cup \{s_o\}$ \label{ln:hgs_add_offspring}
+        
+        \State $\mathcal{P} \leftarrow$ \textsc{Sobreviventes}$(\mathcal{P}, N_p, N_c, \delta)$ \label{ln:hgs_survivors}
+        
+        \State $s_{\text{melhor}} \leftarrow \arg\min_{s \in \mathcal{P}} f(s)$ \label{ln:hgs_best_current}
+        \If{$f(s_{\text{melhor}}) < f(s^*)$} \label{ln:hgs_check_improvement}
+            \State $s^* \leftarrow s_{\text{melhor}}$ \label{ln:hgs_update_best}
+            \State $n_{\text{estag}} \leftarrow 0$ \label{ln:hgs_reset_stag2}
+        \Else
+            \State $n_{\text{estag}} \leftarrow n_{\text{estag}} + 1$ \label{ln:hgs_inc_stag}
+        \EndIf
+    \EndWhile
+    
+    \State \Return $s^*$ \label{ln:hgs_return}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Descrição Detalhada do Algoritmo}
+
+Na linha~\ref{ln:hgs_init_pop}, a população inicial $\mathcal{P}$ é gerada através da função \textsc{GeraPopulacaoInicial}, que tipicamente combina soluções construídas por heurísticas gulosas (ex: Solomon I1) com soluções geradas aleatoriamente, garantindo diversidade inicial. A melhor solução da população é identificada e armazenada em $s^*$ (linha~\ref{ln:hgs_init_best}).
+
+Na linha~\ref{ln:hgs_calc_neighbors}, são pré-calculadas as vizinhanças de $k$ clientes mais próximos para cada cliente, estrutura utilizada posteriormente tanto na busca local quanto no cálculo de diversidade. O contador de estagnação $n_{\text{estag}}$ e o contador de gerações $g$ são inicializados com zero (linhas~\ref{ln:hgs_init_stag}--\ref{ln:hgs_init_gen}).
+
+\paragraph{Laço Evolucionário:} O laço principal (linhas~\ref{ln:hgs_main_loop}--linha antes de~\ref{ln:hgs_return}) executa o ciclo evolucionário por até $N_{\max}$ gerações. A cada geração:
+
+\paragraph{Mecanismo de Reinício:} Se o número de gerações sem melhoria atingiu o limite $I_{\text{reinicio}}$ (linha~\ref{ln:hgs_check_restart}), o procedimento \textsc{Reiniciar} é invocado (linha~\ref{ln:hgs_restart}). Este procedimento preserva os $N_e$ melhores indivíduos da população (elite) e perturba os demais, removendo e reinserindo aleatoriamente uma fração dos clientes (tipicamente 40\%) para restaurar diversidade. O contador de estagnação é resetado (linha~\ref{ln:hgs_reset_stag}).
+
+\paragraph{Seleção de Pais:} Na linha~\ref{ln:hgs_select_parents}, dois pais $(p_1, p_2)$ são selecionados da população através de torneio binário baseado no \emph{biased fitness} (Equação~\eqref{eq:biased_fitness}). Este critério de seleção favorece indivíduos que são tanto bons (baixo custo) quanto diversos (contribuem para a heterogeneidade da população).
+
+\paragraph{Cruzamento e Decodificação:} Na linha~\ref{ln:hgs_crossover}, os cromossomos de $p_1$ e $p_2$ (permutações de clientes) são recombinados usando o operador \textsc{OrderCrossover} (OX1) \cite{davis1985applying}, gerando um cromossomo filho $\pi_o$. Este cromossomo é então decodificado em uma solução viável $s_o$ através do algoritmo \textsc{Split} (linha~\ref{ln:hgs_split}, Algoritmo~\ref{alg:split}).
+
+\paragraph{Educação Lamarckiana:} Na linha~\ref{ln:hgs_local_search}, a solução recém-gerada $s_o$ passa por busca local intensiva através da função \textsc{BuscaLocal}, que pode utilizar VND (Seção~\ref{sec:vnd}) ou outra estratégia de busca local. Esta etapa de "educação" é fundamental: as melhorias obtidas pela busca local são incorporadas ao genoma do indivíduo antes de inseri-lo na população, caracterizando evolução Lamarckiana \cite{vidal2013}.
+
+\paragraph{Inserção e Seleção de Sobreviventes:} O indivíduo educado $s_o$ é adicionado à população (linha~\ref{ln:hgs_add_offspring}), que temporariamente passa a ter $N_p + 1$ indivíduos. Em seguida, a função \textsc{Sobreviventes} (linha~\ref{ln:hgs_survivors}) seleciona os $N_p$ indivíduos que permanecerão na população para a próxima geração, novamente usando o critério de \emph{biased fitness} para equilibrar qualidade e diversidade.
+
+\paragraph{Atualização do Incumbente:} O melhor indivíduo da população corrente é identificado (linha~\ref{ln:hgs_best_current}). Se seu custo é menor que o incumbente global $s^*$ (linha~\ref{ln:hgs_check_improvement}), atualiza-se $s^*$ (linha~\ref{ln:hgs_update_best}) e reseta-se o contador de estagnação (linha~\ref{ln:hgs_reset_stag2}). Caso contrário, o contador de estagnação é incrementado (linha~\ref{ln:hgs_inc_stag}).
+
+Ao final de $N_{\max}$ gerações, o algoritmo retorna a melhor solução encontrada $s^*$ (linha~\ref{ln:hgs_return}).
+
+\subsection{Biased Fitness e Gerenciamento de Diversidade}
+\label{subsec:biased_fitness}
+
+Um dos aspectos mais importantes do HGS é o gerenciamento explícito de diversidade populacional através do critério de \emph{biased fitness} \cite{vidal2012hybrid,vidal2013}. Ao contrário de algoritmos genéticos tradicionais que selecionam indivíduos puramente com base no custo, o HGS utiliza um critério de aptidão que pondera tanto o custo quanto a contribuição à diversidade populacional.
+
+O \emph{biased fitness} de uma solução $s$ na população $\mathcal{P}$ é definido como:
+\begin{equation}
+    f_{\text{biased}}(s, \mathcal{P}) = f(s) \times \left(1 + \delta \times (1 - \text{contrib}_{\text{div}}(s, \mathcal{P}))\right),
+    \label{eq:biased_fitness}
+\end{equation}
+onde:
+\begin{itemize}
+    \item $f(s)$ é o custo objetivo da solução (distância total percorrida);
+    \item $\delta \geq 0$ é o peso de diversidade, tipicamente $\delta = 0.1$;
+    \item $\text{contrib}_{\text{div}}(s, \mathcal{P}) \in [0, 1]$ é a contribuição de diversidade normalizada de $s$ em relação à população $\mathcal{P}$.
+\end{itemize}
+
+A contribuição de diversidade mede quão diferente a solução $s$ é em relação aos demais membros da população. Soluções muito similares a outras já presentes recebem penalização (termo $(1 - \text{contrib}_{\text{div}})$ alto), enquanto soluções distintas são favorecidas.
+
+\subsubsection{Cálculo da Contribuição de Diversidade}
+
+A contribuição de diversidade é calculada com base na distância média de $s$ aos seus $N_c$ vizinhos mais próximos na população (o conjunto "close") \cite{vidal2013}:
+\begin{equation}
+    \text{contrib}_{\text{div}}(s, \mathcal{P}) = \min \left( \frac{d_{\text{média}}(s, \mathcal{C}(s, N_c))}{\bar{d}_{\mathcal{P}}}, 1.0 \right),
+    \label{eq:contrib_div}
+\end{equation}
+onde:
+\begin{itemize}
+    \item $\mathcal{C}(s, N_c) \subseteq \mathcal{P}$ é o conjunto dos $N_c$ indivíduos mais próximos de $s$ na população;
+    \item $d_{\text{média}}(s, \mathcal{C})$ é a distância média entre $s$ e os membros de $\mathcal{C}$;
+    \item $\bar{d}_{\mathcal{P}}$ é a distância média entre todos os pares de soluções na população, usada para normalização.
+\end{itemize}
+
+A distância entre soluções é tipicamente medida pela \emph{Broken-Pairs Distance} (BP-distance) \cite{sorensen2006distance}, que conta o número de pares consecutivos de clientes que aparecem em uma solução mas não na outra:
+\begin{equation}
+    d_{\text{BP}}(s_1, s_2) = \sum_{(i,j) \in A(s_1)} \mathbb{1}\{(i,j) \notin A(s_2)\},
+    \label{eq:bp_distance}
+\end{equation}
+onde $A(s)$ é o conjunto de arcos (pares consecutivos de clientes) na solução $s$, e $\mathbb{1}\{\cdot\}$ é a função indicadora.
+
+\subsection{Operador de Cruzamento Order Crossover (OX1)}
+
+O operador \textsc{OrderCrossover} (OX1) \cite{davis1985applying} é utilizado para recombinar os cromossomos de dois pais, gerando um filho que herda características de ambos enquanto mantém a propriedade de permutação válida.
+
+Dados dois pais $p_1 = [\ldots]$ e $p_2 = [\ldots]$ representados como permutações de clientes, o procedimento OX1 funciona da seguinte forma:
+\begin{enumerate}
+    \item Selecionar aleatoriamente dois pontos de corte $k_1 < k_2$ na permutação;
+    \item Copiar o segmento $p_1[k_1:k_2]$ para a mesma posição no filho $\pi_o$;
+    \item Preencher as posições restantes de $\pi_o$ com os clientes de $p_2$ na ordem em que aparecem, pulando aqueles já presentes no segmento copiado de $p_1$.
+\end{enumerate}
+
+Este operador preserva a ordem relativa dos clientes herdados de cada pai, uma propriedade importante para manter boas subsequências de rotas que podem estar presentes nos progenitores.
+
+\subsection{Parâmetros do Algoritmo}
+
+Os parâmetros do HGS incluem:
+\begin{itemize}
+    \item \textbf{$N_p$:} Tamanho da população. 
+    \item \textbf{$N_e$:} Tamanho da elite preservada no reinício.
+    \item \textbf{$N_c$:} Número de vizinhos próximos considerados no cálculo de diversidade.
+    \item \textbf{$\delta$:} Peso de diversidade no \emph{biased fitness}.
+    \item \textbf{$I_{\text{reinicio}}$:} Limite de gerações sem melhoria para acionar reinício.
+    \item \textbf{$N_{\max}$:} Número máximo de gerações. Valor típico: 1000 a 2000 gerações, ou critério baseado em tempo computacional.
+    \item \textbf{$k$:} Número de vizinhos mais próximos para cada cliente, usado na busca local.
+\end{itemize}
+
+\subsection{Complexidade Computacional}
+
+A complexidade de uma geração do HGS é dominada pela busca local aplicada ao filho gerado. Assumindo que a busca local tem complexidade $O(n^3)$ (similar ao VND discutido na Seção~\ref{subsec:vnd_complexity}), e considerando as demais operações (seleção, cruzamento, decodificação split, gerenciamento de população) com complexidades menores, a complexidade de uma geração é $O(n^3)$.
+
+Para $N_{\max}$ gerações, a complexidade total é $O(N_{\max} \cdot n^3)$. Na prática, o custo computacional do HGS é significativamente maior que métodos como GRASP devido ao número elevado de gerações necessárias para convergência. No entanto, a qualidade das soluções obtidas tipicamente compensa este custo adicional, especialmente em instâncias grandes e complexas \cite{vidal2013}.
+
+\subsection{Vantagens e Características Distintivas}
+
+O HGS apresenta várias características que contribuem para sua eficácia:
+
+\paragraph{Educação Lamarckiana intensiva.} A aplicação de busca local a cada novo indivíduo garante que toda a população consiste de ótimos locais de alta qualidade, acelerando a convergência e melhorando a qualidade final das soluções.
+
+\paragraph{Gerenciamento explícito de diversidade.} O critério de \emph{biased fitness} previne convergência prematura ao favorecer soluções diversas, mesmo que ligeiramente piores em custo, mantendo a capacidade de exploração ao longo de toda a execução.
+
+\paragraph{Reinício automático.} O mecanismo de reinício preserva a elite enquanto restaura diversidade na população quando detectada estagnação, permitindo que o algoritmo escape de ótimos locais e explore novas regiões do espaço de soluções.
+
+\paragraph{Representação flexível.} A representação como permutação combinada com o decodificador \textsc{Split} permite explorar naturalmente soluções com diferentes números de veículos, sem necessidade de especificar este parâmetro a priori.
+
+Estes elementos combinados fazem do HGS um dos métodos mais eficazes para VRPTW, consistentemente produzindo soluções próximas ou iguais aos melhores valores conhecidos em benchmarks padrão \cite{vidal2013,vidal2014}.

@@ -1,0 +1,20 @@
+\section{Conclusão}
+\label{sec:conclusao}
+
+O trabalho consolidou uma linha metodológica coerente para VRPTW: baseline construtivo por Solomon I1 clássico, seguido de comparação entre VND, GRASP (fixo e reativo) e Busca Tabu sob as mesmas regras de factibilidade e o mesmo objetivo de custo.
+
+Do ponto de vista de engenharia experimental, três resultados são centrais:
+\begin{enumerate}
+  \item padronização das estruturas de dados e validações, reduzindo risco de inconsistência entre algoritmos;
+  \item seleção objetiva de vizinhanças do VND (4 de 8) com base em impacto empírico;
+  \item pipeline reprodutível para calibração (\emph{irace}) e geração de tabelas consolidadas por instância.
+\end{enumerate}
+
+Com a tabela por instância (gap, custo e $\Delta veh$ por algoritmo), a comparação deixa de ser apenas agregada e passa a mostrar comportamento local por caso, o que é importante para interpretação acadêmica dos resultados em Solomon.
+
+Como próximos passos, recomenda-se:
+\begin{enumerate}
+  \item concluir o ciclo completo de calibração no orçamento final de \emph{irace};
+  \item repetir a campanha consolidada com múltiplas seeds para algoritmos estocásticos;
+  \item adicionar testes estatísticos não-paramétricos para comparação de desempenho entre métodos \cite{demsar2006statistical}.
+\end{enumerate}

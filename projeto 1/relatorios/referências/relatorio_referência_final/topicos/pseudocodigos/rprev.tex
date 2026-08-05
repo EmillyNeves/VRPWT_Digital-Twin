@@ -1,0 +1,17 @@
+\begin{algorithm}
+
+\caption{R-PREV}
+\label{alg:rprev}
+\SetAlgoLined
+\Entrada{Grafo $G = (V, E)$.}
+\Saida{Árvore Geradora $T = (V, E)$.}
+$dbPREV \gets \text{Cálculo-dbPREV}(G)$;
+\label{lin:calculo_dbPREV}\\
+$(T, B_{\text{T}}, Pontas) \gets \text{Pré-Processamento}(G, dbPREV)$;\label{lin:PreProcessamento}\\
+\Enqto {$|E_{\text{T}}| < |V_{\text{G}}| - 1$}{ \label{lin:inicioloopRPREV}
+    \Se{$Pontas \ne 0$}{
+                
+    }
+}\label{lin:fimloopRPREV}
+\textbf{return} $R$\;
+\end{algorithm}

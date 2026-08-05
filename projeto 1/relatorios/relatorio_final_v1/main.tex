@@ -1,0 +1,89 @@
+\documentclass[10pt,a4paper]{article}
+
+% --- Pacotes Fundamentais ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\IfFileExists{portuguese.ldf}{\usepackage[portuguese]{babel}}{\usepackage[english]{babel}}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\IfFileExists{float.sty}{\usepackage{float}}{}
+\IfFileExists{booktabs.sty}{\usepackage{booktabs}}{}
+\IfFileExists{longtable.sty}{\usepackage{longtable}}{}
+\IfFileExists{array.sty}{\usepackage{array}}{}
+\usepackage[margin=2.5cm]{geometry}
+\IfFileExists{etoolbox.sty}{\usepackage{hyperref}}{}
+\newif\iftikzavailable
+\tikzavailablefalse
+\IfFileExists{tikz.sty}{\usepackage{tikz}\tikzavailabletrue}{}
+
+% --- Pacotes de Algoritmo ---
+\IfFileExists{algorithm.sty}{\usepackage{algorithm}}{}
+\IfFileExists{algpseudocode.sty}{\usepackage{algpseudocode}}{}
+
+% Fallbacks para compilar mesmo em instalações TeX mínimas (sem algorithm/algpseudocode).
+\IfFileExists{algorithm.sty}{}{
+  \newenvironment{algorithm}[1][]{\begin{figure}[##1]}{\end{figure}}
+}
+\IfFileExists{algpseudocode.sty}{}{
+  \newenvironment{algorithmic}[1][]{\par\small\ttfamily}{\par\normalfont}
+  \newcommand{\State}{\par\noindent}
+  \newcommand{\Require}{\par\noindent\textbf{Entrada:} }
+  \newcommand{\Ensure}{\par\noindent\textbf{Saída:} }
+  \newcommand{\Comment}[1]{\hfill\textit{##1}}
+  \newcommand{\If}[1]{\par\noindent\textbf{se} ##1 \textbf{então}}
+  \newcommand{\Else}{\par\noindent\textbf{senão}}
+  \newcommand{\EndIf}{\par\noindent\textbf{fim se}}
+  \newcommand{\For}[1]{\par\noindent\textbf{para} ##1 \textbf{faça}}
+  \newcommand{\EndFor}{\par\noindent\textbf{fim para}}
+  \newcommand{\While}[1]{\par\noindent\textbf{enquanto} ##1 \textbf{faça}}
+  \newcommand{\EndWhile}{\par\noindent\textbf{fim enquanto}}
+  \newcommand{\Return}{\par\noindent\textbf{retorne} }
+}
+
+% --- Configurações de Tradução do Algoritmo ---
+\IfFileExists{algorithm.sty}{\floatname{algorithm}{Algoritmo}}{}
+\IfFileExists{algpseudocode.sty}{
+  \renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+  \renewcommand{\algorithmicensure}{\textbf{Saída:}}
+  \renewcommand{\algorithmicwhile}{\textbf{enquanto}}
+  \renewcommand{\algorithmicdo}{\textbf{faça}}
+  \renewcommand{\algorithmicif}{\textbf{se}}
+  \renewcommand{\algorithmicthen}{\textbf{então}}
+  \renewcommand{\algorithmicelse}{\textbf{senão}}
+  \renewcommand{\algorithmicfor}{\textbf{para}}
+  \renewcommand{\algorithmicforall}{\textbf{para todo}}
+  \renewcommand{\algorithmicreturn}{\textbf{retorne}}
+  \renewcommand{\algorithmicrepeat}{\textbf{repita}}
+  \renewcommand{\algorithmicuntil}{\textbf{até}}
+}{}
+
+% Definição de operador matemático para arg min/max
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\begin{document}
+
+\title{Heurísticas e Meta-heurísticas Clássicas para o VRPTW:\\Implementação, Validação e Calibração Experimental}
+\author{Autor(a)}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+Este trabalho apresenta uma implementação e uma análise experimental de métodos clássicos para o problema de roteamento de veículos com janelas de tempo (VRPTW). O pipeline parte de uma solução inicial por Solomon I1 e compara três estratégias de melhoria: VND, GRASP (fixo e reativo) e Busca Tabu. A implementação foi alinhada à literatura de referência, com verificação explícita de factibilidade temporal e de capacidade em todas as etapas. Além da modelagem matemática e do pseudocódigo, o texto documenta estruturas de dados, regras de aceitação de movimentos, critérios de parada e parâmetros calibráveis. Também é descrito o protocolo de calibração por \emph{irace} e uma tabela consolidada por instância, com gap, custo nominal e variação de veículos por algoritmo. O resultado é um relatório reprodutível e compatível com a implementação efetiva do projeto.
+\end{abstract}
+
+\noindent\textbf{Palavras-chave:} VRPTW, Solomon I1, VND, GRASP, Busca Tabu, calibração automática, irace.
+
+\input{introducao}
+\input{notacao_fluxo}
+\input{solomon}
+\input{vnd}
+\input{grasp}
+\input{tabu}
+\input{experimentos}
+\input{conclusao}
+
+\bibliographystyle{apalike}
+\bibliography{biblio}   
+\end{document}

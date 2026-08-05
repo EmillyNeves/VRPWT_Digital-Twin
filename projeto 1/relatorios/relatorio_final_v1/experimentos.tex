@@ -1,0 +1,336 @@
+\section{Protocolo Experimental, Parametrização e Resultados}
+\label{sec:protocolo}
+
+\subsection{Objetivo experimental}
+
+O objetivo dos experimentos é comparar o ganho de custo dos métodos de melhoria (VND, GRASP fixo, GRASP reativo e Tabu) quando todos partem do mesmo baseline I1.
+Para isso, a análise foi estruturada em dois níveis:
+\begin{enumerate}
+  \item calibração de parâmetros (\emph{tuning});
+  \item execução comparativa consolidada em todas as instâncias de Solomon.
+\end{enumerate}
+
+\subsection{Etapas de validação e teste}
+\label{subsec:etapas_validacao_teste}
+
+Para tornar o processo reprodutível e auditável, a campanha experimental foi estruturada em etapas fixas.
+Cada etapa tem uma entrada, uma checagem objetiva e um critério explícito de aprovação.
+
+\begin{table}[htbp]
+\centering
+\caption{Checklist de validação e teste por etapa.}
+\label{tab:validation_checklist}
+\begin{tabular}{p{2.8cm}p{4.1cm}p{4.0cm}p{4.0cm}}
+\hline
+Etapa & Objetivo & Evidência gerada & Critério de aprovação \\
+\hline
+Build & Garantir compilação consistente do solver & Log de compilação e binário gerado & Compilar sem erro e sem quebra de linkagem \\
+Validação estrutural & Confirmar formato da solução (depósito, cobertura, duplicidade) & Relatório de validação por instância & Todos os clientes atendidos exatamente uma vez \\
+Validação de factibilidade & Confirmar restrições de capacidade e janelas de tempo & Recomputação das rotas e checagem de janelas/carga & Nenhuma violação de capacidade/janela \\
+Validação de custo & Confirmar consistência da função objetivo & Custo total recomputado a partir das rotas & Custo reportado = custo recomputado \\
+Teste funcional por algoritmo & Verificar execução fim-a-fim de I1, VND, GRASP e Tabu & CSV de execução + solução exportada & Execução concluída com solução factível \\
+Teste comparativo & Medir qualidade relativa sob mesmo orçamento & Tabelas agregadas por instância e família & Comparação com mesma instância, seed e limite de tempo \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Desenho para seleção de vizinhanças}
+\label{subsec:desenho_vizinhancas}
+
+Como a seleção de vizinhanças afeta diretamente qualidade e custo computacional, recomenda-se uma sequência em três blocos:
+\begin{enumerate}
+  \item avaliação de cada vizinhança isoladamente;
+  \item construção incremental (adição de operadores por ganho marginal);
+  \item ablação (remoção de operadores a partir do conjunto completo).
+\end{enumerate}
+
+\begin{table}[htbp]
+\centering
+\caption{Plano de experimentos para seleção de vizinhanças.}
+\label{tab:neighborhood_selection_plan}
+\begin{tabular}{p{2.7cm}p{4.2cm}p{3.5cm}p{4.5cm}}
+\hline
+Bloco & Pergunta respondida & Configuração mínima & Critério de decisão \\
+\hline
+Isolado & ``Esta vizinhança é forte sozinha?'' & 1 vizinhança ativa por execução & Manter candidatas com ganho consistente de custo \\
+Incremental & ``Quanto essa vizinhança agrega ao conjunto atual?'' & Adição uma a uma sobre baseline fixo & Priorizar maior ganho marginal por segundo \\
+Ablativo & ``O que acontece se eu retirar esta vizinhança?'' & Conjunto completo menos 1 operador & Remover operadores com baixo impacto e alto custo \\
+Confirmação & ``A seleção generaliza fora do tuning?'' & Repetição no teste final (holdout) & Seleção válida se mantém ranking em famílias C/R/RC \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Configuração operacional da seleção de vizinhanças}
+\label{subsec:config_operacional_vizinhancas}
+
+A seleção de vizinhanças é executada com um motor dedicado de busca local (\texttt{nls}), sem relacionar os resultados com GRASP ou Tabu nesta etapa.
+A configuração base é:
+\begin{itemize}
+  \item solução inicial fixa em Solomon I1;
+  \item política \emph{first improvement} em todas as vizinhanças;
+  \item Fase A com \texttt{nls\_restart = 0} (triagem isolada sem reinício);
+  \item Fase B com \texttt{nls\_restart = 1}, em que subconjuntos com múltiplas vizinhanças são executados no esquema clássico de VND (ordem por complexidade e reinício na primeira vizinhança ao melhorar);
+  \item validação completa de factibilidade (capacidade, janelas de tempo e cobertura de clientes) ao final de cada execução.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\caption{Variáveis registradas por instância e configuração durante a seleção de vizinhanças.}
+\label{tab:neighborhood_selection_variables}
+\begin{tabular}{p{3.3cm}p{5.0cm}p{5.0cm}}
+\hline
+Variável & Significado & Uso na decisão \\
+\hline
+\texttt{cost} & Custo real final da solução factível & Comparação nominal e cálculo de gap \\
+\texttt{num\_routes} & Número de veículos (rotas não triviais) & Verificação de impacto na frota \\
+\texttt{time\_sec} & Tempo de execução da configuração na instância & Desempate por custo computacional \\
+\texttt{gap\_pct} & Gap percentual em relação ao BKS & Métrica primária para ranking \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Plano estatístico e critérios de reporte}
+\label{subsec:plano_estatistico}
+
+Para reduzir risco de conclusões por ruído, a análise final deve combinar medidas de tendência central, dispersão e testes não paramétricos por instância.
+
+\begin{table}[htbp]
+\centering
+\caption{Plano mínimo de análise estatística para comparação de métodos.}
+\label{tab:statistical_plan}
+\begin{tabular}{p{3.2cm}p{3.8cm}p{3.7cm}p{3.8cm}}
+\hline
+Componente & Prática recomendada & Resultado reportado & Decisão \\
+\hline
+Métrica primária & Gap (\%) por instância e seed & Mediana, média e desvio padrão & Ranking principal por mediana de gap \\
+Métrica secundária & Custo nominal, veículos e tempo & Tabelas por instância/família & Verificar trade-off custo vs frota vs tempo \\
+Teste de hipótese (par a par) & Wilcoxon signed-rank (instância a instância) & $p$-valor + direção da diferença & Confirmar se ganho é estatisticamente robusto \\
+Múltiplos algoritmos & Friedman + pós-teste de Nemenyi (ou Holm) & Ranking médio + grupos sem diferença & Evitar conclusão com múltiplas comparações sem controle \\
+Tamanho de efeito & Cliff's delta ou diferença mediana & Magnitude do efeito & Distinguir diferença prática de diferença pequena \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Síntese metodológica.}
+A estratégia ``isolado + incremental + ablação + confirmação'' é adequada para seleção de vizinhanças em meta-heurísticas, pois separa contribuição individual, sinergia e custo computacional.
+Do ponto de vista de metodologia científica, essa abordagem é forte quando executada com:
+\begin{itemize}
+  \item orçamento de tempo idêntico entre métodos;
+  \item múltiplas seeds;
+  \item separação entre tuning e teste final;
+  \item reporte de incerteza e teste estatístico.
+\end{itemize}
+
+\subsection{Calibração de seeds e tempo-limite}
+\label{subsec:calibracao_seed_tempo}
+
+As escolhas de \texttt{seed} e \texttt{time-limit} não devem ser arbitrárias: elas definem o nível de variabilidade observada e a justiça da comparação entre métodos \cite{barr1995experiments,hooker1995testing}.
+
+\subsubsection{Critério para número de seeds}
+
+Para algoritmos estocásticos, recomenda-se calibrar o número de seeds por estudo piloto incremental, em linha com boas práticas de desenho experimental e reporte de heurísticas \cite{barr1995experiments,hooker1995testing}:
+\[
+n \in \{3,5,7,10,15,20\}.
+\]
+Em cada $n$, estima-se a estabilidade de ranking e a incerteza da métrica primária (gap). O menor $n$ aceito deve satisfazer simultaneamente:
+\begin{itemize}
+  \item correlação de ranking (Spearman) com a referência $n=20$ maior ou igual a 0.95 \cite{demsar2006statistical};
+  \item semi-amplitude do IC95\% da mediana do gap abaixo do limiar definido no protocolo (ex.: 0.5 p.p.).
+\end{itemize}
+
+Para métodos determinísticos, uma seed é suficiente para execução, mas deve-se manter o mesmo conjunto de instâncias e orçamento para comparabilidade com os métodos estocásticos.
+
+\subsubsection{Critério para tempo-limite}
+
+O \texttt{time-limit} deve ser calibrado por instância (ou por família) a partir de uma referência fixa.
+Uma forma robusta é usar o tempo mediano de um baseline determinístico e aplicar um multiplicador:
+\[
+T_i = \min\{T_{\max},\max[T_{\min},\kappa\cdot t^{ref}_i]\},
+\]
+em que $t^{ref}_i$ é o tempo da referência na instância $i$ (mediano no piloto), e $\kappa$ controla o orçamento.
+Na comparação final, todos os algoritmos recebem o mesmo $T_i$ na mesma instância.
+
+\subsubsection{Recomendação prática para este trabalho}
+
+No pipeline atual, os valores usados como ponto de partida foram:
+\begin{itemize}
+  \item tuning: seeds 42--46;
+  \item campanha consolidada: seeds 42--51.
+\end{itemize}
+Esses valores são aceitáveis como baseline operacional, mas devem ser validados pelo procedimento piloto acima para justificar rigor metodológico no relatório final.
+Para calibração automática de parâmetros, manter esse desenho desacoplado do \emph{racing} do \texttt{irace} evita enviesar a avaliação \cite{lopez2016irace}.
+
+\IfFileExists{tables/seed_time_calibration_template.tex}{
+\input{tables/seed_time_calibration_template.tex}
+}{
+\begin{table}[htbp]
+\centering
+\caption{Template de calibração de seeds e tempo-limite (pendente).}
+\begin{tabular}{lc}
+\hline
+Status & Observação \\
+\hline
+Pendente & Preencher \texttt{tables/seed\_time\_calibration\_template.tex} após estudo piloto. \\
+\hline
+\end{tabular}
+\end{table}
+}
+
+\subsection{Instâncias e métricas}
+
+As instâncias pertencem ao benchmark clássico de Solomon \cite{solomon1987algorithms}, cobrindo famílias C, R e RC.
+
+A métrica primária é o gap percentual em relação ao BKS:
+\[
+\text{gap}(\%) = 100\cdot\left(\frac{cost}{BKS}-1\right).
+\]
+
+Além do gap, este trabalho reporta:
+\begin{itemize}
+  \item custo nominal da solução;
+  \item número de veículos;
+  \item variação de veículos por algoritmo em relação ao BKS.
+\end{itemize}
+
+Para a variação de veículos por instância $i$ e algoritmo $a$, usa-se:
+\[
+\Delta veh_{a,i} = veh_{a,i} - veh^{BKS}_{i}.
+\]
+Valores negativos indicam redução de frota em relação ao melhor valor conhecido.
+
+\subsection{Parametrização adotada}
+
+\subsubsection{Parâmetros fixos de alinhamento}
+
+Para preservar comparabilidade metodológica, o construtivo base foi fixado na forma clássica orientada à distância:
+\[
+\alpha_1=1,\;\alpha_2=0,\;\lambda=1,\;\mu=1.
+\]
+
+No solver, tentativas de executar com $\mu\neq 1$ são explicitamente rejeitadas.
+
+\subsubsection{Parâmetros por algoritmo}
+
+\begin{itemize}
+  \item \textbf{VND}: conjunto fixo das quatro vizinhanças selecionadas;
+  \item \textbf{GRASP fixo}: $\alpha$ fixo;
+  \item \textbf{GRASP reativo}: conjunto de $\alpha$, frequência de atualização e $\gamma$;
+  \item \textbf{Tabu}: tenure, limite de iterações e limite sem melhoria.
+\end{itemize}
+
+\subsection{Calibração com \emph{irace}}
+
+A calibração automática foi definida com \emph{irace} \cite{lopez2016irace} em tuning set separado.
+O espaço de busca inclui:
+\begin{itemize}
+  \item \textbf{Tabu}: \texttt{tenure}, \texttt{max\_iters}, \texttt{max\_no\_improve};
+  \item \textbf{GRASP reativo}: \texttt{reactive\_update}, \texttt{reactive\_gamma}, conjunto de \texttt{reactive\_alphas}, \texttt{max\_iters}, \texttt{max\_no\_improve}.
+\end{itemize}
+
+O processo completo de calibração e reprodutibilidade está documentado em \texttt{docs/calibration\_process\_irace.md}.
+
+\subsection{Tabelas completas por algoritmo}
+\label{subsec:tabelas_por_algoritmo}
+
+Para manter legibilidade e ainda preservar todos os resultados das 56 instâncias, os dados foram organizados em tabelas separadas por algoritmo.
+Em todas elas, cada linha é uma instância e as colunas são:
+\begin{itemize}
+  \item custo real;
+  \item $\Delta$custo em relação ao BKS;
+  \item gap (\%) em relação ao BKS;
+  \item número de veículos;
+  \item $\Delta$veículos em relação ao BKS;
+  \item tempo de execução (s).
+\end{itemize}
+
+Nas tabelas de GRASP e Tabu, inclui-se também a coluna de iterações executadas.
+
+\IfFileExists{tables/instance_tables_by_algorithm.tex}{
+\input{tables/instance_tables_by_algorithm.tex}
+}{
+\begin{table}[htbp]
+\centering
+\caption{Tabelas por algoritmo (pendente de geração automática).}
+\label{tab:inst_algo_pending}
+\begin{tabular}{lc}
+\hline
+Status & Observação \\
+\hline
+Pendente & Execute \texttt{python3 scripts/build\_algorithm\_tables\_and\_summary.py}. \\
+\hline
+\end{tabular}
+\end{table}
+}
+
+\subsection{Leitura dos resultados}
+
+As tabelas por algoritmo permitem responder perguntas objetivas:
+\begin{enumerate}
+  \item qual algoritmo entrega menor gap por instância;
+  \item quando a redução de custo vem acompanhada de aumento/redução de veículos;
+  \item quais famílias de instância apresentam maior sensibilidade a cada método.
+\end{enumerate}
+
+Na análise textual final, recomenda-se destacar não apenas o menor gap médio global, mas também robustez por família de instâncias e trade-off custo versus frota.
+
+\subsection{Comparativo global dos cinco algoritmos}
+\label{subsec:comparativo_global}
+
+Após as tabelas completas por algoritmo, a Tabela~\ref{tab:algo_global_compare} resume o desempenho agregado dos cinco métodos com média e desvio padrão de gap, $\Delta$custo e tempo.
+Também são reportadas vitórias por instância em três critérios: melhor gap, melhor gap com desempate por menor tempo, e menor tempo absoluto.
+
+\IfFileExists{tables/algorithm_performance_summary.tex}{
+\input{tables/algorithm_performance_summary.tex}
+}{
+\begin{table}[htbp]
+\centering
+\caption{Comparativo global (pendente de geração automática).}
+\begin{tabular}{lc}
+\hline
+Status & Observação \\
+\hline
+Pendente & Execute \texttt{python3 scripts/build\_algorithm\_tables\_and\_summary.py}. \\
+\hline
+\end{tabular}
+\end{table}
+}
+
+\subsection{Saída visual das rotas finais}
+
+Além das tabelas numéricas, o pipeline salva visualizações de rota em SVG para cada par instância-algoritmo.
+No layout de saída, cada execução contém:
+\begin{itemize}
+  \item \texttt{plots/routes.svg} (ou \texttt{routes\_seedX.svg});
+  \item arquivo de solução \texttt{.sol} correspondente.
+\end{itemize}
+
+Para inspeção rápida em lote, foi gerada uma galeria HTML consolidada em:
+\texttt{results/runs/all56\_seed42\_cmp/\_summary/routes\_gallery.html}.
+
+Essa galeria permite comparar visualmente o formato das rotas por instância e algoritmo, apoiando a interpretação dos resultados de gap/custo com evidência qualitativa da estrutura das soluções.
+
+\subsection{Painéis com 5 plots na mesma instância}
+\label{subsec:painel_5plots}
+
+Para tornar a comparação visual direta, este trabalho inclui painéis em que \textbf{a mesma instância} é exibida em 5 colunas (I1, VND, GRASP fixo, GRASP reativo e Tabu).
+Foi selecionada uma instância representativa por família (C, R e RC), usando critério combinado:
+\begin{itemize}
+  \item maior melhoria de custo em relação ao I1;
+  \item menor distância ao BKS para o melhor algoritmo naquela instância.
+\end{itemize}
+
+\IfFileExists{figs/route_compare_figures.tex}{
+\input{figs/route_compare_figures.tex}
+}{
+\begin{table}[htbp]
+\centering
+\caption{Painéis de rotas (pendente de geração).}
+\begin{tabular}{lc}
+\hline
+Status & Observação \\
+\hline
+Pendente & Execute \texttt{python3 scripts/build\_article\_route\_panels.py}. \\
+\hline
+\end{tabular}
+\end{table}
+}

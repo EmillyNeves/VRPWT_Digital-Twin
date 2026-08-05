@@ -1,0 +1,133 @@
+\section{Notação, Estruturas de Dados e Fluxo de Execução}
+\label{sec:notacao_fluxo}
+
+\subsection{Convenções matemáticas e computacionais}
+
+Para manter consistência entre texto, pseudocódigo e implementação em C++, este trabalho adota um padrão único de notação.
+A Tabela~\ref{tab:padrao_notacao} resume os símbolos mais usados e seu mapeamento direto para o código.
+
+\begin{table}[htbp]
+\centering
+\caption{Padrão de notação e mapeamento para a implementação.}
+\label{tab:padrao_notacao}
+\begin{tabular}{lll}
+\hline
+Símbolo & Significado & Nome no código/CLI \\
+\hline
+$S$ & solução completa & \texttt{Solution} \\
+$r$ & rota individual & \texttt{Route} \\
+$NR$ & clientes não roteirizados & \texttt{unrouted} \\
+$d_{ij}$ & distância/custo entre $i$ e $j$ & \texttt{inst.dist[i][j]} \\
+$Q$ & capacidade do veículo & \texttt{inst.capacity} \\
+$m$ & limite de veículos & \texttt{inst.vehicleCount} \\
+$\varepsilon$ & tolerância numérica & \texttt{eps} \\
+$\mu$ & peso do termo de inserção espacial & \texttt{mu} \\
+$N_{\max}$ & limite de iterações & \texttt{maxIters} \\
+$L$ & limite sem melhoria & \texttt{maxNoImprove} \\
+$\theta$ & tenure tabu & \texttt{tenure} \\
+$\alpha$ & parâmetro RCL do GRASP & \texttt{alpha} \\
+$\gamma$ & intensidade reativa do GRASP & \texttt{reactiveGamma} \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Critério de comparação de soluções.}
+No código, a comparação entre duas soluções segue regra lexicográfica custo-primeiro:
+\begin{enumerate}
+  \item menor custo total;
+  \item em empate numérico (dentro de $\varepsilon$), menor número de rotas.
+\end{enumerate}
+Essa política está implementada em \texttt{Solution::betterCostThenRoutes} e é usada de forma uniforme em VND, GRASP e Tabu.
+
+\subsection{Estruturas de dados centrais}
+
+A implementação é organizada em três estruturas principais (\texttt{Instance}, \texttt{Route} e \texttt{Solution}), mas o ponto importante para reprodutibilidade é o \textbf{tipo concreto} das estruturas.
+A Tabela~\ref{tab:estruturas_cpp} explicita se cada componente é vetor, matriz ou conjunto.
+
+\begin{table}[htbp]
+\centering
+\caption{Estruturas de dados concretas da implementação (C++).}
+\label{tab:estruturas_cpp}
+\begin{tabular}{lll}
+\hline
+Componente & Tipo C++ & Papel \\
+\hline
+Clientes da instância & \texttt{std::vector<Customer>} & vetor indexado por id \\
+Distâncias $d_{ij}$ & \texttt{std::vector<std::vector<double>>} & matriz densa $n \times n$ \\
+Vizinhos próximos & \texttt{std::vector<std::vector<int>>} & lista k-NN por cliente \\
+Filtro de vizinho & \texttt{std::vector<std::unordered\_set<int>>} & consulta $O(1)$ de pertinência \\
+Sequência da rota & \texttt{std::vector<int>} & ordem dos clientes (inclui depósito) \\
+Conjunto de rotas & \texttt{std::vector<Route>} & solução completa \\
+Lista tabu & \texttt{std::vector<int>} & iteração-limite por cliente \\
+Estatísticas VND & \texttt{std::array<...,4>} & contador fixo por vizinhança \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Leitura operacional.}
+No código, a estrutura mais custosa em memória é a matriz de distâncias (\texttt{dist}), pois armazena todos os pares de clientes.
+Essa escolha é intencional: evita recomputar distância durante inserções e movimentos de busca local.
+Já a sequência de cada rota é um vetor linear (\texttt{seq}), o que simplifica operações de inserção, remoção e troca de posição usadas por I1, VND, GRASP e Tabu.
+
+A rotina \texttt{Route::recompute} é o núcleo de factibilidade local: percorre o vetor \texttt{seq}, atualiza tempo de chegada/início de serviço/saída, valida janela de tempo e capacidade, e recalcula custo.
+A rotina \texttt{Solution::recompute} remove rotas triviais \texttt{[0,0]}, recompõe cada rota e soma o custo global.
+
+\paragraph{Validação final.}
+Depois de cada execução do solver, a função \texttt{validateSolution} faz checagem global completa:
+\begin{itemize}
+  \item número de rotas não excede $m$;
+  \item toda rota começa e termina no depósito;
+  \item nenhum cliente é repetido e nenhum cliente fica sem atendimento;
+  \item todas as rotas permanecem factíveis em capacidade e janelas.
+\end{itemize}
+
+\subsection{Estruturas auxiliares por algoritmo}
+
+Além das estruturas básicas, cada método usa estruturas específicas:
+\begin{itemize}
+  \item \textbf{I1}: \texttt{BestInsertion} para armazenar melhor posição por cliente e os valores $c_1,c_2$;
+  \item \textbf{VND}: \texttt{VndRunStats} para contar tentativas, aplicações e ganho acumulado por vizinhança;
+  \item \textbf{GRASP}: \texttt{InsertionCandidate} e vetores de probabilidades/contadores para a versão reativa;
+  \item \textbf{Tabu}: \texttt{Move} (atributos do movimento) e vetor \texttt{tabuUntil[c]} para memória de curto prazo.
+\end{itemize}
+
+\subsection{Fluxo geral do solver}
+
+O fluxo implementado no comando \texttt{vrptw solve} é mostrado no Algoritmo~\ref{alg:fluxo_global_solver}.
+
+\begin{algorithm}[htbp]
+\caption{Fluxo global do solver}
+\label{alg:fluxo_global_solver}
+\begin{algorithmic}[1]
+\Require algoritmo \texttt{algo}, instância e parâmetros de execução
+\Ensure solução final validada e artefatos de saída
+\State lê instância VRPTW e BKS (quando disponível)
+\State cria diretórios de logs/soluções
+\State impõe $\mu=1$ para manter comparação alinhada
+\If{\texttt{algo = i1}}
+  \State $S \leftarrow I1$
+\Else
+  \If{\texttt{algo = vnd}}
+    \State $S \leftarrow I1$; $S \leftarrow VND(S)$
+  \Else
+    \If{\texttt{algo = grasp}}
+      \State $S \leftarrow GRASP$ (fixo ou reativo), com refinamento VND em cada iteração
+    \Else
+      \If{\texttt{algo = tabu}}
+        \State $S \leftarrow$ Busca Tabu clássica inicializada em I1
+      \Else
+        \State gera erro de parâmetro inválido
+      \EndIf
+    \EndIf
+  \EndIf
+\EndIf
+\State valida factibilidade global de $S$
+\State grava solução \texttt{.sol}, log de execução e logs de convergência (quando aplicável)
+\State \Return $S$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Texto complementar ao pseudocódigo.}
+Há dois pontos importantes no fluxo real.
+Primeiro, todos os algoritmos passam pela mesma validação final antes da escrita da solução, então resultados inviáveis são bloqueados imediatamente.
+Segundo, o formato de log é unificado, com campos de custo, gap, tempo, número de rotas e parâmetros efetivos; isso simplifica a consolidação estatística e reduz risco de inconsistência na comparação entre métodos.

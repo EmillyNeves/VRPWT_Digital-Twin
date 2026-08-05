@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+# irace target-runner for the VRPTW solver.
+#
+# irace calls:  target-runner <config_id> <instance_id> <seed> <instance> [--switch value ...]
+# It must print ONE number to stdout: the objective irace minimizes. We print the
+# GAP to the best-known (Dinamics) cost, which normalizes across instance scales.
+#
+# The algorithm is taken from env var VRPTW_ALGO (grasp | rgrasp | tabu), so the
+# same runner serves all scenarios. Other env vars (with defaults):
+#   VRPTW_SOLVER      path to the solve binary
+#   VRPTW_INPUT       Solomon instances dir
+#   VRPTW_REFS        Dinamics references dir (for the gap)
+#   VRPTW_BUDGET_MS   per-run SAFETY time cap (ms); the real stop is the tuned
+#                     K (--max-no-improve), passed by irace among the params.
+import os
+import sys
+import subprocess
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ALGO   = os.environ.get("VRPTW_ALGO", "grasp")
+SOLVER = os.environ.get("VRPTW_SOLVER", os.path.join(HERE, "../../solver/build/solve"))
+INPUT  = os.environ.get("VRPTW_INPUT",  os.path.join(HERE, "../../input"))
+REFS   = os.environ.get("VRPTW_REFS",   os.path.join(HERE, "../../solution (Dinamics)"))
+BUDGET = os.environ.get("VRPTW_BUDGET_MS", "5000")
+
+PENALTY = 1.0e9
+
+
+def ref_cost(name):
+    p = os.path.join(REFS, name + ".sol")
+    if os.path.isfile(p):
+        for line in open(p, errors="ignore"):
+            if "Cost" in line or "cost" in line:
+                try:
+                    return float(line.split()[-1])
+                except ValueError:
+                    pass
+    return None
+
+
+def main():
+    config_id, instance_id, seed, instance = sys.argv[1:5]
+    params = sys.argv[5:]
+    name = os.path.splitext(os.path.basename(instance))[0]
+    inst_path = instance if instance.endswith(".txt") else os.path.join(INPUT, name + ".txt")
+
+    # K (criterio de parada) e FIXADO pela analise de joelho (nao calibrado): vem
+    # do env VRPTW_K. O tempo (budget-ms) e apenas teto de seguranca.
+    fixedK = os.environ.get("VRPTW_K")
+    kflag = ["--max-no-improve", fixedK] if fixedK else []
+    cmd = [SOLVER, "--algo", ALGO, "--instance", inst_path, "--seed", seed,
+           "--budget-ms", BUDGET, "--print-cost"] + kflag + params
+    out = subprocess.run(cmd, capture_output=True, text=True)
+    try:
+        cost = float(out.stdout.strip().splitlines()[-1])
+    except (IndexError, ValueError):
+        print(PENALTY)
+        return
+
+    ref = ref_cost(name)
+    print(f"{(cost - ref) / ref:.6f}" if ref else f"{cost:.4f}")
+
+
+if __name__ == "__main__":
+    main()

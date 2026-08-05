@@ -1,0 +1,15 @@
+parametro,valor,distancia_total,coletas,transbordos
+threshold,0.5,4263.7,167,2
+threshold,0.6,4047.8,135,7
+threshold,0.7,3954.0,119,16
+threshold,0.8,4002.8,109,23
+threshold,0.9,3814.8,101,40
+capacity,15,6666.7,119,16
+capacity,20,4367.3,119,16
+capacity,25,3954.0,119,16
+capacity,30,3550.6,119,16
+capacity,40,3096.6,119,16
+urgency_coef,0.0,3954.0,119,16
+urgency_coef,0.3,3954.0,119,16
+urgency_coef,0.6,3954.0,119,16
+urgency_coef,0.9,3954.0,119,16

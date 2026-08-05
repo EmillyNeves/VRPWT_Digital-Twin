@@ -1,0 +1,17 @@
+\begin{algorithm}
+\caption{Multi-Start (MS)}
+\label{alg:multi_start}
+\SetAlgoLined
+\Entrada{O grafo $G = (V, E)$, $MaxIter$.}
+\Saida{Uma solução válida $T^*$.}
+
+$T^* \gets \emptyset$; \label{lin:MultiStart_Tstar_init}\\
+\Para{$i = 1$ \textbf{até} $MaxIter$}{ \label{lin:MultiStart_LoopInit}
+    $T_{inicial} \gets Construtivo(G)$; \label{lin:MultiStart_Construtivo}\\
+    $T_{local} \gets Busca\_Local(T_{inicial})$; \label{lin:MultiStart_BuscaLocal}\\
+    \Se{$T_{local}$ é melhor que $T^*$}{ \label{lin:MultiStart_IfBetter}
+        $T^* \gets T_{local}$; \label{lin:MultiStart_UpdateTstar}\\
+    }
+} \label{lin:MultiStart_LoopEnd}
+\textbf{return} $T^*$\;
+\end{algorithm}

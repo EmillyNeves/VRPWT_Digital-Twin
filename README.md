@@ -1,1 +1,0 @@
-# VRPWT_Digital-Twin

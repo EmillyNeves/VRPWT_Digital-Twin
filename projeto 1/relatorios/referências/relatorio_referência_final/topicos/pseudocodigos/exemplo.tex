@@ -1,0 +1,25 @@
+\begin{algorithm}
+\caption{Algoritmo Viabilizador Swap}
+\label{alg:ESwap}
+\SetAlgoLined
+\Entrada{$R$ = \{conjunto de rotas, com pelo menos uma inviável\}, \linebreak$capacity$ = \{capacidade de carga dos caminhões\}}
+\Saida{conjunto de rotas $R$ viáveis}
+
+\Para {$r \in R$ \textbf{e} $\texttt{Demanda(r)} > capacity$} { \label{lin:RotaInviavelSwap}
+    \Para {$s \in R$ \textbf{e} $s \neq r$ \textbf{e} $\texttt{Demanda(s)} <= capacity$} { \label{lin:rotaViavelSwap}
+        \Para{vértice $V_r \in r$}{ \label{lin:VrEMrSwap}
+            \Para{vértice $V_s \in s$} { \label{lin:VsEMSwap}
+                \Se{\texttt{ConfereTroca($s$, $V_r$, $r$, $V_s$)}}{ \label{lin:SeTrocaViavelSwap}
+                    $s \leftarrow s - V_s + V_r$\; \label{lin:atribuiVremSSwap}
+                    $r \leftarrow r - V_r + V_s$\; \label{lin:atribuiVsemRSwap}
+                }
+            }
+        }
+
+    }
+}
+\Se{alguma rota com demanda $> capacity$}{ \label{lin:RotaExcAposSwap}
+    $R \leftarrow \texttt{Enables\_Reallocate(R, capacity)}$\; \label{lin:ChamaEnRealSwap}
+}
+\textbf{return} $R$\;
+\end{algorithm}

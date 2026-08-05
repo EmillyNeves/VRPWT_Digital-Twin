@@ -1,0 +1,45 @@
+\section{Introdução}
+\label{sec:introducao}
+
+\subsection{Contexto e motivação}
+
+O \emph{Vehicle Routing Problem with Time Windows} (VRPTW) combina decisões de roteamento com restrições temporais: além de visitar todos os clientes, cada atendimento deve ocorrer dentro de uma janela de tempo predefinida. Essa combinação torna o problema significativamente mais difícil do que variantes sem restrições de tempo, tanto do ponto de vista de modelagem quanto de resolução computacional \cite{toth2002vehicle,braysy2005vehicle}.
+
+Na prática, o VRPTW aparece em distribuição urbana, abastecimento de lojas, entregas com horário agendado e operações de coleta. Nesses contextos, soluções de boa qualidade precisam equilibrar custo de deslocamento, uso de frota e viabilidade operacional. Em instâncias de porte realista, métodos exatos tendem a ter custo elevado, o que justifica o uso de heurísticas e meta-heurísticas bem estruturadas.
+
+\subsection{Base acadêmica adotada}
+
+Este trabalho segue a linha clássica da literatura: construção inicial por Solomon I1 \cite{solomon1987algorithms} e refinamento por busca local/meta-heurística. Três métodos de melhoria foram implementados e avaliados:
+\begin{itemize}
+  \item VND (\emph{Variable Neighborhood Descent}) \cite{hansen2001variable};
+  \item GRASP nas variantes fixa e reativa \cite{feo1995greedy,resende2003greedy,prais2000reactive};
+  \item Busca Tabu clássica com memória de curto prazo e aspiração \cite{glover1989tabu,glover1990tabu}.
+\end{itemize}
+
+A proposta metodológica central foi manter a comparação justa: o construtivo base é o mesmo para todos os algoritmos, com função objetivo única (custo total), critérios de factibilidade idênticos e protocolo de execução reprodutível.
+
+\subsection{Objetivo do trabalho}
+
+O objetivo é duplo:
+\begin{enumerate}
+  \item garantir alinhamento entre definição acadêmica e lógica implementada no código;
+  \item comparar o comportamento de VND, GRASP e Tabu quando todos partem do mesmo ponto de entrada construtivo.
+\end{enumerate}
+
+Em termos práticos, isso exige explicitar não apenas os pseudocódigos, mas também as estruturas de dados, as regras de aceitação de movimentos, os critérios de parada e os parâmetros passíveis de calibração.
+
+\subsection{Contribuições deste texto}
+
+As principais contribuições documentadas são:
+\begin{itemize}
+  \item padronização formal da notação matemática e das variáveis usadas nos algoritmos;
+  \item descrição detalhada do fluxo de execução do solver e das estruturas de dados centrais;
+  \item especificação do Solomon I1 na configuração clássica orientada à distância;
+  \item análise de VND com seleção de 4 vizinhanças a partir de evidência empírica;
+  \item descrição unificada de GRASP (fixo e reativo) e Busca Tabu clássica;
+  \item protocolo de calibração por \emph{irace} e discussão de reprodutibilidade experimental.
+\end{itemize}
+
+\subsection{Organização do artigo}
+
+A Seção~\ref{sec:notacao_fluxo} apresenta notação, estruturas de dados e fluxo geral do solver. A Seção~\ref{sec:vrptw_i1} descreve o modelo do problema e o construtivo Solomon I1. As Seções~\ref{sec:vnd}, \ref{sec:grasp} e \ref{sec:tabu} detalham os métodos de melhoria. A Seção~\ref{sec:protocolo} consolida protocolo experimental, calibração e resultados preliminares. Por fim, a Seção~\ref{sec:conclusao} apresenta síntese e próximos passos.

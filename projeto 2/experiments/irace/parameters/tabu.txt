@@ -1,0 +1,4 @@
+# irace parameter space — Busca Tabu (forma clássica: tenure).
+# Calibra APENAS o tenure (qualidade); K é FIXADO pela análise de joelho.
+# nome    switch        tipo   intervalo
+tenure    "--tenure "   i      (5, 40)

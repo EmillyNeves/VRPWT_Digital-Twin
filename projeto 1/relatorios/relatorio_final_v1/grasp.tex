@@ -1,0 +1,111 @@
+\section{GRASP para VRPTW}
+\label{sec:grasp}
+
+O GRASP (\emph{Greedy Randomized Adaptive Search Procedure}) alterna construção gulosa randomizada e refinamento por busca local \cite{feo1995greedy,resende2003greedy}.
+No contexto deste trabalho, as duas variantes implementadas (fixa e reativa) usam o mesmo núcleo de construção e o mesmo refinamento local (VND).
+
+\subsection{Estrutura do método implementado}
+
+Cada iteração executa três fases:
+\begin{enumerate}
+  \item seleção de $\alpha_t$ (fixo ou amostrado da distribuição reativa);
+  \item construção de uma solução por inserção com RCL;
+  \item aplicação de VND e atualização do incumbente.
+\end{enumerate}
+
+Além disso, o incumbente inicial é o I1 puro, para manter alinhamento com o baseline da comparação.
+A parada é controlada por dois limites: número máximo de iterações ($N_{\max}$) e número máximo de iterações sem melhoria ($L$).
+
+\begin{algorithm}[htbp]
+\caption{GRASP (fixo e reativo) com VND}
+\label{alg:grasp}
+\begin{algorithmic}[1]
+\Require instância VRPTW, modo (\texttt{fixed}/\texttt{reactive}), $N_{\max}$ e $L$
+\Ensure melhor solução $S^*$
+\State $S^* \leftarrow I1$
+\State $noImprove \leftarrow 0$
+\State inicializa distribuição reativa (se modo reativo)
+\For{$t=1$ até $N_{\max}$}
+  \State define $\alpha_t$ (fixo ou amostrado)
+  \State $S_t \leftarrow$ construção com RCL usando $\alpha_t$
+  \If{$S_t$ cobre todos os clientes}
+    \State $S_t \leftarrow VND(S_t)$
+  \EndIf
+  \If{$S_t$ melhora $S^*$}
+    \State $S^* \leftarrow S_t$; $noImprove \leftarrow 0$
+  \Else
+    \State $noImprove \leftarrow noImprove + 1$
+  \EndIf
+  \If{modo reativo e $t \bmod update = 0$}
+    \State atualiza probabilidades dos $\alpha$ e zera acumuladores do bloco
+  \EndIf
+  \If{$noImprove \ge L$}
+    \State \textbf{break}
+  \EndIf
+\EndFor
+\State \Return $S^*$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Texto complementar ao pseudocódigo.}
+As linhas 3--4 implementam o controle de estagnação: toda iteração sem melhora do incumbente incrementa \texttt{noImprove}, e a execução para quando o limite $L$ é atingido.
+Isso evita gastar orçamento em repetições pouco produtivas.
+
+Na linha 6, a construção com RCL produz uma solução completa ou parcial.
+Se parcial, a iteração é contabilizada, mas não entra em refinamento (linha 7), preservando consistência da comparação.
+Se completa, a linha 8 aplica o mesmo VND usado no baseline de busca local, de modo que o diferencial do GRASP fica concentrado na estratégia de diversificação da fase construtiva.
+
+No modo reativo, a atualização de probabilidades ocorre por blocos (\texttt{reactiveUpdate}) e não em toda iteração.
+Essa escolha reduz variância na estimativa de desempenho de cada $\alpha$, evitando que decisões de probabilidade sejam influenciadas por amostras muito pequenas.
+
+\subsection{Construção com RCL}
+
+A construção usa inserção factível por custo incremental:
+\[
+ c_1(i,u,j)=d_{iu}+d_{uj}-\mu d_{ij}.
+\]
+
+Em cada passo, calcula-se $c_{\min}$ e $c_{\max}$ entre inserções factíveis e define-se:
+\[
+ \text{RCL}=\{(i,u,j): c_1(i,u,j) \le c_{\min}+\alpha(c_{\max}-c_{\min})\}.
+\]
+
+Um candidato da RCL é selecionado aleatoriamente (uniforme), aplicado, e o processo continua até não existir inserção factível.
+
+\paragraph{Compatibilidade com o baseline I1.}
+Embora o GRASP use aleatorização via RCL, ele preserva a mesma estrutura de construção por inserção e os mesmos testes de factibilidade (capacidade e janelas) utilizados no restante do pipeline.
+Isso evita que o ganho observado seja resultado de regras de viabilidade diferentes.
+
+\subsection{GRASP fixo}
+
+No modo fixo, o valor de $\alpha$ permanece constante em toda a execução.
+No código, esse valor é fornecido por \texttt{--alpha} (padrão 0.3).
+
+\paragraph{Interpretação.}
+Valores menores de $\alpha$ tornam a construção mais gulosa (intensificação);
+valores maiores ampliam diversidade (exploração).
+A calibração desse parâmetro pode alterar significativamente o balanço qualidade/tempo.
+
+\subsection{GRASP reativo}
+
+No modo reativo, $\alpha$ é amostrado de um conjunto discreto e suas probabilidades são atualizadas periodicamente \cite{prais2000reactive}.
+Seja $\bar{f}_i$ o custo médio observado para o valor $\alpha_i$ no bloco atual e $f^*$ o melhor custo global até o momento.
+A qualidade relativa é calculada por:
+\[
+q_i = \left(\frac{f^*}{\bar{f}_i}\right)^\gamma,
+\qquad
+p_i = \frac{q_i}{\sum_j q_j}.
+\]
+
+O parâmetro $\gamma$ controla quão agressiva é a concentração de probabilidade nos $\alpha$ de melhor desempenho.
+
+\subsection{Parâmetros relevantes}
+
+Os parâmetros principais da implementação são:
+\begin{itemize}
+  \item comuns: $N_{\max}$ (\texttt{maxIters}) e $L$ (\texttt{maxNoImprove});
+  \item modo fixo: $\alpha$;
+  \item modo reativo: conjunto \texttt{reactiveAlphas}, \texttt{reactiveUpdate} e $\gamma$.
+\end{itemize}
+
+Esses parâmetros compõem o espaço de calibração no fluxo com \emph{irace}, mantendo o construtivo base (I1) fixo para comparação justa entre algoritmos.

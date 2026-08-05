@@ -1,0 +1,18 @@
+\begin{algorithm}[H]
+\caption{Busca Local}
+\label{alg:buscalocal}
+\Entrada {A solução atual $T_{\text{curr}}$, $O_D$, $OrdenacaoBusca = \{Grau, PageRank\}$ e $SelecaoVizinhos = \{Primeiro,  Melhor\}$.} 
+\Saida {A solução $T_{\text{best}}$.}
+
+$T_{\text{best}} \gets T_{\text{curr}}$; \label{lin:InicializacaoTbest}\\
+\Repita{$melhoria = false$}{\label{lin:InicioLoopBuscaLocal}
+    $melhoria \gets false$; \label{lin:VariavelParadaBuscaLocal}\\ 
+    $T \gets Vizinho\_Customizado(G, T_{\text{best}}, O_{\text{D}}, OrdenacaoBusca, SelecaoVizinhos)$; \label{lin:CustomneighborBuscaLocal}\\
+    \Se {$T  \ne T_{\text{best}}$}{\label{lin:VerificacaoMelhoriaBuscaLocal}
+        $T_{\text{best}} \gets T$; \label{lin:SalvaMelhoriaBuscaLocal}\\
+        $melhoria \gets true$; \\
+        \label{lin:ReinicioVariavelParadaBuscaLocal}
+    }
+} \label{lin:FimLoopBuscaLoca}
+\textbf{return} $T_{\text{best}}$ \label{lin:RetornoBuscaLocal}
+\end{algorithm}

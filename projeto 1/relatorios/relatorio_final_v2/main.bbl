@@ -1,0 +1,170 @@
+\begin{thebibliography}{}
+
+\bibitem[Almeida and Borin, 2021]{almeida2021}
+Almeida, L. G.~d. and Borin, J.~F. (2021).
+\newblock Plataforma inteligente e sustent{\'a}vel para coleta de res{\'i}duos
+  baseada em {IoT} e {LPWAN}.
+\newblock In {\em Anais do Workshop de Computa{\c c}{\~a}o Urbana (COURB)},
+  pages 154--167. SBC.
+
+\bibitem[Barth et~al., 2023]{barth2023}
+Barth, L., Schweiger, L., Benedech, R., and Ehrat, M. (2023).
+\newblock From data to value in smart waste management: Optimizing solid waste
+  collection with a digital twin-based decision support system.
+\newblock {\em Decision Analytics Journal}, 9:100347.
+
+\bibitem[Birattari, 2009]{birattari2009}
+Birattari, M. (2009).
+\newblock {\em Tuning Metaheuristics: A Machine Learning Perspective}, volume
+  197 of {\em Studies in Computational Intelligence}.
+\newblock Springer.
+
+\bibitem[Br{\"a}ysy and Gendreau, 2005]{braysy2005}
+Br{\"a}ysy, O. and Gendreau, M. (2005).
+\newblock Vehicle routing problem with time windows, part {I}: Route
+  construction and local search algorithms.
+\newblock {\em Transportation Science}, 39(1):104--118.
+
+\bibitem[Cordeau et~al., 2001]{cordeau2001}
+Cordeau, J.-F., Laporte, G., and Mercier, A. (2001).
+\newblock A unified tabu search heuristic for vehicle routing problems with
+  time windows.
+\newblock {\em Journal of the Operational Research Society}, 52(8):928--936.
+
+\bibitem[Dem{\v s}ar, 2006]{demsar2006}
+Dem{\v s}ar, J. (2006).
+\newblock Statistical comparisons of classifiers over multiple data sets.
+\newblock {\em Journal of Machine Learning Research}, 7:1--30.
+
+\bibitem[Feo and Resende, 1995]{feo1995}
+Feo, T.~A. and Resende, M. G.~C. (1995).
+\newblock Greedy randomized adaptive search procedures.
+\newblock {\em Journal of Global Optimization}, 6(2):109--133.
+
+\bibitem[Gehring and Homberger, 1999]{gehring1999}
+Gehring, H. and Homberger, J. (1999).
+\newblock A parallel hybrid evolutionary metaheuristic for the vehicle routing
+  problem with time windows.
+\newblock In Miettinen, K., M{\"a}kel{\"a}, M., and Toivanen, J., editors, {\em
+  Proceedings of EUROGEN99}, pages 57--64. University of Jyv{\"a}skyl{\"a}.
+
+\bibitem[Gendreau and Potvin, 2010]{gendreau2010}
+Gendreau, M. and Potvin, J.-Y. (2010).
+\newblock Tabu search.
+\newblock In Gendreau, M. and Potvin, J.-Y., editors, {\em Handbook of
+  Metaheuristics}, volume 146 of {\em International Series in Operations
+  Research \& Management Science}, pages 41--59. Springer, 2 edition.
+
+\bibitem[Glover, 1989]{glover1989}
+Glover, F. (1989).
+\newblock Tabu search -- part {I}.
+\newblock {\em ORSA Journal on Computing}, 1(3):190--206.
+
+\bibitem[Glover, 1990]{glover1990}
+Glover, F. (1990).
+\newblock Tabu search -- part {II}.
+\newblock {\em ORSA Journal on Computing}, 2(1):4--32.
+
+\bibitem[Glover and Laguna, 1997]{glover1997}
+Glover, F. and Laguna, M. (1997).
+\newblock {\em Tabu Search}.
+\newblock Kluwer Academic Publishers, Boston.
+
+\bibitem[Golden et~al., 2008]{DIMACS2014}
+Golden, B., Raghavan, S., and Wasil, E., editors (2008).
+\newblock {\em Vehicle Routing: Latest Advances and New Challenges}, volume~43
+  of {\em Operations Research/Computer Science Interfaces Series}. Springer.
+\newblock Based on the 12th DIMACS Challenge on Vehicle Routing Problems.
+
+\bibitem[Hansen and Mladenovi{\'c}, 2001]{hansen2001}
+Hansen, P. and Mladenovi{\'c}, N. (2001).
+\newblock Variable neighborhood search: Principles and applications.
+\newblock {\em European Journal of Operational Research}, 130(3):449--467.
+
+\bibitem[Lin and Kernighan, 1973]{lin1973}
+Lin, S. and Kernighan, B.~W. (1973).
+\newblock An effective heuristic algorithm for the traveling-salesman problem.
+\newblock {\em Operations Research}, 21(2):498--516.
+
+\bibitem[L{\'o}pez-Ib{\'a}{\~n}ez et~al., 2016]{lopez2016}
+L{\'o}pez-Ib{\'a}{\~n}ez, M., Dubois-Lacoste, J., C{\'a}ceres, L.~P.,
+  Birattari, M., and St{\"u}tzle, T. (2016).
+\newblock The {irace} package: Iterated racing for automatic algorithm
+  configuration.
+\newblock {\em Operations Research Perspectives}, 3:43--58.
+
+\bibitem[Lozano et~al., 2018]{lozano2018}
+Lozano, {\'A}., Caridad, J., De~Paz, J.~F., Villarrubia~Gonzalez, G., and Bajo,
+  J. (2018).
+\newblock Smart waste collection system with low consumption {LoRaWAN} nodes
+  and route optimization.
+\newblock {\em Sensors}, 18(5):1465.
+
+\bibitem[Melo et~al., 2008]{melo2008}
+Melo, R.~A., Nogueira, L.~H., and Souza, S.~R. (2008).
+\newblock Variable neighborhood descent with combinatorial neighborhood
+  structures for the vehicle routing problem with time windows.
+\newblock {\em Pesquisa Operacional}, 28(3):483--500.
+
+\bibitem[Or, 1976]{or1976}
+Or, I. (1976).
+\newblock {\em Traveling Salesman-Type Combinatorial Problems and Their
+  Relation to the Logistics of Regional Blood Banking}.
+\newblock PhD thesis, Northwestern University.
+
+\bibitem[Pardini et~al., 2020]{pardini2020}
+Pardini, K., Rodrigues, J. J. P.~C., Diallo, O., Das, A.~K., de~Albuquerque, V.
+  H.~C., and Kozlov, S.~A. (2020).
+\newblock A smart waste management solution geared towards citizens.
+\newblock {\em Sensors}, 20(8):2380.
+
+\bibitem[Potvin and Rousseau, 1995]{potvin1995}
+Potvin, J.-Y. and Rousseau, J.-M. (1995).
+\newblock An exchange heuristic for routeing problems with time windows.
+\newblock {\em Journal of the Operational Research Society}, 46(12):1433--1446.
+
+\bibitem[Prais and Ribeiro, 2000]{prais2000}
+Prais, M. and Ribeiro, C.~C. (2000).
+\newblock Reactive {GRASP}: An application to a matrix decomposition problem in
+  {TDMA} traffic assignment.
+\newblock {\em INFORMS Journal on Computing}, 12(3):164--176.
+
+\bibitem[Ramson et~al., 2021]{ramson2021}
+Ramson, S. R.~J., Vishnu, S., Kirubaraj, A.~A., Anagnostopoulos, T., and
+  Abu-Mahfouz, A.~M. (2021).
+\newblock A {LoRaWAN} {IoT} enabled trash bin level monitoring system.
+\newblock {\em IEEE Transactions on Industrial Informatics}, 17(8):5697--5707.
+
+\bibitem[Resende and Ribeiro, 2003]{resende2003}
+Resende, M. G.~C. and Ribeiro, C.~C. (2003).
+\newblock Greedy randomized adaptive search procedures.
+\newblock In Glover, F. and Kochenberger, G.~A., editors, {\em Handbook of
+  Metaheuristics}, pages 219--249. Springer, Boston.
+
+\bibitem[Shaw, 1998]{shaw1998}
+Shaw, P. (1998).
+\newblock Using constraint programming and local search methods to solve
+  vehicle routing problems.
+\newblock In {\em Principles and Practice of Constraint Programming -- CP
+  1998}, volume 1520 of {\em Lecture Notes in Computer Science}, pages
+  417--431. Springer.
+
+\bibitem[Solomon, 1987]{solomon1987}
+Solomon, M.~M. (1987).
+\newblock Algorithms for the vehicle routing and scheduling problems with time
+  window constraints.
+\newblock {\em Operations Research}, 35(2):254--265.
+
+\bibitem[Toth and Vigo, 2003]{toth2003}
+Toth, P. and Vigo, D. (2003).
+\newblock The granular tabu search and its application to the vehicle-routing
+  problem.
+\newblock {\em INFORMS Journal on Computing}, 15(4):333--346.
+
+\bibitem[Vidal et~al., 2013]{vidal2013}
+Vidal, T., Crainic, T.~G., Gendreau, M., and Prins, C. (2013).
+\newblock A hybrid genetic algorithm with adaptive diversity management for a
+  large class of vehicle routing problems with time-windows.
+\newblock {\em Computers \& Operations Research}, 40(1):475--489.
+
+\end{thebibliography}

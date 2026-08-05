@@ -1,0 +1,18 @@
+## irace scenario for the VRPTW solver (one run per tunable algorithm).
+##
+## Requires R + the irace package, which need sudo to install and are NOT present
+## in the dev sandbox. To run on your machine:
+##   sudo apt-get install r-base           # or your distro's R
+##   R -e 'install.packages("irace", repos="https://cloud.r-project.org")'
+##
+## Then, from this directory (experiments/irace), tune each algorithm:
+##   VRPTW_ALGO=grasp  irace --scenario scenario.txt --parameter-file parameters/grasp.txt  --exec-dir ../../results/irace/grasp
+##   VRPTW_ALGO=rgrasp irace --scenario scenario.txt --parameter-file parameters/rgrasp.txt --exec-dir ../../results/irace/rgrasp
+##   VRPTW_ALGO=tabu   irace --scenario scenario.txt --parameter-file parameters/tabu.txt   --exec-dir ../../results/irace/tabu
+## Optionally set VRPTW_BUDGET_MS to match the final experiment budget.
+## Tuning uses the TRAIN instances only; report results on TEST (see ../config/test.txt).
+
+targetRunner        = "./target-runner"
+trainInstancesDir   = ""
+trainInstancesFile  = "../config/train.txt"
+maxExperiments      = 2000

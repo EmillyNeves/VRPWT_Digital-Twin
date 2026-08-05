@@ -1,0 +1,19 @@
+\begin{algorithm}
+
+\caption{New Construct}
+\label{alg:rbep}
+\SetAlgoLined
+\Entrada{Grafo $G = (V, E)$.}
+\Saida{Árvore Geradora $T = (V, E)$.}
+$dbPREV \gets \text{Cálculo-dbPREV}(G)$;\\
+$(T, B_{\text{T}}, Pontas, dbPREV) \gets \text{Pré-Processamento}(G)$;\label{lin:PreProcessamento}\\
+\Enqto {$|E_{\text{T}}| < |V_{\text{G}}| - 1$}{
+    \Se{$Pontas \ne 0$}{
+        \text{Seja } $d_{\text{1}}$ \text{ o maior grau } $d_{\text{G}}$
+        \text{ dentre os vértices contidos em } $Pontas$;\\
+        $R_{\text{1}} \gets \text{Inicializar\_Roleta}()$;\\
+                
+    }
+}
+\textbf{return} $R$\;
+\end{algorithm}

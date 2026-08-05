@@ -1,0 +1,4 @@
+tenure "--tenure " i (5, 50)
+
+[global]
+digits = 6

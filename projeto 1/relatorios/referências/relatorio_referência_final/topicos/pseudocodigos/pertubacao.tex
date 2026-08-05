@@ -1,0 +1,20 @@
+\begin{algorithm}[H]
+  \caption{Pertubation}
+  \label{alg:pertubacao}
+    \Entrada{Um grafo $G = (V, E)$, a solucao atual $T_{\text{curr}}$, o conjunto de vértices obrigatórios $O_{\text{D}}$ e $ModoPertubacao = \{Grau, PageRank\}$.}
+    \Saida {A solução $T$.}
+    $T \gets T_{\text{curr}}$\;
+    $DB \gets Sort\_Ascending(G, T_{\text{curr}}, O_{\text{D}}, ModoPertubacao)$\;  
+       \Para {$v \in DB$}{
+            \Para {$u \in N_{\text{T}}(v)$}{
+                Remove a aresta $\{u, v\}$ de $T$\;
+                $\{u', v'\} \gets Find\_Other\_Edge(u, v, T, G, O_{\text{D}}, ModoPertubacao)$\;
+                \eSe{$\{u', v'\} \ne \varnothing$}{
+                    Insere a aresta $\{u', v'\}$ em $T$ e marca como uma aresta proibida\;
+                }{
+                    Retorna a aresta $\{u, v\}$ para $T$\;
+                }
+            }
+       }
+    \Retorna{$T$.}
+\end{algorithm}

@@ -1,0 +1,5 @@
+# irace parameter space — GRASP reativo (Prais & Ribeiro; grade de alpha fixa).
+# Calibra APENAS delta e block (qualidade); K é FIXADO pela análise de joelho.
+# nome   switch       tipo   intervalo
+delta    "--delta "   r      (0.5, 3.0)
+block    "--block "   i      (20, 200)

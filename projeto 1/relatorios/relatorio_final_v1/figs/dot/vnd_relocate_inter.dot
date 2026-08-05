@@ -1,0 +1,63 @@
+digraph G {
+  graph [rankdir=LR, splines=true, nodesep=0.40, ranksep=0.55, fontname="Helvetica", fontsize=10];
+  node  [shape=circle, fixedsize=true, width=0.42, fontname="Helvetica", fontsize=9.5];
+  edge  [color="#1f2937", penwidth=1.2];
+
+  subgraph cluster_before {
+    label="Antes: relocate_inter";
+    color="#9ca3af";
+    style=rounded;
+
+    subgraph cluster_b_r1 {
+      label="Rota 1";
+      color="#d1d5db";
+      style=rounded;
+      b10 [label="0"];
+      b11 [label="A"];
+      b12 [label="B", style=filled, fillcolor="#fde68a"];
+      b13 [label="C"];
+      b14 [label="0"];
+      b10 -> b11 -> b12 -> b13 -> b14;
+    }
+
+    subgraph cluster_b_r2 {
+      label="Rota 2";
+      color="#d1d5db";
+      style=rounded;
+      b20 [label="0"];
+      b21 [label="D"];
+      b22 [label="E"];
+      b23 [label="0"];
+      b20 -> b21 -> b22 -> b23;
+    }
+  }
+
+  subgraph cluster_after {
+    label="Depois: move B de Rota 1 para Rota 2";
+    color="#9ca3af";
+    style=rounded;
+
+    subgraph cluster_a_r1 {
+      label="Rota 1";
+      color="#d1d5db";
+      style=rounded;
+      a10 [label="0"];
+      a11 [label="A"];
+      a13 [label="C"];
+      a14 [label="0"];
+      a10 -> a11 -> a13 -> a14;
+    }
+
+    subgraph cluster_a_r2 {
+      label="Rota 2";
+      color="#d1d5db";
+      style=rounded;
+      a20 [label="0"];
+      a21 [label="D"];
+      a22 [label="B", style=filled, fillcolor="#86efac"];
+      a23 [label="E"];
+      a24 [label="0"];
+      a20 -> a21 -> a22 -> a23 -> a24;
+    }
+  }
+}

@@ -1,0 +1,96 @@
+\section{Busca Tabu}
+\label{sec:tabu}
+
+A Busca Tabu é uma meta-heurística baseada em busca local com memória de curto prazo, projetada para evitar ciclos curtos e escapar de ótimos locais \cite{glover1989tabu,glover1990tabu,glover1997tabu}.
+No VRPTW, versões clássicas utilizam um conjunto de movimentos factíveis, lista tabu por atributos e critério de aspiração.
+
+\subsection{Estrutura implementada}
+
+A versão final implementada segue uma linha clássica enxuta:
+\begin{itemize}
+  \item inicialização em solução I1;
+  \item varredura completa de vizinhanças por iteração;
+  \item memória tabu por cliente movimentado;
+  \item aspiração global por melhoria do melhor incumbente;
+  \item parada por limite de iterações ou estagnação.
+\end{itemize}
+
+As vizinhanças avaliadas em cada iteração são:
+\begin{enumerate}
+  \item \textbf{relocate} (intra e inter-rotas);
+  \item \textbf{swap\_intra};
+  \item \textbf{or-opt} (blocos de tamanho 2 ou 3, intra e inter-rotas).
+\end{enumerate}
+
+\begin{algorithm}[htbp]
+\caption{Busca Tabu clássica (implementação final)}
+\label{alg:tabu}
+\begin{algorithmic}[1]
+\Require instância VRPTW, tenure fixo $\theta$ ou intervalo $[\theta_{\min},\theta_{\max}]$, limites $I_{\max}$ e $L$
+\Ensure melhor solução $S^*$
+\State $S \leftarrow I1$, $S^* \leftarrow S$
+\State inicializa vetor $tabuUntil[c] \leftarrow 0$
+\State $noImprove \leftarrow 0$
+\For{$t=1$ até $I_{\max}$}
+  \State gera candidatos factíveis em relocate, swap\_intra e or-opt
+  \State filtra candidatos tabu (exceto aspiração)
+  \State escolhe melhor movimento admissível por custo (desempate por rotas)
+  \If{não existe movimento admissível}
+    \State \textbf{break}
+  \EndIf
+  \State aplica movimento em $S$
+  \State amostra $\theta_t \sim U[\theta_{\min},\theta_{\max}]$ (ou $\theta_t \leftarrow \theta$ se fixo)
+  \State para cada cliente atributo do movimento: $tabuUntil[c] \leftarrow t + \theta_t$
+  \If{$S$ melhora $S^*$}
+    \State $S^* \leftarrow S$; $noImprove \leftarrow 0$
+  \Else
+    \State $noImprove \leftarrow noImprove + 1$
+  \EndIf
+  \If{$noImprove \ge L$}
+    \State \textbf{break}
+  \EndIf
+\EndFor
+\State \Return $S^*$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Texto complementar ao pseudocódigo.}
+As linhas 5--7 explicitam a principal diferença para um método de descida: a Tabu escolhe o melhor movimento admissível da iteração, mesmo quando esse movimento não melhora a solução corrente.
+Esse mecanismo controlado de piora temporária é o que permite escapar de ótimos locais.
+
+Na implementação, cada candidato é representado por um descritor de movimento (tipo, rotas afetadas e clientes-atributo), solução resultante e avaliação lexicográfica (custo e número de rotas).
+A linha 9 atualiza o bloqueio tabu no vetor \texttt{tabuUntil} para os clientes-atributo do movimento aplicado.
+Com isso, evita-se reversão imediata do movimento recém-feito, reduzindo ciclos curtos.
+
+As linhas 10--15 implementam o monitor de progresso: melhora do incumbente zera estagnação; ausência de melhora incrementa \texttt{noImprove}; o laço encerra quando atinge $L$.
+Essa regra torna o custo computacional mais previsível sem descaracterizar a versão clássica.
+
+\subsection{Regra tabu e aspiração}
+
+Um movimento é considerado tabu se algum cliente atributo ainda estiver bloqueado:
+\[
+ tabuUntil[c] > t.
+\]
+
+O critério de aspiração libera movimento tabu quando ele melhora a melhor solução global $S^*$.
+Esse desenho é compatível com a formulação clássica e evita bloqueios excessivos em movimentos realmente promissores.
+Além disso, quando todos os movimentos da iteração estão tabu e nenhum satisfaz a aspiração global, aplica-se \emph{aspiration by default}: seleciona-se o melhor movimento tabu disponível para evitar estagnação por bloqueio total.
+
+Nesta implementação comparativa, o tenure é mantido fixo por decisão de isonomia experimental entre métodos e para reduzir variância estocástica entre execuções.
+
+\subsection{Parâmetros}
+
+Os parâmetros calibráveis desta versão são:
+\begin{itemize}
+  \item $\theta$ (tenure fixo);
+  \item $I_{\max}$ (máximo de iterações);
+  \item $L$ (máximo de iterações sem melhoria).
+\end{itemize}
+
+Não foram incluídas extensões de memória de longo prazo (frequência, intensificação/diversificação), oscilação estratégica ou função de mérito penalizada.
+A decisão metodológica foi manter uma versão clássica de curto prazo, comparável em pé de igualdade com VND e GRASP no estudo principal.
+
+\subsection{Relação com o objetivo comparativo do trabalho}
+
+Como a busca inicia em I1 (mesmo baseline dos outros métodos), o desempenho da Tabu observado nos experimentos representa ganho efetivo da estratégia de exploração com memória, e não vantagem de inicialização.
+Essa separação é essencial para a análise comparativa entre VND, GRASP e Tabu.

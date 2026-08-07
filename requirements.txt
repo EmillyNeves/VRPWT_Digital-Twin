@@ -1,0 +1,20 @@
+# Dependências Python do projeto (versões conferidas no ambiente original).
+# Instalação:
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# O solver em C++ (solver/) NÃO tem dependência nenhuma além de g++ e make.
+
+# Análise e estatística — experiments/analysis/
+pandas==3.0.3
+numpy==2.4.6
+scipy==1.17.1
+scikit-posthocs==0.14.0     # teste de Nemenyi (stats.py)
+
+# Figuras — analysis/plots.py, algo_figures.py, route_evolution.py
+matplotlib==3.10.9
+pillow==12.2.0              # GIF da evolução das rotas (route_evolution.py, animate.py)
+
+# Gêmeo digital — digital_twin/
+plotly==6.7.0               # mapas interativos (maps.py)
+streamlit==1.57.0           # dashboard.py

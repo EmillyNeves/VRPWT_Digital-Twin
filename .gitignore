@@ -1,0 +1,37 @@
+# --- Arquivo morto (material removido na reorganização; confira e apague quando quiser) ---
+_arquivo_morto/
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# --- C++ / build ---
+solver/build/
+*.o
+*.a
+*.d
+
+# --- Resultados brutos (regeneráveis: bash experiments/pipelines/run_all.sh) ---
+results/raw/
+results/irace/
+
+# --- LaTeX (artefatos de compilação) ---
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
+# main.log e afins; mantém .log de execução do pipeline fora daqui
+docs/**/*.log
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db

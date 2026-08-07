@@ -1,4 +1,0 @@
-alpha "--alpha " r (0.0, 1.0)
-
-[global]
-digits = 6

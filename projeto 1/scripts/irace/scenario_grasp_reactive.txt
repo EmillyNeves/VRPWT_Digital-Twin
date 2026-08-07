@@ -1,6 +1,0 @@
-parameterFile = "./scripts/irace/parameters_grasp_reactive.txt"
-trainInstancesFile = "./scripts/tuning_set.txt"
-targetRunner = "./scripts/irace/target_runner.py"
-logFile = "./results/irace/grasp_reactive/irace.Rdata"
-maxExperiments = 1000
-deterministic = 0

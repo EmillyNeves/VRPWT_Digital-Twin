@@ -2,18 +2,32 @@
 #include "vrptw/Instance.hpp"
 #include "vrptw/DistanceMatrix.hpp"
 #include "vrptw/Solution.hpp"
+#include "vrptw/Validator.hpp"
 #include <cmath>
 
 namespace vrptw {
 
-// Solomon lexicographic key: fewer vehicles first, then shorter distance
-// (distance rounded to 2 decimals). Lower is better.
+// Solomon's lexicographic ordering, verbatim from the paper (1987, p.259):
+// "Solution quality is measured in terms of the minimum number of vehicles,
+//  minimum schedule time, minimum distance, and minimum waiting time in that
+//  order, i.e., we use a lexicographic ordering of the solutions."
+// Lower is better. Continuous keys are rounded to 2 decimals (the SINTEF/Solomon
+// reporting convention) before comparison.
+//
+// NOTE: this is NOT the objective the search optimizes. The search minimizes
+// total distance only (the 12th DIMACS convention, `primary()` below). This key
+// exists to reproduce Solomon's own "best of eight runs" selection when checking
+// our I1 against his Tables I-VI. Do not mix the two.
 struct LexKey {
     int    vehicles = 0;
+    double sched2   = 0.0;
     double dist2    = 0.0;
+    double wait2    = 0.0;
     bool operator<(const LexKey& o) const {
-        if (vehicles != o.vehicles) return vehicles < o.vehicles;
-        return dist2 < o.dist2 - 1e-9;
+        if (vehicles != o.vehicles)               return vehicles < o.vehicles;
+        if (std::fabs(sched2 - o.sched2) > 1e-9)  return sched2 < o.sched2;
+        if (std::fabs(dist2  - o.dist2)  > 1e-9)  return dist2  < o.dist2;
+        return wait2 < o.wait2 - 1e-9;
     }
 };
 
@@ -37,14 +51,20 @@ public:
         return total;
     }
 
-    int    vehicles(const Solution& s) const { return s.num_vehicles(); }
-    LexKey lex(const Solution& s) const { return LexKey{vehicles(s), round2(primary(s))}; }
+    int vehicles(const Solution& s) const { return s.num_vehicles(); }
+
+    // Solomon's 4-level key needs schedule and waiting time, which only the
+    // Validator produces (a Solution alone does not carry them).
+    static LexKey lex(const ValidationResult& v) {
+        return LexKey{v.vehicles, round2(v.schedule_time),
+                      round2(v.distance), round2(v.waiting_time)};
+    }
+    static bool better_lex(const ValidationResult& a, const ValidationResult& b) {
+        return lex(a) < lex(b);
+    }
 
     bool better_primary(const Solution& a, const Solution& b) const {
         return primary(a) < primary(b) - 1e-9;
-    }
-    bool better_lex(const Solution& a, const Solution& b) const {
-        return lex(a) < lex(b);
     }
 
     static double round1(double v) { return std::round(v * 10.0) / 10.0; }

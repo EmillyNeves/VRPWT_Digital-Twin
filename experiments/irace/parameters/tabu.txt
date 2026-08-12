@@ -1,4 +1,14 @@
 # irace parameter space — Busca Tabu (forma clássica: tenure).
 # Calibra APENAS o tenure (qualidade); K é FIXADO pela análise de joelho.
+#
+# INTERVALO ALARGADO. Na calibração anterior o intervalo era (5,40) e o irace
+# escolheu 39 -- a FRONTEIRA SUPERIOR. Um valor de fronteira não é um ótimo, é
+# "o melhor dentro do que foi testado", e não se pode reportar como calibrado.
+# A literatura sugere tenure da ordem de 0,1-0,4*n para n=100 (ou seja, 10-40),
+# mas a fronteira indica que o ótimo pode estar acima; o teto vai a 80.
+#
+# Vale para esta rodada: a convenção do tenure foi corrigida (antes t proibia por
+# t-1 iterações; ver docs/verificacao/02-algoritmos-de-melhoria.md), então o
+# valor calibrado agora significa exatamente o que diz.
 # nome    switch        tipo   intervalo
-tenure    "--tenure "   i      (5, 40)
+tenure    "--tenure "   i      (5, 80)

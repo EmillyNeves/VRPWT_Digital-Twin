@@ -24,8 +24,34 @@ DETERMINISTIC = {"i1", "vnd", "tabu"}
 STOCHASTIC = {"grasp", "rgrasp"}
 
 CSV_HEADER = ["algorithm", "instance", "family", "type", "seed", "run_idx",
-              "distance", "vehicles", "time_ms", "iters", "feasible",
-              "ref_dinamics", "gap_pct"]
+              "distance", "vehicles", "time_ms", "iters", "improvements",
+              "time_to_best_ms", "feasible", "ref_dinamics", "gap_pct"]
+
+
+def read_trace(path):
+    """Curva de convergencia (elapsed_ms,best) -> (nº de melhorias, tempo ate a melhor).
+
+    `iters` conta as iteracoes REALIZADAS; `improvements` conta quantas delas
+    melhoraram o incumbente, e `time_to_best_ms` e o instante da ultima melhoria.
+    O tempo total de execucao inclui o que foi gasto DEPOIS de achar a melhor
+    solucao (esperando o criterio de parada), e por isso nao serve para comparar
+    esforco util entre metodos.
+    """
+    if not os.path.isfile(path):
+        return 0, None
+    improvements, last_ms = 0, None
+    with open(path) as fh:
+        next(fh, None)                      # cabecalho elapsed_ms,best
+        for line in fh:
+            parts = line.strip().split(",")
+            if len(parts) < 2:
+                continue
+            try:
+                last_ms = int(float(parts[0]))
+            except ValueError:
+                continue
+            improvements += 1
+    return improvements, last_ms
 
 
 def parse_family_type(name):
@@ -71,9 +97,11 @@ def run_one(solver, algo, inst_path, name, seed, budget_ms, sol_dir, trace_dir,
         return None
     # solve --csv: algo,instance,seed,distance,vehicles,time_ms,feasible,iters
     f = line[-1].split(",")
+    improvements, ttb = read_trace(os.path.join(trace_dir, tag + ".csv"))
     return {"distance": float(f[3]), "vehicles": int(f[4]),
             "time_ms": int(f[5]), "feasible": int(f[6]),
-            "iters": int(f[7]) if len(f) > 7 else 0}
+            "iters": int(f[7]) if len(f) > 7 else 0,
+            "improvements": improvements, "time_to_best_ms": ttb}
 
 
 def main():
@@ -147,6 +175,8 @@ def main():
             gap = (r["distance"] - ref) / ref * 100.0 if ref else ""
             rows.append([algo, name, fam, typ, seed, run_idx,
                          f"{r['distance']:.1f}", r["vehicles"], r["time_ms"], r["iters"],
+                         r["improvements"],
+                         "" if r["time_to_best_ms"] is None else r["time_to_best_ms"],
                          r["feasible"],
                          "" if ref is None else f"{ref:.1f}",
                          "" if gap == "" else f"{gap:.3f}"])

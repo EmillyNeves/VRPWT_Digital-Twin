@@ -35,13 +35,30 @@ FIG = os.path.join(ROOT, "results", "figures", "knee_K.png")
 
 EPS_PP = 0.10   # joelho: gap a <= 0,10 ponto percentual do melhor
 
-# parâmetros de QUALIDADE correntes (sem K); varremos K separadamente
-QUALITY = {"grasp": "--alpha 0.1596",
-           "rgrasp": "--delta 1.7822 --block 183",
-           "tabu": "--tenure 35"}
-KGRID = {"grasp": [20, 40, 60, 90, 130, 180, 250],
-         "rgrasp": [20, 40, 60, 90, 130, 180, 250],
-         "tabu": [100, 200, 400, 600, 900, 1400]}
+# Parâmetros de QUALIDADE usados para varrer K.
+#
+# São valores CLÁSSICOS DA LITERATURA, não os calibrados. Isso é deliberado e
+# quebra a circularidade: o K é fixado pelo joelho, e só então o irace calibra a
+# qualidade a esse K. Usar os valores calibrados aqui faria o K depender de uma
+# calibração que depende do K.
+#   alpha = 0,3        RCL de tamanho moderado (Feo & Resende)
+#   delta = 1,0        expoente do artigo original (Prais & Ribeiro)
+#   block_frac = 0,1   ~10 reponderações por execução
+#   tenure = 15        ~0,15n para n = 100
+QUALITY = {"grasp": "--alpha 0.3",
+           "rgrasp": "--delta 1.0 --block-frac 0.1",
+           "tabu": "--tenure 15"}
+
+# GRADE ESTENDIDA. Na análise anterior os tetos eram 250/250/1400 e os TRÊS K
+# escolhidos foram exatamente o teto -- ou seja, nenhum K menor ficou a 0,10 pp
+# do maior testado, e portanto a curva ainda não havia achatado: não havia
+# joelho, apenas o limite da grade. É o mesmo defeito que o desenho desacoplado
+# diz estar evitando ao não calibrar K pelo gap. A grade agora dobra a cada
+# passo e vai bem além do antigo teto, para que o achatamento (se existir)
+# apareça DENTRO dela.
+KGRID = {"grasp": [25, 50, 100, 200, 400, 800, 1600],
+         "rgrasp": [25, 50, 100, 200, 400, 800, 1600],
+         "tabu": [100, 200, 400, 800, 1600, 3200, 6400]}
 SEEDS = {"grasp": 3, "rgrasp": 3, "tabu": 1}
 COLOR = {"grasp": "#2ca02c", "rgrasp": "#1f77b4", "tabu": "#d62728"}
 

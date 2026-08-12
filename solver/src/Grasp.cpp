@@ -23,34 +23,24 @@ Solution grasp_construct(const Instance& inst, const DistanceMatrix& dm, Rng& rn
     int remaining = inst.num_customers();
 
     while (remaining > 0) {
-        int seed = -1;
-        double best_seed = -1.0;
-        for (int u = 1; u < n; ++u)
-            if (!routed[u] && dm(0, u) > best_seed) { best_seed = dm(0, u); seed = u; }
+        const int seed = i1_select_seed(inst, dm, routed, p.seed);
+        if (seed < 0) break;
 
         Route r;
         r.seq = {seed};
         r.recompute(inst, dm);
-        routed[seed] = 1;
+        routed[static_cast<std::size_t>(seed)] = 1;
         --remaining;
 
         while (true) {
-            // best feasible insertion (c1) and selection value (c2) per unrouted customer
+            // best feasible insertion (c1) and selection value (c2) per unrouted
+            // customer -- the SAME Solomon criterion the deterministic I1 uses
             std::vector<Cand> cands;
+            I1Candidate ic;
             for (int u = 1; u < n; ++u) {
-                if (routed[u]) continue;
-                double best_c1 = kInf;
-                int    pos_u = -1;
-                for (int pos = 0; pos <= static_cast<int>(r.len()); ++pos) {
-                    const InsertEval ie = eval_insert(inst, dm, r, pos, u);
-                    if (!ie.feasible) continue;
-                    const int pred = (pos == 0) ? 0 : r.seq[pos - 1];
-                    const int succ = (pos == static_cast<int>(r.len())) ? 0 : r.seq[pos];
-                    const double c11 = ie.ddist + (1.0 - p.mu) * dm(pred, succ);
-                    const double c1  = p.alpha1 * c11;
-                    if (c1 < best_c1) { best_c1 = c1; pos_u = pos; }
-                }
-                if (pos_u >= 0) cands.push_back({u, pos_u, p.lambda * dm(0, u) - best_c1});
+                if (routed[static_cast<std::size_t>(u)]) continue;
+                if (i1_best_insertion(inst, dm, r, u, p, ic))
+                    cands.push_back({ic.u, ic.pos, ic.c2});
             }
             if (cands.empty()) break;
 
@@ -92,12 +82,23 @@ Solution grasp(const Instance& inst, const DistanceMatrix& dm, StoppingCriterion
     std::vector<double> sum_cost(A.size(), 0.0);
     std::vector<int>    count(A.size(), 0);
 
-    Solution best;
-    double best_cost = std::numeric_limits<double>::max();
-    bool   have = false;
+    // A I1 pura entra como INCUMBENTE INICIAL, de modo que o GRASP herda a mesma
+    // solucao de partida que o VND e a Busca Tabu recebem. E a politica declarada
+    // em docs/planejamento/conformance_audit.md -- "same initial baseline policy:
+    // I1-based starts in nls/vnd/grasp/tabu" -- e o que a versao anterior do
+    // projeto fazia. Sem isto, o GRASP so conhece construcoes randomizadas e a
+    // relacao GRASP <= I1 fica sendo uma observacao empirica em vez de uma
+    // garantia. Nao vale semear com I1+VND: isso tornaria GRASP <= VND um
+    // teorema e esvaziaria justamente a comparacao que se quer medir.
+    Solution best = solomon_i1(inst, dm, cfg.i1);
+    best.recompute_all(inst, dm);
+    double best_cost = ev.primary(best);
+    bool   have = true;
     int    snap_idx = 0;
     int    iter = 0;
     int    no_improve = 0;   // consecutive iterations without improving the incumbent
+
+    if (log) log->on_improve(0, best_cost);   // curva anytime comeca na I1, em t=0
 
     while (!stop.should_stop()) {                       // time budget acts only as a safety cap
         if (cfg.max_iters >= 0 && iter >= cfg.max_iters) break;
@@ -110,7 +111,7 @@ Solution grasp(const Instance& inst, const DistanceMatrix& dm, StoppingCriterion
             alpha = A[static_cast<std::size_t>(ai)];
         }
 
-        Solution s = grasp_construct(inst, dm, rng, alpha);
+        Solution s = grasp_construct(inst, dm, rng, alpha, cfg.i1);
         s = vnd_local_search(inst, dm, std::move(s), cfg.vnd, nullptr, &stop, nullptr);
         const double c = ev.primary(s);
 

@@ -59,4 +59,32 @@ private:
     std::vector<double> t_;   // empty => time == distance
 };
 
+// Euclidean matrix built EXPLICITLY, so the numeric convention is chosen at the
+// call site instead of being baked into the constructor above. Injected through
+// load_distance(), the same extension point the Digital Twin already uses, which
+// is why `--dist-mode trunc` (the default) never calls this and the 56/56
+// reference gate is immune by construction.
+//
+//   truncate = true   d_ij = trunc(euclid * 10)/10   -- 12th DIMACS convention
+//   truncate = false  d_ij = euclid                  -- full double precision
+//
+// Solomon (1987) used the latter: he reports his best C1 solution as "a distance
+// of 829 units", and those very routes cost 828.94 in double precision but 827.3
+// truncated. Use double precision ONLY when comparing against his Tables I-VI;
+// gaps against the CVRPLIB best-known are meaningless under it.
+inline std::vector<double> make_euclid_matrix(const Instance& inst, bool truncate) {
+    const int n = static_cast<int>(inst.size());
+    std::vector<double> m(static_cast<std::size_t>(n) * static_cast<std::size_t>(n), 0.0);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            const double dx = inst.node(i).x - inst.node(j).x;
+            const double dy = inst.node(i).y - inst.node(j).y;
+            const double d  = std::sqrt(dx * dx + dy * dy);
+            m[static_cast<std::size_t>(i) * static_cast<std::size_t>(n) + static_cast<std::size_t>(j)] =
+                truncate ? DistanceMatrix::truncate1(d) : d;
+        }
+    }
+    return m;
+}
+
 } // namespace vrptw

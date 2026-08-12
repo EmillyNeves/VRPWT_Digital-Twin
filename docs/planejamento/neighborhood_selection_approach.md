@@ -1,5 +1,19 @@
 # Seleção de Vizinhanças (NLS, First Improvement)
 
+> **NOTA DE SUPERAÇÃO (ago/2026).** O subconjunto recomendado de quatro
+> movimentos registrado na seção "Conjunto operacional pós-seleção" **não se
+> sustenta**: dá 11,388 % de gap contra 8,249 % do conjunto completo (+3,14 pp),
+> por descartar o Or-opt, que é estatisticamente significativo (p = 0,0216 com
+> correção de Holm). A seleção foi reexaminada por busca exaustiva dos 63
+> subconjuntos, e nenhum subconjunto próprio domina o completo. Ver
+> `docs/verificacao/03-vizinhancas.md`.
+>
+> A ordenação por complexidade, que este documento define, **permanece válida** —
+> mas a lista concreta muda, porque a implementação funde intra e inter em três
+> operadores, o que inverte o custo relativo (o 2-opt intra é o mais barato, não
+> o sexto). A ordem em uso vem do custo medido, não da ordenação teórica abaixo.
+
+
 ## Escopo
 
 Este protocolo é **apenas** para seleção de vizinhanças (operadores de busca local).

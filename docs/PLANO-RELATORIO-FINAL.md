@@ -1,4 +1,4 @@
-# Plano de execução — Relatório Final de IC
+                                                                 # Plano de execução — Relatório Final de IC
 
 **Objetivo:** produzir `docs/relatorio-final/` no formato modular exigido (`main.tex` + `topicos/`), cumprindo o planejamento do relatório parcial, com todos os dados corrigidos e verificáveis.
 

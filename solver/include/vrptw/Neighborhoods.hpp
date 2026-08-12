@@ -15,7 +15,8 @@ enum class MoveType {
     Swap,          // exchange 2 customers (intra or inter)
     TwoOpt,        // reverse a segment within one route (intra)
     OrOpt,         // move a chain of length seg (2..3), intra or inter
-    CrossExchange  // exchange a segment of r1 with a segment of r2 (inter)
+    CrossExchange, // exchange a segment of r1 with a segment of r2 (inter)
+    TwoOptStar     // exchange the TAILS of two routes (inter); can merge routes
 };
 
 inline const char* move_name(MoveType t) {
@@ -25,6 +26,7 @@ inline const char* move_name(MoveType t) {
         case MoveType::TwoOpt:        return "TwoOpt";
         case MoveType::OrOpt:         return "OrOpt";
         case MoveType::CrossExchange: return "CrossExchange";
+        case MoveType::TwoOptStar:    return "TwoOptStar";
         default:                      return "None";
     }
 }
@@ -50,12 +52,39 @@ SeqEval evaluate_seq(const Instance& inst, const DistanceMatrix& dm, const std::
 // (between seq[pos-1] and seq[pos]) of route r, using r's caches (push-forward
 // slack). Requires r.recompute() to have been called. Used by Solomon I1 and
 // the GRASP randomized construction.
-struct InsertEval { bool feasible = false; double ddist = 0.0; };
+//
+// `ddist` is Solomon's c11 term without the mu weight:
+//     ddist = d(i,u) + d(u,j) - d(i,j)     =>  c11 = ddist + (1-mu)*d(i,j)
+// `dtime` is Solomon's c12 = b_ju - b_j, the push-forward (delay) induced at the
+// successor j. Both are only meaningful when `feasible` is true. When u is
+// appended at the end of the route the successor is the depot, which has no
+// b_j; we then take c12 as the delay of the return to the depot (the article
+// does not specify this case -- see docs/verificacao/01-solomon-i1.md, S5).
+struct InsertEval { bool feasible = false; double ddist = 0.0; double dtime = 0.0; };
 InsertEval eval_insert(const Instance& inst, const DistanceMatrix& dm,
                        const Route& r, int pos, int u);
 
 // Identifiers for the neighborhoods used by VND's variable ordering.
-enum class Neighborhood { Relocate, Swap, TwoOpt, OrOpt, CrossExchange };
+//
+// TwoOptStar (Potvin & Rousseau 1995) is implemented but NOT in the default
+// order: it is the eighth movement listed in the partial report and was never
+// part of the studied kit. Whether it earns a place is decided empirically by
+// the ablation (docs/verificacao/03-vizinhancas.md), not by assumption.
+enum class Neighborhood { Relocate, Swap, TwoOpt, OrOpt, CrossExchange, TwoOptStar };
+
+// A UNICA lista do kit, em ordem de complexidade computacional crescente (custo
+// medido de uma varredura; ver o teste decisao_2_2_ordem_por_complexidade).
+//
+// DECISAO 2.5 (docs/DECISOES-DE-PROJETO.md; fonte: conformance_audit.md §6,
+// "same local neighborhood set across compared methods"): VND e Busca Tabu usam
+// o MESMO conjunto. Ambos leem daqui, de modo que a igualdade e garantida por
+// CONSTRUCAO -- nao por disciplina nem por teste.
+inline const std::vector<Neighborhood>& all_neighborhoods() {
+    static const std::vector<Neighborhood> k = {
+        Neighborhood::TwoOpt, Neighborhood::Swap, Neighborhood::TwoOptStar,
+        Neighborhood::Relocate, Neighborhood::OrOpt, Neighborhood::CrossExchange};
+    return k;
+}
 
 // Find the best improving feasible move in the given neighborhood (or, if
 // first_improvement, the first one). Returns a Move with type==None if none.

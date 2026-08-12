@@ -25,6 +25,7 @@ struct GraspConfig {
     double                delta = 1.0;            // reactive: probability-update exponent
     int                   block = 50;             // reactive: iterations between probability updates
     VndConfig             vnd;                    // local search
+    I1Params              i1;                     // Solomon criterion used by the construction
     int                   max_iters = -1;         // hard cap on total iterations (-1 => disabled)
     int                   max_no_improve = -1;    // PRIMARY stop: iterations without improving the best
                                                   // (-1 => disabled). One iteration = one construction+VND.

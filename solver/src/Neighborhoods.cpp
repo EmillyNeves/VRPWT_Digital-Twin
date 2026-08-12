@@ -96,11 +96,14 @@ InsertEval eval_insert(const Instance& inst, const DistanceMatrix& dm,
     const double arr_succ = dep_u + dm.time(u, succ);
     if (pos == m) {
         if (arr_succ > inst.depot().due + kEps) return ie;      // return to depot
+        // successor is the depot (no b_j): c12 := delay of the return
+        ie.dtime = arr_succ - (dep_pred + dm.time(pred, succ));
     } else {
         const Customer& cs = inst.node(succ);
         const double new_start_succ = std::max(arr_succ, cs.ready);
         const double shift = new_start_succ - r.start[pos];     // push-forward at succ
         if (shift > r.tw_slack[pos] + kEps) return ie;
+        ie.dtime = shift;                                       // Solomon's c12 = b_ju - b_j
     }
     ie.feasible = true;
     return ie;
@@ -297,31 +300,78 @@ static Move find_cross(const Solution& sol, const Instance& inst,
     return B.move;
 }
 
-Move find_best_move(const Solution& sol, const Instance& inst, const DistanceMatrix& dm,
-                    Neighborhood nb, bool first_improvement) {
+// ------------------------------------------------------ 2-opt* (entre rotas)
+// Potvin & Rousseau (1995). Corta duas rotas e troca as CAUDAS, preservando a
+// orientacao de ambas. Difere do Cross-exchange em dois pontos que importam:
+// o trecho trocado tem comprimento ARBITRARIO (o Cross aqui vai ate 3), e no
+// limite (i=0, j=n2) uma rota fica vazia -- ou seja, o operador FUNDE rotas,
+// reduzindo a frota. Nenhum dos outros cinco faz isso por atacado.
+//   i = quantos clientes permanecem em r1;  j = idem em r2.
+static Move find_twoopt_star(const Solution& sol, const Instance& inst,
+                             const DistanceMatrix& dm, bool first, const MoveFilter* filt) {
+    Best B(filt, first);
+    const int R = static_cast<int>(sol.routes.size());
+    for (int r1 = 0; r1 < R && !B.done; ++r1) {
+        const auto& s1 = sol.routes[r1].seq;
+        if (s1.empty()) continue;
+        const double old1 = sol.routes[r1].distance;
+        for (int r2 = r1 + 1; r2 < R && !B.done; ++r2) {
+            const auto& s2 = sol.routes[r2].seq;
+            if (s2.empty()) continue;
+            const double old2 = sol.routes[r2].distance;
+            const int n1 = static_cast<int>(s1.size()), n2 = static_cast<int>(s2.size());
+            for (int i = 0; i <= n1 && !B.done; ++i) {
+                for (int j = 0; j <= n2 && !B.done; ++j) {
+                    if (i == n1 && j == n2) continue;   // identidade
+                    if (i == 0 && j == 0) continue;     // troca as rotas inteiras (rerotulagem)
+                    std::vector<int> a, b;
+                    a.reserve(static_cast<std::size_t>(i + n2 - j));
+                    b.reserve(static_cast<std::size_t>(j + n1 - i));
+                    a.insert(a.end(), s1.begin(), s1.begin() + i);
+                    a.insert(a.end(), s2.begin() + j, s2.end());
+                    b.insert(b.end(), s2.begin(), s2.begin() + j);
+                    b.insert(b.end(), s1.begin() + i, s1.end());
+                    const SeqEval e1 = evaluate_seq(inst, dm, a);
+                    const SeqEval e2 = evaluate_seq(inst, dm, b);
+                    B.consider(Move{MoveType::TwoOptStar, r1, i, r2, j, 1, 1, false,
+                                    e1.feasible && e2.feasible,
+                                    (e1.distance + e2.distance) - (old1 + old2)});
+                }
+            }
+        }
+    }
+    return B.move;
+}
+
+// Despacho unico. find_best_move e find_best_admissible passam por aqui, de modo
+// que nenhuma vizinhanca pode existir para um metodo e nao para o outro.
+static Move find_in(Neighborhood nb, const Solution& sol, const Instance& inst,
+                    const DistanceMatrix& dm, bool first, const MoveFilter* filt) {
     switch (nb) {
-        case Neighborhood::Relocate:      return find_relocate(sol, inst, dm, first_improvement, nullptr);
-        case Neighborhood::Swap:          return find_swap(sol, inst, dm, first_improvement, nullptr);
-        case Neighborhood::TwoOpt:        return find_twoopt(sol, inst, dm, first_improvement, nullptr);
-        case Neighborhood::OrOpt:         return find_oropt(sol, inst, dm, first_improvement, nullptr);
-        case Neighborhood::CrossExchange: return find_cross(sol, inst, dm, first_improvement, nullptr);
+        case Neighborhood::Relocate:      return find_relocate(sol, inst, dm, first, filt);
+        case Neighborhood::Swap:          return find_swap(sol, inst, dm, first, filt);
+        case Neighborhood::TwoOpt:        return find_twoopt(sol, inst, dm, first, filt);
+        case Neighborhood::OrOpt:         return find_oropt(sol, inst, dm, first, filt);
+        case Neighborhood::CrossExchange: return find_cross(sol, inst, dm, first, filt);
+        case Neighborhood::TwoOptStar:    return find_twoopt_star(sol, inst, dm, first, filt);
     }
     return Move{};
 }
 
+Move find_best_move(const Solution& sol, const Instance& inst, const DistanceMatrix& dm,
+                    Neighborhood nb, bool first_improvement) {
+    return find_in(nb, sol, inst, dm, first_improvement, nullptr);
+}
+
 Move find_best_admissible(const Solution& sol, const Instance& inst,
                           const DistanceMatrix& dm, const MoveFilter& filter) {
-    const Move cands[] = {
-        find_relocate(sol, inst, dm, false, &filter),
-        find_swap(sol, inst, dm, false, &filter),
-        find_twoopt(sol, inst, dm, false, &filter),
-        find_oropt(sol, inst, dm, false, &filter),
-        find_cross(sol, inst, dm, false, &filter),
-    };
+    // Percorre all_neighborhoods() -- a MESMA lista que o VND usa (decisao 2.5).
     Move best;
     double bd = filter.allow_nonimproving ? std::numeric_limits<double>::max() : -kImprove;
-    for (const Move& m : cands)
+    for (Neighborhood nb : all_neighborhoods()) {
+        const Move m = find_in(nb, sol, inst, dm, false, &filter);
         if (m.type != MoveType::None && m.delta < bd) { bd = m.delta; best = m; }
+    }
     return best;
 }
 
@@ -358,6 +408,19 @@ void apply_move(Solution& sol, const Move& mv, const Instance& inst, const Dista
             auto& s = sol.routes[mv.r1].seq;
             std::reverse(s.begin() + mv.i1, s.begin() + mv.i2 + 1);
             sol.routes[mv.r1].recompute(inst, dm);
+            break;
+        }
+        case MoveType::TwoOptStar: {
+            auto& s1 = sol.routes[mv.r1].seq;
+            auto& s2 = sol.routes[mv.r2].seq;
+            std::vector<int> a(s1.begin(), s1.begin() + mv.i1);
+            a.insert(a.end(), s2.begin() + mv.i2, s2.end());
+            std::vector<int> b(s2.begin(), s2.begin() + mv.i2);
+            b.insert(b.end(), s1.begin() + mv.i1, s1.end());
+            s1 = std::move(a);
+            s2 = std::move(b);
+            sol.routes[mv.r1].recompute(inst, dm);
+            sol.routes[mv.r2].recompute(inst, dm);
             break;
         }
         case MoveType::OrOpt: {

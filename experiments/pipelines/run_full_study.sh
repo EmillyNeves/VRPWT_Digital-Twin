@@ -36,8 +36,20 @@ fi
   echo PIPELINE_FAILED >> "$STATUS"; exit 1; }
 log "K fixo: $(tr -d '\n' < "$EXP/config/fixed_K.json")"
 
+# --- (0) verificação de fidelidade ---
+# Nao se calibra o que nao foi verificado: os parametros calibrados descrevem o
+# algoritmo IMPLEMENTADO, e se ele nao corresponde ao da literatura a calibracao
+# apenas afina o objeto errado.
+log "etapa 0/3 — verificação de fidelidade à literatura..."
+if bash "$HERE/0_verify.sh" > "$ROOT/results/0_verify.log" 2>&1; then
+  log "verificação OK (results/solomon-i1/, results/neighborhoods/)"
+else
+  log "verificação FALHOU (ver results/0_verify.log)"
+  echo PIPELINE_FAILED >> "$STATUS"; exit 1
+fi
+
 # --- (1) calibração ---
-log "etapa 1/2 — calibrando com irace (só qualidade, K fixo)..."
+log "etapa 1/3 — calibrando com irace (só qualidade, K fixo)..."
 if bash "$HERE/1_calibrate.sh" 600000 "$MAXEXP" "$JOBS" > "$ROOT/results/1_calibrate.log" 2>&1; then
   log "calibração OK: $(tr -d '\n' < "$EXP/config/tuned.json")"
 else
@@ -46,11 +58,21 @@ else
 fi
 
 # --- (2) estudo completo ---
-log "etapa 2/2 — executando o estudo completo (jobs=$JOBS runs=$RUNS)..."
+log "etapa 2/3 — executando o estudo completo (jobs=$JOBS runs=$RUNS)..."
 if bash "$HERE/2_run_study.sh" "$JOBS" "$RUNS" > "$ROOT/results/2_run_study.log" 2>&1; then
   log "estudo OK — tabelas em results/*.csv, figuras em results/figures/"
-  echo PIPELINE_DONE >> "$STATUS"
 else
   log "estudo FALHOU (ver results/2_run_study.log)"
   echo PIPELINE_FAILED >> "$STATUS"; exit 1
 fi
+
+# --- (3) gêmeo digital ---
+# Etapas 6 e 7 do cronograma do relatorio parcial. Duas figuras do relatorio
+# dependem dele. Nao aborta o pipeline se falhar: o benchmark ja esta pronto.
+log "etapa 3/3 — gêmeo digital de Vitória..."
+if bash "$HERE/3_digital_twin.sh" > "$ROOT/results/3_digital_twin.log" 2>&1; then
+  log "gêmeo digital OK (results/digital_twin/)"
+else
+  log "gêmeo digital FALHOU (ver results/3_digital_twin.log) -- o benchmark ficou pronto"
+fi
+echo PIPELINE_DONE >> "$STATUS"

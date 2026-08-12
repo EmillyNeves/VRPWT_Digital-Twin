@@ -1,0 +1,147 @@
+# Registro de decisões de projeto
+
+**Para que serve.** As decisões metodológicas deste trabalho estão espalhadas por sete documentos, misturadas com referências de implementação obsoletas (`src/main.cpp`, `bin/vrptw`, `--vnd-neighborhoods`). Tratar um documento como obsoleto por causa dos caminhos de arquivo faz perder a decisão que ele carrega. Foi o que aconteceu, repetidamente.
+
+**O que este documento NÃO faz.** Não decide. Onde há conflito entre o planejado e o implementado, ele marca **REQUER DECISÃO** e apresenta as opções — a escolha é da estudante e da orientadora.
+
+**Fontes varridas** (para que a extração seja auditável):
+`docs/relatorio-parcial/relatorio-parcial-nomealuno.tex` · `docs/planejamento/{conformance_audit, neighborhood_selection_approach, irace_calibration_plan, irace_parameter_justification, irace_search_space_template, irace_target_runner_template}.md`
+
+**Coluna "Guarda"** — o que impede a decisão de ser violada em silêncio. `teste` é o mais forte (quebra o build); `construção` é ainda mais forte (torna a violação impossível); `—` significa que depende de disciplina.
+
+---
+
+## 1. Algoritmos e implementação
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 1.1 | I1 de Solomon, VND, GRASP fixo e reativo, Busca Tabu | parcial, §Materiais e Métodos | — |
+| 1.2 | C++20, 56 instâncias Solomon-100, critério DIMACS | parcial, §Materiais e Métodos | `reproduce_dinamics_costs` |
+| 1.3 | `objective = cost`; μ = 1,0; ε = 1e-6 | `irace_calibration_plan.md` §2 | **teste** `decisao_1_3_parametros_fixos` |
+| 1.4 | **Mesma solução inicial I1 para `nls/vnd/grasp/tabu`** | `conformance_audit.md` §6 | **teste** `decisao_1_4_i1_como_partida_comum` |
+| 1.5 | Núcleo de avaliação compartilhado por todos os métodos | `conformance_audit.md` §6 | **construção** — `DistanceMatrix` e `Evaluator` únicos |
+| 1.6 | Aspiração por omissão na Busca Tabu | `conformance_audit.md` §5 | **teste** `tabu_aspiration_by_default_prevents_truncation` |
+| 1.7 | Memória de longo prazo e oscilação estratégica fora de escopo | `conformance_audit.md` §5 | — (declarado no relatório) |
+
+## 2. Conjunto de vizinhanças
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 2.1 | Oito movimentos avaliados (3 intra + 5 inter) | parcial, §Materiais e Métodos | `docs/verificacao/03` §1 |
+| 2.2 | **Ordem de exploração por complexidade computacional** | `neighborhood_selection_approach.md`; Hansen & Mladenović (2001) | **teste** `decisao_2_2_ordem_por_complexidade` |
+| 2.3 | Papéis dos quatro grupos de operadores | parcial, Quadro 2 | `docs/verificacao/03` §2 |
+| 2.4 | ~~Subconjunto pós-seleção de 4 movimentos~~ | `neighborhood_selection_approach.md` | **REVOGADO** — ver Revogações |
+| 2.5 | Mesmo conjunto de vizinhanças entre os métodos | `conformance_audit.md` §6 | **construção** — `all_neighborhoods()`, mais `decisao_2_5_mesmo_kit_vnd_e_tabu` |
+
+## 3. Critério de parada e isonomia
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 3.1 | **Critério de parada: número de iterações sem melhoria (K)** | orientação da orientadora, ago/2026 | ✅ implementado; ver nota |
+| 3.2 | Mesmo teto de tempo por execução para todos | `conformance_audit.md` §6 | — (600 s no pipeline) |
+| 3.3 | Mesmo esquema de sementes por algoritmo | `conformance_audit.md` §6 | — (`runner.py`) |
+| 3.4 | Perfis de tempo por algoritmo (Quadro 3) | parcial, Quadro 3 | ⚠️ uma linha não se sustenta |
+
+> ### 3.1 — resolvido
+>
+> **O critério é o número de iterações sem melhoria (K)**, conforme orientação recebida. É o que está implementado.
+>
+> O relatório parcial **não menciona critério de parada** — a busca por "critério de parada", "parada", "tempo limite", "iterações", "orçamento" e "sem melhoria" no `.tex` entregue retorna zero ocorrências. A regra de tempo igual aparece apenas em dois documentos internos de planejamento (`irace_calibration_plan.md` §2 e `irace_parameter_justification.md` §4.1), que nunca foram entregues e antecedem esta orientação. **Não há, portanto, desvio a declarar**: o critério é definido pela primeira vez no relatório final.
+>
+> A leitura sob tempo igual (`results/equal_time.csv`, `primal_integral.csv`) permanece como **análise complementar** — não como resultado co-primário. Ela já está implementada e não custa nada reportar.
+
+> ### ⚠️ 3.4 — o Quadro 3 do parcial precisa de um ajuste
+>
+> O parcial não fixa critério de parada, mas o Quadro 3 caracteriza os métodos por tempo de resposta. Duas linhas se sustentam, uma não:
+>
+> | Algoritmo | Afirmação | Medido |
+> |---|---|---|
+> | VND | "baixo tempo de resposta" | ✅ 40 ms contra segundos |
+> | GRASP fixo | "maior esforço computacional" | ✅ |
+> | Busca Tabu | "resposta mais ágil do que abordagens mais intensivas" | ❌ razão Tabu/GRASP vai de 5,62× a 0,58× conforme a instância |
+>
+> A afirmação sobre a Tabu não vale como característica do método, e ela sustenta o "potencial de uso: replanejamento mais frequente" na mesma linha. Reformular para algo do tipo "tempo de resposta dependente da estrutura da instância", com os números da execução nova.
+
+## 4. Calibração (irace)
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 4.1 | Calibrar só os hiperparâmetros canônicos; fixar o resto | `irace_search_space_template.md` §Global fixed controls | — |
+| 4.2 | Divisão treino/holdout fixada **antes** da corrida | `irace_calibration_plan.md` §2 | — (28/28 estratificada) |
+| 4.3 | Score = `gap_pct + λ·time_sec`; λ = 1e-4 recomendado, **λ = 0 permitido** (DIMACS estrito) | `irace_parameter_justification.md` §1.1 | — |
+| 4.4 | Penalidade fixa 1e9 em falha ou inviabilidade | idem §1.1 | — (`target-runner`) |
+| 4.5 | **Vencedor na borda do intervalo ⇒ abrir novo intervalo e repetir a corrida** | idem §2.1 (**ação obrigatória**) | — |
+| 4.6 | `maxExperiments` = 1000 por cenário; aumentar e **registrar** se não convergir | idem §2.2 | — |
+| 4.7 | **Pré-registro ex-ante obrigatório**: parâmetros ajustáveis, intervalos, fixos | idem §2 | — |
+| 4.8 | **Justificativa ex-post obrigatória** com checklist: posição no intervalo, impacto na mediana, custo, IQR | idem §3 e §3.1 | — |
+
+## 5. Validação
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 5.1 | Toda solução validada: cobertura, capacidade, janelas de tempo | parcial, §Materiais e Métodos | **teste** — 56/56 em I1, VND, GRASP, Tabu |
+| 5.2 | Protocolo final: congelar parâmetros, rodar no holdout, **comparar contra baseline não calibrado** | `irace_calibration_plan.md` §6 | — (`analysis/calibration_gain.py`) |
+| 5.3 | Testes não paramétricos com controle de comparações múltiplas | parcial, §Materiais e Métodos | — (`stats.py`, `stats_paired.py`) |
+
+## 6. Dados e convenções
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 6.1 | Convenção DIMACS: euclidiana truncada a 1 casa | parcial, §Materiais e Métodos | **teste** `reproduce_dinamics_costs` (56/56) |
+| 6.2 | Hierarquia lexicográfica de Solomon também implementada | parcial, §Materiais e Métodos | — (`LexKey` de 4 níveis) |
+| 6.3 | "Duas casas decimais" de Solomon também implementada | parcial, §Materiais e Métodos | **teste** `double_precision_refs` (7 âncoras) |
+| 6.4 | SINTEF/TOP como benchmark complementar | parcial, §Resultados | — (`baseline_compare.py`) |
+
+## 7. Gêmeo digital e IoT
+
+| # | Decisão | Fonte | Guarda |
+|---|---|---|---|
+| 7.1 | Enchimento com variação pico/fora de pico | parcial, Quadro 1 | — (Poisson não homogêneo) |
+| 7.2 | Acionamento por limiar configurável | parcial, Quadro 1 | — |
+| 7.3 | Lixeiras ativas viram clientes com janela de tempo | parcial, Quadro 1 | — |
+| 7.4 | Interface com o solver a cada ciclo | parcial, Quadro 1 | — |
+| 7.5 | **Comunicação LoRaWAN (simulada)** | parcial, Quadro 1 | ⚠️ **REQUER DECISÃO** |
+
+> ### ⚠️ 7.5 — REQUER DECISÃO
+>
+> Não existe camada de comunicação: a palavra aparece uma vez, numa string de dashboard.
+>
+> | Opção | Custo |
+> |---|---|
+> | **A** — implementar camada mínima (latência, perda de pacote, ciclo de *duty*) | trabalho novo no 12º mês |
+> | **B** — corrigir o Quadro 1 para "modelo de sensoriamento" e declarar em Limitações | uma linha |
+
+---
+
+## Revogações
+
+| # | Decisão revogada | Data | Motivo |
+|---|---|---|---|
+| 2.4 | Subconjunto de 4 movimentos (`relocate_intra`, `swap_intra`, `relocate_inter`, `two_opt_inter`) | ago/2026 | 11,388 % de gap contra 8,249 % do conjunto completo (+3,14 pp); descartava o Or-opt, estatisticamente significativo (p = 0,0216 com Holm). Busca exaustiva dos 63 subconjuntos: nenhum domina o completo. Ver `docs/verificacao/03-vizinhancas.md` §3 |
+
+---
+
+## Pendências abertas — revisão de ago/2026
+
+Itens sem guarda e ainda não executados. **Esta seção envelhece**; reveja a data antes de confiar nela.
+
+| # | Pendência | Bloqueia |
+|---|---|---|
+| 4.5 | Conferir os três intervalos do irace quanto à borda antes de recalibrar | a recalibração |
+| 4.7 | Escrever o pré-registro ex-ante | a recalibração |
+| 4.3 | Declarar λ = 0 como escolha (alternativa DIMACS estrita) | — |
+| 4.6 | Registrar `maxExperiments` = 1200–1500 em vez de 1000 | — |
+| 4.8 | Justificativa ex-post com checklist | fecha após a recalibração |
+| 5.2 | Comparar contra baseline não calibrado no holdout | fecha após o estudo |
+| 3.4 | Refazer a caracterização de tempo da Busca Tabu no Quadro 3 do parcial | o texto de resultados |
+| 7.5 | Decidir A / B | o Quadro 1 do relatório final |
+
+---
+
+## Regra de uso
+
+1. **Antes de implementar** — procure aqui. Se a decisão existe, siga; se discordar, **revogue por escrito** na tabela de Revogações.
+2. **Antes de calibrar ou executar** — confira as Pendências da área envolvida.
+3. **Ao mudar de rumo** — registre. Um desvio declarado é aceitável; um desvio silencioso não é.
+4. **Ao ler um documento de planejamento** — separe **referência de implementação** (envelhece) de **decisão de projeto** (permanece). Foi a confusão entre as duas que produziu este documento.
+5. **O que puder virar teste, vira teste.** Um documento é lido uma vez; um teste quebra o build.

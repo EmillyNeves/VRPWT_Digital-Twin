@@ -17,7 +17,9 @@ iterações), com os parâmetros de qualidade calibrados (sem o critério K).
 Saída: results/primal_integral.csv + results/figures/primal_integral.png
        + results/figures/anytime_convergence_<inst>.png
 """
+import argparse
 import csv
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import math
 import os
@@ -35,8 +37,14 @@ INPUT = os.path.join(ROOT, "data", "instances", "solomon")
 REFS = os.path.join(ROOT, "data", "reference-solutions", "dinamics")
 TUNED = os.path.join(_HERE, "config", "tuned.json")
 
-T_MS = 15000          # orçamento de tempo fixo (complementar; não é o 1800s da competição)
-INSTANCES = ["R101", "RC101", "R201"]
+# Orçamento de tempo fixo, IGUAL para todos os métodos, com o critério por
+# iterações sem melhoria DESATIVADO (ver _quality_flags). É a leitura
+# complementar à parada por convergência: lá cada método para quando a própria
+# curva achata (e gasta de 0% a 60% do tempo produzindo, conforme medido em
+# docs/verificacao/04-criterio-de-parada.md); aqui todos recebem o mesmo T.
+# Não é o 1800s da competição DIMACS -- é o teto viável neste hardware.
+T_MS = 20000
+INSTANCES = None      # None => conjunto de TESTE (experiments/config/test.txt)
 
 
 def _quality_flags(spec):
@@ -60,7 +68,11 @@ ALGOS = {"grasp": _quality_flags(_tuned["grasp"]),
          "rgrasp": _quality_flags(_tuned["rgrasp"]),
          "tabu": _quality_flags(_tuned["tabu"]),
          "vnd": ""}
-SEEDS = {"grasp": 5, "rgrasp": 5, "tabu": 1, "vnd": 1}
+# Sementes UNIFORMES entre os estocásticos. A versão anterior usava 5/5/1/1, o
+# que dava ao GRASP cinco amostras e à Tabu uma -- réplicas desiguais não podem
+# entrar numa comparação. VND e Tabu são determinísticos: uma execução basta.
+RUNS_STOCHASTIC = 10
+SEEDS = {"grasp": RUNS_STOCHASTIC, "rgrasp": RUNS_STOCHASTIC, "tabu": 1, "vnd": 1}
 COLOR = {"grasp": "#2ca02c", "rgrasp": "#1f77b4", "tabu": "#d62728", "vnd": "#9467bd"}
 
 
@@ -100,15 +112,50 @@ def primal_integral(trace, T, ref):
 
 
 def main():
-    rows = []
-    pi_by = {a: [] for a in ALGOS}
+    global T_MS, INSTANCES, SEEDS
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--budget-ms", type=int, default=T_MS)
+    ap.add_argument("--runs", type=int, default=RUNS_STOCHASTIC)
+    ap.add_argument("--instances-file",
+                    default=os.path.join(_HERE, "config", "test.txt"))
+    ap.add_argument("--instances", default=None, help="lista separada por vírgula")
+    ap.add_argument("--jobs", type=int, default=14)
+    a = ap.parse_args()
+    T_MS = a.budget_ms
+    SEEDS = {"grasp": a.runs, "rgrasp": a.runs, "tabu": 1, "vnd": 1}
+    if a.instances:
+        INSTANCES = [x.strip() for x in a.instances.split(",") if x.strip()]
+    else:
+        INSTANCES = [l.strip() for l in open(a.instances_file) if l.strip()]
+    print(f"tempo igual T={T_MS/1000:.0f}s, {len(INSTANCES)} instancias, "
+          f"{a.runs} sementes nos estocasticos, K desativado")
+
+    # As execuções são independentes entre si; sequencialmente, 28 instâncias x
+    # 10 sementes x T = 20s levariam horas. O solver é single-thread, então um
+    # pool de processos externos escala quase linearmente.
+    tasks = [(inst, algo, s)
+             for inst in INSTANCES for algo in ALGOS
+             for s in range(1, SEEDS[algo] + 1)]
+    print(f"  {len(tasks)} execucoes em {a.jobs} processos...")
+    traces = {}
+    with ThreadPoolExecutor(max_workers=a.jobs) as ex:
+        futs = {ex.submit(run_trace, algo, inst, s): (inst, algo, s)
+                for inst, algo, s in tasks}
+        for n, fut in enumerate(as_completed(futs), 1):
+            traces[futs[fut]] = fut.result()
+            if n % 25 == 0 or n == len(tasks):
+                print(f"    {n}/{len(tasks)}", flush=True)
+
+    rows, final_rows = [], []
+    pi_by = {a_: [] for a_ in ALGOS}
     for inst in INSTANCES:
         ref = bks(inst)
         traces_for_plot = {}
         for algo in ALGOS:
-            pis = []
+            pis, traces_all = [], []
             for s in range(1, SEEDS[algo] + 1):
-                tr = run_trace(algo, inst, s)
+                tr = traces[(inst, algo, s)]
+                traces_all.append(tr)
                 pi = primal_integral(tr, T_MS, ref)
                 pis.append(pi)
                 if s == 1:
@@ -118,9 +165,20 @@ def main():
             rows.append({"instance": inst, "algorithm": algo, "bks": ref,
                          "T_ms": T_MS, "primal_integral_mean": round(mean_pi, 4),
                          "runs": SEEDS[algo]})
+            # qualidade FINAL sob tempo igual: a incumbente ao fim de T
+            finals = [tr[-1][1] for tr in traces_all if tr]
+            if finals:
+                gaps = [100.0 * (f - ref) / ref for f in finals]
+                final_rows.append({"instance": inst, "algorithm": algo, "bks": ref,
+                                   "T_ms": T_MS, "runs": len(finals),
+                                   "gap_mean": round(sum(gaps) / len(gaps), 4),
+                                   "gap_best": round(min(gaps), 4)})
             print(f"  {inst} {algo:7s}: PI={mean_pi:.3f}")
 
-        # figura de convergência anytime (incumbente x tempo) para esta instância
+        # figura de convergência anytime: só para as representativas, senão
+        # seriam 28 arquivos que ninguém olha
+        if inst not in ("R101", "RC101", "R201", "C101"):
+            continue
         plt.figure(figsize=(7, 4.2))
         for algo, tr in traces_for_plot.items():
             if not tr:
@@ -140,6 +198,23 @@ def main():
         w = csv.DictWriter(fh, fieldnames=["instance", "algorithm", "bks", "T_ms",
                                            "primal_integral_mean", "runs"])
         w.writeheader(); w.writerows(rows)
+
+    # tabela de qualidade final sob TEMPO IGUAL -- a leitura que o critério por
+    # iterações sem melhoria não fornece
+    eq = os.path.join(ROOT, "results", "equal_time.csv")
+    with open(eq, "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=["instance", "algorithm", "bks", "T_ms",
+                                           "runs", "gap_mean", "gap_best"])
+        w.writeheader(); w.writerows(final_rows)
+    agg = {}
+    for r in final_rows:
+        agg.setdefault(r["algorithm"], []).append(r["gap_mean"])
+    print(f"\n=== Qualidade final sob TEMPO IGUAL (T={T_MS/1000:.0f}s) ===")
+    for a_ in ALGOS:
+        if a_ in agg:
+            print(f"  {a_:7s} gap medio {sum(agg[a_])/len(agg[a_]):7.3f}%  "
+                  f"({len(agg[a_])} instancias)")
+    print(f"  -> {eq}")
 
     # figura resumo: PI médio por algoritmo (média sobre instâncias)
     algos = list(ALGOS)

@@ -1,0 +1,365 @@
+design,config,neighborhoods,instance,family,distance,vehicles,feasible,gap_pct
+cumul,2-opt intra,twoopt,C104,C1,1069.4,10,1,29.955
+cumul,2-opt intra,twoopt,C105,C1,878.9,10,1,6.2372
+cumul,2-opt intra,twoopt,C107,C1,902.4,10,1,9.0777
+cumul,2-opt intra,twoopt,C108,C1,958.2,10,1,15.8226
+cumul,2-opt intra,twoopt,C203,C2,882.6,4,1,49.9236
+cumul,2-opt intra,twoopt,C206,C2,632.3,3,1,7.901
+cumul,2-opt intra,twoopt,C207,C2,725.3,3,1,23.8136
+cumul,2-opt intra,twoopt,C208,C2,692.4,3,1,18.1973
+cumul,2-opt intra,twoopt,R102,R1,1708.6,19,1,16.5008
+cumul,2-opt intra,twoopt,R103,R1,1530.3,16,1,26.6071
+cumul,2-opt intra,twoopt,R105,R1,1578.2,15,1,16.4465
+cumul,2-opt intra,twoopt,R107,R1,1319.2,12,1,23.9151
+cumul,2-opt intra,twoopt,R108,R1,1211.1,11,1,29.9324
+cumul,2-opt intra,twoopt,R111,R1,1265.7,12,1,20.6923
+cumul,2-opt intra,twoopt,R202,R2,1549.9,4,1,50.5342
+cumul,2-opt intra,twoopt,R204,R2,1063.5,4,1,45.426
+cumul,2-opt intra,twoopt,R207,R2,1124.7,3,1,41.6499
+cumul,2-opt intra,twoopt,R208,R2,955.9,3,1,36.3623
+cumul,2-opt intra,twoopt,R209,R2,1275.0,4,1,49.1577
+cumul,2-opt intra,twoopt,R211,R2,1001.7,3,1,34.1503
+cumul,2-opt intra,twoopt,RC102,RC,1785.5,15,1,22.5127
+cumul,2-opt intra,twoopt,RC103,RC,1527.9,12,1,21.4547
+cumul,2-opt intra,twoopt,RC105,RC,1822.4,16,1,20.3937
+cumul,2-opt intra,twoopt,RC108,RC,1346.2,11,1,20.8221
+cumul,2-opt intra,twoopt,RC202,RC,1636.9,4,1,49.8581
+cumul,2-opt intra,twoopt,RC203,RC,1424.1,4,1,54.1734
+cumul,2-opt intra,twoopt,RC206,RC,1585.8,4,1,50.8705
+cumul,2-opt intra,twoopt,RC208,RC,1084.4,3,1,39.7243
+cumul,2-opt intra+Swap,"twoopt,swap",C104,C1,1027.2,10,1,24.8268
+cumul,2-opt intra+Swap,"twoopt,swap",C105,C1,873.8,10,1,5.6207
+cumul,2-opt intra+Swap,"twoopt,swap",C107,C1,898.4,10,1,8.5942
+cumul,2-opt intra+Swap,"twoopt,swap",C108,C1,891.1,10,1,7.7118
+cumul,2-opt intra+Swap,"twoopt,swap",C203,C2,848.1,4,1,44.0632
+cumul,2-opt intra+Swap,"twoopt,swap",C206,C2,632.3,3,1,7.901
+cumul,2-opt intra+Swap,"twoopt,swap",C207,C2,714.6,3,1,21.987
+cumul,2-opt intra+Swap,"twoopt,swap",C208,C2,692.4,3,1,18.1973
+cumul,2-opt intra+Swap,"twoopt,swap",R102,R1,1607.4,19,1,9.6004
+cumul,2-opt intra+Swap,"twoopt,swap",R103,R1,1415.4,16,1,17.101
+cumul,2-opt intra+Swap,"twoopt,swap",R105,R1,1551.5,15,1,14.4765
+cumul,2-opt intra+Swap,"twoopt,swap",R107,R1,1274.3,12,1,19.6975
+cumul,2-opt intra+Swap,"twoopt,swap",R108,R1,1197.9,11,1,28.5163
+cumul,2-opt intra+Swap,"twoopt,swap",R111,R1,1246.9,12,1,18.8996
+cumul,2-opt intra+Swap,"twoopt,swap",R202,R2,1539.4,4,1,49.5144
+cumul,2-opt intra+Swap,"twoopt,swap",R204,R2,1029.1,4,1,40.722
+cumul,2-opt intra+Swap,"twoopt,swap",R207,R2,1038.5,3,1,30.7935
+cumul,2-opt intra+Swap,"twoopt,swap",R208,R2,923.1,3,1,31.6833
+cumul,2-opt intra+Swap,"twoopt,swap",R209,R2,1228.9,4,1,43.7646
+cumul,2-opt intra+Swap,"twoopt,swap",R211,R2,992.5,3,1,32.9182
+cumul,2-opt intra+Swap,"twoopt,swap",RC102,RC,1708.2,15,1,17.2087
+cumul,2-opt intra+Swap,"twoopt,swap",RC103,RC,1475.7,12,1,17.3052
+cumul,2-opt intra+Swap,"twoopt,swap",RC105,RC,1711.3,16,1,13.0541
+cumul,2-opt intra+Swap,"twoopt,swap",RC108,RC,1308.4,11,1,17.4295
+cumul,2-opt intra+Swap,"twoopt,swap",RC202,RC,1538.3,4,1,40.8313
+cumul,2-opt intra+Swap,"twoopt,swap",RC203,RC,1382.0,4,1,49.6157
+cumul,2-opt intra+Swap,"twoopt,swap",RC206,RC,1452.2,4,1,38.16
+cumul,2-opt intra+Swap,"twoopt,swap",RC208,RC,1050.3,3,1,35.3305
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C104,C1,1016.6,10,1,23.5387
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C105,C1,831.3,10,1,0.4835
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C107,C1,830.6,10,1,0.3989
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C108,C1,846.7,10,1,2.345
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C203,C2,848.1,4,1,44.0632
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C206,C2,587.9,3,1,0.3242
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C207,C2,697.6,3,1,19.085
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",C208,C2,641.9,3,1,9.5766
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R102,R1,1541.0,19,1,5.073
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R103,R1,1287.9,16,1,6.5525
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R105,R1,1477.2,15,1,8.9943
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R107,R1,1218.7,12,1,14.4749
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R108,R1,1134.2,11,1,21.6822
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R111,R1,1196.9,12,1,14.1318
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R202,R2,1373.2,4,1,33.3722
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R204,R2,924.3,4,1,26.3914
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R207,R2,1002.5,3,1,26.2594
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R208,R2,850.7,3,1,21.3552
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R209,R2,1092.5,4,1,27.8077
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",R211,R2,985.1,3,1,31.9271
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC102,RC,1595.9,15,1,9.5032
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC103,RC,1385.0,12,1,10.0954
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC105,RC,1667.2,16,1,10.1407
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC108,RC,1278.7,11,1,14.764
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC202,RC,1415.3,4,1,29.5706
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC203,RC,1121.3,4,1,21.3922
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC206,RC,1421.2,4,1,35.2107
+cumul,2-opt intra+Swap+2-opt*,"twoopt,swap,twooptstar",RC208,RC,1032.1,3,1,32.9854
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C104,C1,918.9,10,1,11.6661
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C105,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C107,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C108,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C203,C2,653.7,4,1,11.0413
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C206,C2,586.0,3,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C207,C2,585.8,3,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",C208,C2,632.3,3,1,7.9379
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R102,R1,1493.0,19,1,1.8001
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R103,R1,1273.0,16,1,5.3198
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R105,R1,1414.4,15,1,4.3607
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R107,R1,1159.1,12,1,8.8766
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R108,R1,1080.4,11,1,15.9103
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R111,R1,1190.9,12,1,13.5596
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R202,R2,1186.1,4,1,15.2001
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R204,R2,828.9,4,1,13.3461
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R207,R2,881.4,3,1,11.0076
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R208,R2,802.8,3,1,14.5221
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R209,R2,970.0,4,1,13.4768
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",R211,R2,965.4,3,1,29.2889
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC102,RC,1540.9,15,1,5.7294
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC103,RC,1341.9,12,1,6.6693
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC105,RC,1613.0,16,1,6.5601
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC108,RC,1242.4,11,1,11.506
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC202,RC,1316.8,4,1,20.553
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC203,RC,1038.1,4,1,12.385
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC206,RC,1191.9,4,1,13.3955
+cumul,2-opt intra+Swap+2-opt*+Relocate,"twoopt,swap,twooptstar,relocate",RC208,RC,934.2,3,1,20.3711
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C104,C1,876.7,10,1,6.5379
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C105,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C107,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C108,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C203,C2,635.3,4,1,7.9157
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C206,C2,586.0,3,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C207,C2,585.8,3,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",C208,C2,632.3,3,1,7.9379
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R102,R1,1493.0,19,1,1.8001
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R103,R1,1272.0,16,1,5.237
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R105,R1,1414.4,15,1,4.3607
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R107,R1,1159.1,12,1,8.8766
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R108,R1,1080.4,11,1,15.9103
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R111,R1,1190.9,12,1,13.5596
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R202,R2,1173.8,4,1,14.0054
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R204,R2,828.9,4,1,13.3461
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R207,R2,873.5,3,1,10.0126
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R208,R2,802.8,3,1,14.5221
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R209,R2,954.6,4,1,11.6752
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",R211,R2,965.4,3,1,29.2889
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC102,RC,1533.1,15,1,5.1942
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC103,RC,1334.9,12,1,6.1129
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC105,RC,1568.1,15,1,3.5938
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC108,RC,1242.4,11,1,11.506
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC202,RC,1288.8,4,1,17.9896
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC203,RC,1036.9,4,1,12.2551
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC206,RC,1092.8,4,1,3.9673
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt,"twoopt,swap,twooptstar,relocate,oropt",RC208,RC,926.6,3,1,19.3918
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C104,C1,876.7,10,1,6.5379
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C105,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C107,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C108,C1,827.3,10,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C203,C2,635.3,4,1,7.9157
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C206,C2,586.0,3,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C207,C2,585.8,3,1,0.0
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",C208,C2,632.3,3,1,7.9379
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R102,R1,1493.0,19,1,1.8001
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R103,R1,1272.0,16,1,5.237
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R105,R1,1414.4,15,1,4.3607
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R107,R1,1159.1,12,1,8.8766
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R108,R1,1042.6,11,1,11.855
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R111,R1,1190.9,12,1,13.5596
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R202,R2,1173.8,4,1,14.0054
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R204,R2,828.9,4,1,13.3461
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R207,R2,873.5,3,1,10.0126
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R208,R2,792.7,3,1,13.0813
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R209,R2,954.6,4,1,11.6752
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",R211,R2,965.4,3,1,29.2889
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC102,RC,1533.1,15,1,5.1942
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC103,RC,1334.9,12,1,6.1129
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC105,RC,1568.1,15,1,3.5938
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC108,RC,1183.8,11,1,6.2466
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC202,RC,1288.8,4,1,17.9896
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC203,RC,1006.8,4,1,8.9964
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC206,RC,1092.8,4,1,3.9673
+cumul,2-opt intra+Swap+2-opt*+Relocate+Or-opt+Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt,cross",RC208,RC,926.6,3,1,19.3918
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C104,C1,958.4,10,1,16.4662
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C105,C1,827.3,10,1,0.0
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C107,C1,827.3,10,1,0.0
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C108,C1,827.3,10,1,0.0
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C203,C2,635.3,4,1,7.9157
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C206,C2,586.0,3,1,0.0
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C207,C2,585.8,3,1,0.0
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",C208,C2,632.3,3,1,7.9379
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R102,R1,1493.0,19,1,1.8001
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R103,R1,1263.6,16,1,4.5421
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R105,R1,1414.4,15,1,4.3607
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R107,R1,1175.4,12,1,10.4077
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R108,R1,1071.4,11,1,14.9447
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R111,R1,1182.9,12,1,12.7968
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R202,R2,1127.8,4,1,9.5377
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R204,R2,826.0,4,1,12.9495
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R207,R2,897.1,3,1,12.9849
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R208,R2,794.0,3,1,13.2668
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R209,R2,937.6,4,1,9.6865
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",R211,R2,935.1,3,1,25.231
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC102,RC,1533.1,15,1,5.1942
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC103,RC,1334.9,12,1,6.1129
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC105,RC,1568.1,15,1,3.5938
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC108,RC,1181.4,11,1,6.0312
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC202,RC,1302.3,4,1,19.2255
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC203,RC,1086.3,4,1,17.6031
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC206,RC,1233.2,4,1,17.3247
+loo,sem 2-opt intra,"swap,twooptstar,relocate,oropt,cross",RC208,RC,924.4,3,1,19.1084
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C104,C1,876.6,10,1,6.5257
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C105,C1,827.3,10,1,0.0
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C107,C1,827.3,10,1,0.0
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C108,C1,827.3,10,1,0.0
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C203,C2,635.3,4,1,7.9157
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C206,C2,586.0,3,1,0.0
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C207,C2,585.8,3,1,0.0
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",C208,C2,632.3,3,1,7.9379
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R102,R1,1497.5,19,1,2.1069
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R103,R1,1290.3,16,1,6.7511
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R105,R1,1406.2,15,1,3.7556
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R107,R1,1170.6,12,1,9.9568
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R108,R1,1037.2,10,1,11.2756
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R111,R1,1184.2,12,1,12.9208
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R202,R2,1128.2,4,1,9.5765
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R204,R2,834.3,4,1,14.0845
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R207,R2,931.5,3,1,17.3174
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R208,R2,782.7,3,1,11.6548
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R209,R2,982.4,4,1,14.9275
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",R211,R2,941.4,3,1,26.0747
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC102,RC,1533.5,15,1,5.2216
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC103,RC,1360.7,12,1,8.1638
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC105,RC,1602.5,16,1,5.8664
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC108,RC,1190.1,11,1,6.8121
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC202,RC,1276.5,4,1,16.8635
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC203,RC,1077.8,4,1,16.6829
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC206,RC,1205.4,4,1,14.6799
+loo,sem Swap,"twoopt,twooptstar,relocate,oropt,cross",RC208,RC,942.7,3,1,21.4663
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C104,C1,876.7,10,1,6.5379
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C105,C1,827.3,10,1,0.0
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C107,C1,827.3,10,1,0.0
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C108,C1,827.3,10,1,0.0
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C203,C2,622.2,4,1,5.6905
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C206,C2,586.0,3,1,0.0
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C207,C2,585.8,3,1,0.0
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",C208,C2,585.8,3,1,0.0
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R102,R1,1506.0,19,1,2.6865
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R103,R1,1303.7,16,1,7.8597
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R105,R1,1440.5,15,1,6.2864
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R107,R1,1208.0,12,1,13.4698
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R108,R1,1043.8,11,1,11.9837
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R111,R1,1152.6,12,1,9.9075
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R202,R2,1187.9,4,1,15.3749
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R204,R2,863.6,4,1,18.0911
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R207,R2,879.0,3,1,10.7053
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R208,R2,819.3,3,1,16.8759
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R209,R2,988.2,4,1,15.606
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",R211,R2,915.5,3,1,22.6061
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC102,RC,1529.2,15,1,4.9266
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC103,RC,1392.5,12,1,10.6916
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC105,RC,1596.1,16,1,5.4436
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC108,RC,1184.6,11,1,6.3184
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC202,RC,1399.1,4,1,28.0875
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC203,RC,1159.6,4,1,25.5386
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC206,RC,1121.2,4,1,6.6692
+loo,sem 2-opt*,"twoopt,swap,relocate,oropt,cross",RC208,RC,925.8,3,1,19.2888
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C104,C1,876.1,10,1,6.4649
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C105,C1,831.3,10,1,0.4835
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C107,C1,830.6,10,1,0.3989
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C108,C1,830.6,10,1,0.3989
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C203,C2,634.5,4,1,7.7799
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C206,C2,586.0,3,1,0.0
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C207,C2,696.5,3,1,18.8972
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",C208,C2,632.5,3,1,7.972
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R102,R1,1539.0,19,1,4.9366
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R103,R1,1287.9,16,1,6.5525
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R105,R1,1477.2,15,1,8.9943
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R107,R1,1184.4,12,1,11.2531
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R108,R1,1031.5,10,1,10.6641
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R111,R1,1194.0,12,1,13.8552
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R202,R2,1213.7,4,1,17.8807
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R204,R2,875.7,4,1,19.7457
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R207,R2,932.3,3,1,17.4181
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R208,R2,799.2,3,1,14.0086
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R209,R2,1009.0,4,1,18.0393
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",R211,R2,910.7,3,1,21.9633
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC102,RC,1589.5,15,1,9.0641
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC103,RC,1365.2,12,1,8.5215
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC105,RC,1650.1,16,1,9.011
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC108,RC,1210.9,11,1,8.6789
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC202,RC,1337.9,4,1,22.4847
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC203,RC,1048.2,4,1,13.4784
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC206,RC,1210.9,4,1,15.2031
+loo,sem Relocate,"twoopt,swap,twooptstar,oropt,cross",RC208,RC,970.8,3,1,25.087
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C104,C1,918.9,10,1,11.6661
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C105,C1,827.3,10,1,0.0
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C107,C1,827.3,10,1,0.0
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C108,C1,827.3,10,1,0.0
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C203,C2,653.7,4,1,11.0413
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C206,C2,586.0,3,1,0.0
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C207,C2,585.8,3,1,0.0
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",C208,C2,632.3,3,1,7.9379
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R102,R1,1493.0,19,1,1.8001
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R103,R1,1273.0,16,1,5.3198
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R105,R1,1414.4,15,1,4.3607
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R107,R1,1159.1,12,1,8.8766
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R108,R1,1042.6,11,1,11.855
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R111,R1,1190.9,12,1,13.5596
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R202,R2,1186.1,4,1,15.2001
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R204,R2,828.9,4,1,13.3461
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R207,R2,881.4,3,1,11.0076
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R208,R2,792.7,3,1,13.0813
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R209,R2,970.0,4,1,13.4768
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",R211,R2,965.4,3,1,29.2889
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC102,RC,1540.9,15,1,5.7294
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC103,RC,1341.9,12,1,6.6693
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC105,RC,1613.0,16,1,6.5601
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC108,RC,1183.8,11,1,6.2466
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC202,RC,1316.8,4,1,20.553
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC203,RC,1028.2,4,1,11.3132
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC206,RC,1082.5,4,1,2.9873
+loo,sem Or-opt,"twoopt,swap,twooptstar,relocate,cross",RC208,RC,934.2,3,1,20.3711
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C104,C1,876.7,10,1,6.5379
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C105,C1,827.3,10,1,0.0
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C107,C1,827.3,10,1,0.0
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C108,C1,827.3,10,1,0.0
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C203,C2,635.3,4,1,7.9157
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C206,C2,586.0,3,1,0.0
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C207,C2,585.8,3,1,0.0
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",C208,C2,632.3,3,1,7.9379
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R102,R1,1493.0,19,1,1.8001
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R103,R1,1272.0,16,1,5.237
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R105,R1,1414.4,15,1,4.3607
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R107,R1,1159.1,12,1,8.8766
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R108,R1,1080.4,11,1,15.9103
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R111,R1,1190.9,12,1,13.5596
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R202,R2,1173.8,4,1,14.0054
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R204,R2,828.9,4,1,13.3461
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R207,R2,873.5,3,1,10.0126
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R208,R2,802.8,3,1,14.5221
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R209,R2,954.6,4,1,11.6752
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",R211,R2,965.4,3,1,29.2889
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC102,RC,1533.1,15,1,5.1942
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC103,RC,1334.9,12,1,6.1129
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC105,RC,1568.1,15,1,3.5938
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC108,RC,1242.4,11,1,11.506
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC202,RC,1288.8,4,1,17.9896
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC203,RC,1036.9,4,1,12.2551
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC206,RC,1092.8,4,1,3.9673
+loo,sem Cross-exch.,"twoopt,swap,twooptstar,relocate,oropt",RC208,RC,926.6,3,1,19.3918
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C104,C1,876.7,10,1,6.5379
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C105,C1,827.3,10,1,0.0
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C107,C1,827.3,10,1,0.0
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C108,C1,827.3,10,1,0.0
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C203,C2,635.3,4,1,7.9157
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C206,C2,586.0,3,1,0.0
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C207,C2,585.8,3,1,0.0
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",C208,C2,632.3,3,1,7.9379
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R102,R1,1493.0,19,1,1.8001
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R103,R1,1272.0,16,1,5.237
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R105,R1,1414.4,15,1,4.3607
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R107,R1,1159.1,12,1,8.8766
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R108,R1,1042.6,11,1,11.855
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R111,R1,1190.9,12,1,13.5596
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R202,R2,1173.8,4,1,14.0054
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R204,R2,828.9,4,1,13.3461
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R207,R2,873.5,3,1,10.0126
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R208,R2,792.7,3,1,13.0813
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R209,R2,954.6,4,1,11.6752
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",R211,R2,965.4,3,1,29.2889
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC102,RC,1533.1,15,1,5.1942
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC103,RC,1334.9,12,1,6.1129
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC105,RC,1568.1,15,1,3.5938
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC108,RC,1183.8,11,1,6.2466
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC202,RC,1288.8,4,1,17.9896
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC203,RC,1006.8,4,1,8.9964
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC206,RC,1092.8,4,1,3.9673
+kit,kit completo (6),"twoopt,swap,twooptstar,relocate,oropt,cross",RC208,RC,926.6,3,1,19.3918

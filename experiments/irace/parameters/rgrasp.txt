@@ -1,5 +1,17 @@
-# irace parameter space — GRASP reativo (Prais & Ribeiro; grade de alpha fixa).
-# Calibra APENAS delta e block (qualidade); K é FIXADO pela análise de joelho.
-# nome   switch       tipo   intervalo
-delta    "--delta "   r      (0.5, 3.0)
-block    "--block "   i      (20, 200)
+# irace parameter space — GRASP reativo (Prais & Ribeiro, 2000).
+# Calibra APENAS delta e a cadencia de reponderacao; K e FIXADO pela analise de joelho.
+#
+# block_frac SUBSTITUI o antigo `block` em iteracoes absolutas. Motivo: com o
+# intervalo (20,200) o irace escolheu 199 -- a fronteira superior -- e com K=250
+# isso da UMA reponderacao por execucao, ou seja, o mecanismo reativo nao opera
+# (medido em docs/verificacao/02-algoritmos-de-melhoria.md). Nada no criterio do
+# irace penaliza um reativo que nao reage, entao o parametro precisa ser
+# expresso de forma livre de escala: block = round(block_frac * K).
+#
+#   block_frac = 0,04  ->  25 reponderacoes    block_frac = 0,40  ->  2,5
+#
+# O teto de 0,4 garante ao menos ~2 reponderacoes; o piso de 0,02 mantem ~4
+# amostras por alpha em cada bloco (a grade tem 10 alphas).
+# nome        switch            tipo   intervalo
+delta         "--delta "        r      (0.5, 3.0)
+block_frac    "--block-frac "   r      (0.02, 0.40)

@@ -15,7 +15,7 @@ de cada meta-heurística (aqueles que os próprios autores expõem) são calibra
 | Elemento | Decisão | Justificativa |
 |---|---|---|
 | Convenção de distância (trunc. 1 casa) | **fixo** | Convenção DIMACS; verificada contra as 56 referências. |
-| Parâmetros da I1 (μ=1, λ=2, α₁=1, α₂=0) | **fixo** | Configuração canônica de Solomon (1987); a I1 é semente comum, não objeto de comparação. |
+| Parâmetros da I1 (μ=1, λ=2, α₁=1, α₂=0) | **fixo** | Uma das **quatro** combinações que Solomon (1987, p.259) testa, com o primeiro dos dois critérios de semente — não "a configuração canônica". O autor publica a I1 como **melhor de oito execuções** e conclui (p.263) que a inserção por tempo (α₂=1) é superior. A I1 é semente comum a todos os métodos, por isso é fixada; a fidelidade da implementação é verificada em [docs/verificacao/01-solomon-i1.md](../docs/verificacao/01-solomon-i1.md), que mede o custo desta escolha. |
 | Kit de 5 vizinhanças | **fixo** | Justificado por ablação (`results/ablation_summary.csv`); o mesmo para todos = justiça. |
 | Ordem do VND | **fixo** | Determinística; mesma para todos. |
 | Nº de execuções (30 estocásticas) | **fixo** | Prática padrão em meta-heurísticas para estabilidade estatística. |

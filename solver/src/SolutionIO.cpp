@@ -32,6 +32,20 @@ ParsedSolution read_solution_file(const std::string& path) {
                 try { ps.cost = std::stod(tk.back()); }
                 catch (...) { /* ignore malformed cost */ }
             }
+        } else if (util::contains(s, "Reference")) {
+            // Only accept a lone, fully-numeric token after the colon. The other
+            // SINTEF files hold prose ("... Springer 2007.", "N/A", a URL), and
+            // a loose parse would happily read "2007." as a cost.
+            const std::size_t colon = s.find(':');
+            if (colon == std::string::npos) continue;
+            const auto tk = util::tokens(s.substr(colon + 1));
+            if (tk.size() == 1) {
+                try {
+                    std::size_t used = 0;
+                    const double v = std::stod(tk[0], &used);
+                    if (used == tk[0].size()) ps.reference = v;   // whole token consumed
+                } catch (...) { /* not a number: a real citation */ }
+            }
         }
     }
     return ps;

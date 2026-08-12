@@ -1,5 +1,5 @@
 {
-  "grasp": 250,
-  "rgrasp": 250,
-  "tabu": 1400
+  "grasp": 1600,
+  "rgrasp": 1600,
+  "tabu": 800
 }

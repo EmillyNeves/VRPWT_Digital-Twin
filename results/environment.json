@@ -1,0 +1,31 @@
+{
+  "cpu": "Intel(R) Core(TM) Ultra 9 285K",
+  "cpu_threads": 24,
+  "os": "Linux 7.0.0-28-generic",
+  "distro": "Ubuntu 24.04.4 LTS",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "cxx_flags": "-std=c++20 -O2 -Wall -Wextra",
+  "python": "3.12.3",
+  "git_commit": "b0f10580",
+  "git_dirty": true,
+  "seed_scheme": "make_seed(base, nome_da_instancia, indice) -- a semente combina de forma deterministica um valor base, o nome da instancia e o indice da execucao, de modo que cada execucao e reproduzivel isoladamente",
+  "python_packages": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9",
+    "scikit_posthocs": "0.14.0"
+  },
+  "tuned": {
+    "grasp": "--alpha 0.1517 --max-no-improve 250",
+    "rgrasp": "--delta 1.3992 --block 199 --max-no-improve 250",
+    "tabu": "--tenure 39 --max-no-improve 1400"
+  },
+  "fixed_K": {
+    "grasp": 250,
+    "rgrasp": 250,
+    "tabu": 1400
+  },
+  "train_size": 28,
+  "test_size": 28
+}

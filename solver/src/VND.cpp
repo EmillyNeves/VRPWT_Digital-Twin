@@ -3,9 +3,31 @@
 
 namespace vrptw {
 
+// Ordem por COMPLEXIDADE CRESCENTE, conforme Hansen & Mladenovic (2001) -- "the
+// neighbourhoods should be ordered so that the simplest is explored first" -- e
+// conforme o planejamento do projeto (docs/planejamento/neighborhood_selection_approach.md).
+//
+// A ordem abaixo vem do custo MEDIDO de uma varredura completa (teste
+// neighborhood_scan_cost_ordering), nao da ordenacao teorica do planejamento:
+// aquele documento ordena OITO operadores separados, enquanto esta implementacao
+// FUNDE intra e inter em Relocate, Swap e Or-opt. A fusao muda o custo relativo
+// -- o 2-opt intra varre R rotas, o Relocate varre R^2 pares -- e o 2-opt intra
+// passa a ser o mais barato por duas ordens de grandeza.
+//
+//   2-opt intra   ~10 us     (intra: R * L^2)
+//   Swap          ~170 us    (R^2/2 * L^2)
+//   Relocate      ~320 us    (R^2 * L^2)
+//   Or-opt        ~1000 us   (R^2 * L^2, cadeias de 2-3)
+//   Cross-exch.   ~1700 us   (R^2 * L^2 * 9 combinacoes de segmento)
+//
+//   2-opt*        ~300 us    (R^2 * L^2, caudas de comprimento arbitrario)
+//
+// O 2-opt* e o oitavo movimento listado no relatorio parcial. A ablacao com
+// Wilcoxon+Holm nas 28 instancias de treino mostrou que ele melhora em 8 e piora
+// em NENHUMA (-1,291 pp em media), e por isso foi incorporado
+// (docs/verificacao/03-vizinhancas.md).
 std::vector<Neighborhood> default_vnd_order() {
-    return {Neighborhood::Relocate, Neighborhood::OrOpt, Neighborhood::Swap,
-            Neighborhood::TwoOpt, Neighborhood::CrossExchange};
+    return all_neighborhoods();   // decisao 2.5: uma unica lista, lida tambem pela Tabu
 }
 
 Solution vnd_local_search(const Instance& inst, const DistanceMatrix& dm, Solution sol,

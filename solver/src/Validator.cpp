@@ -27,18 +27,23 @@ ValidationResult validate(const Instance& inst, const DistanceMatrix& dm, const 
             res.distance += dm(prev, c);            // cost
             t += dm.time(prev, c);                  // arrival (time matrix; == distance by default)
             const Customer& cust = inst.node(c);
-            if (t < cust.ready) t = cust.ready;     // wait until window opens
+            if (t < cust.ready) {                   // wait until window opens
+                res.waiting_time += cust.ready - t;
+                t = cust.ready;
+            }
             if (t > cust.due + kEps) {
                 res.time_ok = false;
                 res.errors.push_back("janela violada no cliente " + std::to_string(c));
             }
             t += cust.service;                      // departure
+            res.service_time += cust.service;
             load += cust.demand;
             prev = c;
         }
 
         res.distance += dm(prev, 0);                // return to depot (cost)
         t += dm.time(prev, 0);                      // arrival back (time matrix)
+        res.schedule_time += t - inst.depot().ready;   // route duration (departure at depot.ready)
         if (t > inst.depot().due + kEps) {
             res.returns_to_depot_ok = false;
             res.errors.push_back("retorno ao deposito apos o horizonte");

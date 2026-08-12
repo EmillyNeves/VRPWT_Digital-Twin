@@ -1,0 +1,7 @@
+config,delta_gap_pp,worse,better,tie,p_wilcoxon,p_holm,significant
+sem 2-opt intra,1.0014,8,8,12,0.747607,0.747607,nao
+sem Swap,0.9841,13,8,7,0.178316,0.534947,nao
+sem 2-opt*,1.4165,16,6,6,0.043637,0.174548,nao
+sem Relocate,3.1519,23,4,1,0.000257,0.001544,sim
+sem Or-opt,0.7595,12,1,15,0.004329,0.021644,sim
+sem Cross-exch.,0.5005,4,0,24,0.190757,0.534947,nao

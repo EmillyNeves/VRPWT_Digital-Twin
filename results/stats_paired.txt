@@ -3,19 +3,19 @@ instancias lidas: 56  (treino 28 / teste 28)
 ====================================================================================
 FRIEDMAN — conjunto de TESTE (28), resultado primario
 ====================================================================================
-chi2 = 94.12 (sem correcao de empates 85.0; C = 0.9036)  p = 1.75e-19  CD(k=5) = 1.1528
-ranks medios: {'GRASP': 1.804, 'GRASP-R': 1.804, 'Tabu': 2.625, 'VND': 3.768, 'I1': 5.0}
+chi2 = 94.15 (sem correcao de empates 85.1; C = 0.9036)  p = 1.73e-19  CD(k=5) = 1.1528
+ranks medios: {'GRASP': 1.768, 'GRASP-R': 1.839, 'Tabu': 2.625, 'VND': 3.768, 'I1': 5.0}
 
 ====================================================================================
 FRIEDMAN — todas as 56 (inclui as 28 vistas pelo irace)
 ====================================================================================
-chi2 = 186.37 (sem correcao de empates 167.7; C = 0.9000)  p = 3.2e-39  CD(k=5) = 0.8151
-ranks medios: {'GRASP': 1.768, 'GRASP-R': 1.857, 'Tabu': 2.643, 'VND': 3.732, 'I1': 5.0}
+chi2 = 185.36 (sem correcao de empates 167.3; C = 0.9027)  p = 5.27e-39  CD(k=5) = 0.8151
+ranks medios: {'GRASP': 1.804, 'GRASP-R': 1.83, 'Tabu': 2.634, 'VND': 3.732, 'I1': 5.0}
 
 ====================================================================================
 SENSIBILIDADE DO NEMENYI AO POOL (Benavoli et al., 2016)
 ====================================================================================
-56 instancias, |rank(GRASP) - rank(Tabu)| = 0.8750
+56 instancias, |rank(GRASP) - rank(Tabu)| = 0.8304
   k=5 (com I1):  CD = 0.8151  ->  significativo
   k=4 (sem I1):  CD = 0.6268  ->  SIGNIFICATIVO
   (os ranks dos demais metodos nao mudam: a I1 e dominada em todas as instancias)
@@ -24,3 +24,38 @@ SENSIBILIDADE DO NEMENYI AO POOL (Benavoli et al., 2016)
 WILCOXON + HOLM — conjunto de TESTE (28), resultado PRIMARIO
 ====================================================================================
 par                 A melhor  B melhor  empate    p bruto     p Holm  decisao
+I1 x VND                   0        28       0   4.00e-06   4.00e-05  VND melhor (signif.)
+I1 x GRASP                 0        28       0   4.00e-06   4.00e-05  GRASP melhor (signif.)
+I1 x GRASP-R               0        28       0   4.00e-06   4.00e-05  GRASP-R melhor (signif.)
+I1 x Tabu                  0        28       0   4.00e-06   4.00e-05  Tabu melhor (signif.)
+VND x GRASP                0        24       4   1.94e-05   1.16e-04  GRASP melhor (signif.)
+VND x GRASP-R              0        24       4   1.94e-05   1.16e-04  GRASP-R melhor (signif.)
+VND x Tabu                 0        23       5   2.89e-05   1.16e-04  Tabu melhor (signif.)
+GRASP x Tabu              18         3       7   2.29e-04   6.88e-04  GRASP melhor (signif.)
+GRASP-R x Tabu            18         3       7   2.29e-04   6.88e-04  GRASP-R melhor (signif.)
+GRASP x GRASP-R           11         9       8   9.55e-01   9.55e-01  sem evidencia de diferenca
+
+====================================================================================
+WILCOXON + HOLM — todas as 56
+====================================================================================
+par                 A melhor  B melhor  empate    p bruto     p Holm  decisao
+I1 x VND                   0        56       0   7.76e-11   7.76e-10  VND melhor (signif.)
+I1 x GRASP                 0        56       0   7.76e-11   7.76e-10  GRASP melhor (signif.)
+I1 x GRASP-R               0        56       0   7.76e-11   7.76e-10  GRASP-R melhor (signif.)
+I1 x Tabu                  0        56       0   7.76e-11   7.76e-10  Tabu melhor (signif.)
+VND x GRASP                0        47       9   2.48e-09   1.49e-08  GRASP melhor (signif.)
+VND x GRASP-R              0        47       9   2.48e-09   1.49e-08  GRASP-R melhor (signif.)
+VND x Tabu                 1        45      10   3.89e-09   1.56e-08  Tabu melhor (signif.)
+GRASP-R x Tabu            36         6      14   1.61e-07   4.84e-07  GRASP-R melhor (signif.)
+GRASP x Tabu              36         7      13   1.65e-07   4.84e-07  GRASP melhor (signif.)
+GRASP x GRASP-R           22        20      14   3.65e-01   3.65e-01  sem evidencia de diferenca
+
+====================================================================================
+GAP MEDIO TREINO x TESTE (medida direta de superajuste da calibragem)
+====================================================================================
+algoritmo   treino(28)  teste(28)  diferenca
+I1              34.295     37.640     +3.345
+VND              8.250      8.607     +0.357
+GRASP            1.908      2.006     +0.099
+GRASP-R          1.764      2.004     +0.240
+Tabu             3.853      4.043     +0.190

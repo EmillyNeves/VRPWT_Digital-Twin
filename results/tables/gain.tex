@@ -1,0 +1,13 @@
+\begin{table}[H]
+\centering
+\caption{A calibração valeu a pena? Parâmetros clássicos da literatura ($\alpha{=}0{,}30$; $\delta{=}1{,}0$, \textit{block\_frac}$=0{,}1$; \textit{tenure}$=15$) contra os calibrados pelo \textit{irace}, nas 28 instâncias de \emph{teste} --- nunca vistas pela calibração ---, com 30 sementes e o mesmo $K=800$. Ganho positivo = calibrado melhor; $p$ do teste de Wilcoxon pareado.}\label{tab:gain}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Cenário} & \textbf{Gap clássico (\%)} & \textbf{Gap calibrado (\%)} & \textbf{Ganho (pp)} & \textbf{melhor/pior/empate} & $p$ \\
+\midrule
+GRASP & 2{,}01 & 2{,}03 & -0{,}02 & 9/11/8 & 0{,}6316 \\
+GRASP reativo & 2{,}03 & 2{,}00 & +0{,}03 & 14/6/8 & 0{,}0496 \\
+Busca Tabu & 5{,}30 & 4{,}04 & +1{,}26 & 13/6/9 & 0{,}0431 \\
+\bottomrule
+\end{tabular}
+\end{table}

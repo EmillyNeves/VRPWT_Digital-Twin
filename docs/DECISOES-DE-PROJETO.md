@@ -41,7 +41,7 @@
 | 3.1b | **K = 800, igual para os três métodos** | orçamento declarado; ver nota | `experiments/config/fixed_K.json` |
 | 3.2 | Mesmo teto de tempo por execução para todos | `conformance_audit.md` §6 | — (600 s no pipeline) |
 | 3.3 | Mesmo esquema de sementes por algoritmo | `conformance_audit.md` §6 | — (`runner.py`) |
-| 3.4 | Perfis de tempo por algoritmo (Quadro 3) | parcial, Quadro 3 | ⚠️ uma linha não se sustenta |
+| 3.4 | Perfis de tempo por algoritmo (Quadro 3) | parcial, Quadro 3 | ✅ resolvido — ver Divergências ~~D2~~ |
 
 > ### 3.1 — resolvido
 >
@@ -164,8 +164,8 @@ Confundir as duas foi o modo de falha que originou este registro.
 | # | O parcial diz | O trabalho faz | Onde declarar |
 |---|---|---|---|
 | ~~D1~~ | `:200` — oito movimentos avaliados, *"seguida da seleção de um subconjunto mais promissor"* | **não é divergência**: o procedimento de seleção foi executado e sua resposta foi o conjunto completo. Ver nota abaixo | reportar como resultado da seleção |
-| D2 | Quadro 3 — Busca Tabu tem *"resposta mais ágil do que abordagens mais intensivas"* | não se sustenta: a razão Tabu/GRASP vai de 5,62× a 0,58× conforme a instância | Quadro 3 reformulado (decisão 3.4) |
-| D3 | `:295` — Figura da C102, *"o GRASP reativo apresentou o melhor resultado"* | os painéis vêm do solver antigo e não reproduzem; o VND sozinho já chega a 841,1 contra os 903,7 do painel | legenda da figura regerada |
+| ~~D2~~ | Quadro 3 — Busca Tabu tem *"resposta mais ágil"* | ✅ **resolvido no relatório final**: caracterizada como propriedade *média* (mediana 7,4× mais rápida que o GRASP sob K=800), não garantida por instância (faixa 0,57×–17,3×). Está na leitura da Tabela de desempenho global | — |
+| ~~D3~~ | `:295` — Figura da C102, *"o GRASP reativo apresentou o melhor resultado"* | ✅ **verificado com o estudo novo**: I1 = 1039,7 e TODOS os métodos de melhoria empatam no ótimo (827,3). O "vencedor" do parcial era artefato do solver antigo; o relatório final usa a figura de evolução da C101 e não repete a alegação | — |
 | ~~D4~~ | Quadro 1 — comunicação **LoRaWAN** no gêmeo digital | **deixa de ser divergência**: decidido implementar (opção A). Vira divergência de novo apenas se não for implementado até a entrega | — |
 
 > ### D1 — por que NÃO é divergência

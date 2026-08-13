@@ -188,7 +188,7 @@ def bloco_pareado(data, names, titulo):
         if pa >= 0.05:
             dec = "sem evidencia de diferenca"
         else:
-            dec = f"{lab.split(' x ')[0 if w > l else 2]} melhor (signif.)"
+            dec = f"{lab.split(' x ')[0 if w > l else 1]} melhor (signif.)"
         print(f"{lab:18s} {w:9d} {l:9d} {t:7d} {p:10.2e} {pa:10.2e}  {dec}")
     print()
 

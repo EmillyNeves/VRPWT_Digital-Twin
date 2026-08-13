@@ -48,22 +48,35 @@ INSTANCES = None      # None => conjunto de TESTE (experiments/config/test.txt)
 
 
 def _quality_flags(spec):
-    """Mantém apenas os parâmetros de QUALIDADE calibrados, descartando o critério
-    de parada por iterações sem melhoria (--max-no-improve N): este experimento roda
-    por tempo fixo T, então o algoritmo deve usar o orçamento inteiro."""
+    """Mantém apenas os parâmetros de QUALIDADE, descartando o critério de parada
+    por iterações sem melhoria (--max-no-improve N): este experimento roda por
+    tempo fixo T, então o algoritmo deve usar o orçamento inteiro.
+
+    CASO ESPECIAL --block-frac: essa flag define o bloco do reativo como fração
+    de K e por isso EXIGE --max-no-improve no solver. Sem K, ela e convertida
+    para o bloco ABSOLUTO equivalente ao K declarado do estudo (frac * K), de
+    modo que a cadencia de reponderacao seja a mesma calibrada. Sem essa
+    conversao o solver aborta e o reativo simplesmente nao roda -- foi o defeito
+    que deixou o rgrasp fora do equal_time.csv e com PI no teto."""
+    K_DECLARADO = 800
     toks = spec.split()
     out, i = [], 0
     while i < len(toks):
         if toks[i] == "--max-no-improve":
             i += 2
             continue
+        if toks[i] == "--block-frac":
+            out += ["--block", str(max(1, round(float(toks[i + 1]) * K_DECLARADO)))]
+            i += 2
+            continue
         out.append(toks[i]); i += 1
     return " ".join(out)
 
 
-# parâmetros calibrados lidos de config/tuned.json (única fonte de verdade), sem o K;
-# o VND não tem parâmetros calibráveis.
-_tuned = json.load(open(TUNED))
+# parâmetros FINAIS do estudo (pos-portao de aceitacao), sem o K; o VND nao tem
+# parametros calibraveis. tuned.json permanece apenas como registro do irace.
+_study = os.path.join(os.path.dirname(TUNED), "study_params.json")
+_tuned = json.load(open(_study if os.path.isfile(_study) else TUNED))
 ALGOS = {"grasp": _quality_flags(_tuned["grasp"]),
          "rgrasp": _quality_flags(_tuned["rgrasp"]),
          "tabu": _quality_flags(_tuned["tabu"]),

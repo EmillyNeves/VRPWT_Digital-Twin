@@ -27,7 +27,7 @@ static void run_grasp(const std::string& name, bool reactive) {
     const double d_vnd = ev.primary(vnd_local_search(inst, dm, s_i1, VndConfig{}));
 
     StoppingCriterion stop(600000);                 // large; iteration count is the binding stop
-    Rng rng(make_seed(12345, name, 0));
+    Rng rng(make_seed(12345, name));
     GraspConfig cfg;
     cfg.reactive = reactive;
     cfg.alpha = 0.3;

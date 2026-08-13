@@ -30,6 +30,25 @@ def main():
 
     df = pd.read_csv(args.runs_csv)
 
+    # GUARDA DE VIABILIDADE (decisao 5.1). O relatorio parcial afirma que "toda
+    # solucao produzida e validada quanto a cobertura de clientes, a capacidade
+    # veicular e a viabilidade das janelas de tempo". Agregar em silencio uma
+    # execucao inviavel quebraria essa afirmacao: uma solucao que viola janela
+    # de tempo costuma ter distancia MENOR, entao ela nao so entra na media como
+    # a puxa para baixo -- o erro se disfarca de bom resultado.
+    #
+    # Uma execucao inviavel e um BUG, nao um ponto amostral: nao ha media a
+    # tirar dela. Por isso isto interrompe, em vez de filtrar.
+    if "feasible" in df.columns:
+        ruins = df[df["feasible"] != 1]
+        if not ruins.empty:
+            print(f"ERRO: {len(ruins)} de {len(df)} execucoes INVIAVEIS no CSV mestre.")
+            for _, r in ruins.head(10).iterrows():
+                print(f"  {r['algorithm']:<7}{r['instance']:<8}semente={r.get('seed', '?')}")
+            print("Uma solucao inviavel e um bug, nao um dado. Investigue com "
+                  "`solver/build/validate` antes de agregar.")
+            raise SystemExit(1)
+
     # ESFORCO UTIL: `time_ms` e o tempo total ate o criterio de parada disparar;
     # `time_to_best_ms` e o instante em que a melhor solucao foi encontrada. A
     # razao entre os dois diz quanto da execucao foi produtivo e quanto foi gasto

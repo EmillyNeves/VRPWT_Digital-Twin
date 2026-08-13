@@ -48,7 +48,7 @@ Estas decisões mudam materialmente o que será escrito. Decida-as primeiro.
 
 | # | Experimento | Como | Se não fizer |
 |---|---|---|---|
-| 2.1 | **Grade de K estendida** | `grasp/rgrasp: [20,40,80,160,320,640,1280,2560]`; `tabu: [100,…,12800]`; ≥10 sementes; critério formal (Kneedle) | escrever: *"K foi limitado pelo orçamento computacional, não pela convergência"* e **apagar** a palavra "joelho" e a legenda da figura |
+| 2.1 | ~~**Grade de K estendida**~~ | ✅ **RESOLVIDO** — grade medida de K=50 a 3200 (`analysis/stopping_budget.py`). Não há joelho com os parâmetros calibrados; K passou a ser **orçamento declarado**, uniforme em 800. A palavra "joelho" e a figura foram removidas do `.tex`; `knee_K.py` foi arquivado. Ver decisão 3.1b | — |
 | 2.2 | **irace com intervalos expandidos** | `tenure ∈ (5,80)`; `block` relativo a K (`block_frac ∈ (0,01; 0,5)`); declarar `seed`, `deterministic=1` para tabu | escrever a ressalva: *"tenure e block venceram na fronteira superior; leia-se 'o melhor dentro da faixa testada', não como ótimo"* + a frase de que o Reativo estava degenerado (1 atualização por execução) |
 | 2.3 | **Comparação sob tempo de CPU igual** | `--budget-ms T*` (≈20 s), K desativado, 30 sementes, 28 de teste; repetir Friedman | a alegação de isonomia do README fica sem suporte |
 | 2.4 | **Integral primal ampliado** | 28 instâncias, sementes uniformes | declarar *"três instâncias, réplicas 5/5/1/1"* e trocar "confirmando" por "sugerindo, em caráter exploratório" |
@@ -109,7 +109,7 @@ Base: `:170-456`. Correções obrigatórias:
 | `:186`, `:366` | o atributo tabu é o **cliente-âncora** (1 para Relocate/Or-opt, 2 para Swap/Cross-exchange), não "todo cliente que o movimento toca" |
 | `:188`, `:456` | o protocolo de semente descrito não é o implementado (o índice da execução está fixo em 0) |
 | `:165` | "as quatro restrições" → cinco (falta o limite de frota), ou implementar a checagem |
-| `:435`, `:440` | **reescrever a subseção de K** conforme 2.1 — se o joelho não existir, dizer que K é decisão de orçamento |
+| ~~`:435`, `:440`~~ | ✅ subseção de K reescrita: K é orçamento declarado e uniforme; figura do joelho substituída pela tabela `results/stopping/budget_K.tex` |
 | `:494` | acrescentar a **ressalva de fronteira** para `tenure` e `block` |
 | Nova subseção | **"A calibragem valeu a pena?"** com a tabela de 1.7 |
 

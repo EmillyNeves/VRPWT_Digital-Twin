@@ -104,7 +104,7 @@ Solution tabu_search(const Instance& inst, const DistanceMatrix& dm, Solution st
             no_improve = 0;                                                   // best improved: reset
             if (log) {
                 const long ms = stop.elapsed_ms();
-                log->on_improve(ms, cur);
+                log->on_improve(ms, cur, iter);
                 log->on_move(++snap_idx, ms, cur, best, "incumbent");
             }
             if (cfg.target >= 0.0 && best_cost <= cfg.target + 1e-6) break;   // target reached (TTT)

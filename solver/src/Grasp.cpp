@@ -98,7 +98,7 @@ Solution grasp(const Instance& inst, const DistanceMatrix& dm, StoppingCriterion
     int    iter = 0;
     int    no_improve = 0;   // consecutive iterations without improving the incumbent
 
-    if (log) log->on_improve(0, best_cost);   // curva anytime comeca na I1, em t=0
+    if (log) log->on_improve(0, best_cost, 0);   // curva anytime comeca na I1, em t=0
 
     while (!stop.should_stop()) {                       // time budget acts only as a safety cap
         if (cfg.max_iters >= 0 && iter >= cfg.max_iters) break;
@@ -124,7 +124,7 @@ Solution grasp(const Instance& inst, const DistanceMatrix& dm, StoppingCriterion
             no_improve = 0;                                                   // incumbent improved: reset
             if (log) {
                 const long ms = stop.elapsed_ms();
-                log->on_improve(ms, c);
+                log->on_improve(ms, c, iter);
                 log->on_move(++snap_idx, ms, c, best, "incumbent");
             }
             if (cfg.target >= 0.0 && best_cost <= cfg.target + 1e-6) break;   // target reached (TTT)

@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
             sol = vnd_local_search(inst, dm, solomon_i1(inst, dm, i1p), cfg, &log);
         } else if (algo == "grasp" || algo == "rgrasp") {
             StoppingCriterion stop(args.getl("budget-ms", 5000));
-            Rng rng(make_seed(static_cast<std::uint64_t>(args.getl("seed", 1)), inst.name, 0));
+            Rng rng(make_seed(static_cast<std::uint64_t>(args.getl("seed", 1)), inst.name));
             GraspConfig cfg;
             cfg.i1 = i1p;
             cfg.reactive = (algo == "rgrasp");

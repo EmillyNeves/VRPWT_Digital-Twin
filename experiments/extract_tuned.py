@@ -25,7 +25,7 @@ def best_cmdline(log_path):
 
 
 def main():
-    # K fixo (joelho), anexado aos parâmetros de qualidade calibrados pelo irace
+    # K (orçamento declarado), anexado aos parâmetros de qualidade calibrados pelo irace
     fixedK = {}
     fk = os.path.join(HERE, "config", "fixed_K.json")
     if os.path.isfile(fk):

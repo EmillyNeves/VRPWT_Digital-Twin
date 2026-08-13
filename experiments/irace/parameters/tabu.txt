@@ -1,5 +1,6 @@
 # irace parameter space — Busca Tabu (forma clássica: tenure).
-# Calibra APENAS o tenure (qualidade); K é FIXADO pela análise de joelho.
+# Calibra APENAS o tenure (qualidade); K é um orçamento DECLARADO
+# (experiments/config/fixed_K.json, decisão 3.1b), não um parâmetro calibrável.
 #
 # INTERVALO ALARGADO. Na calibração anterior o intervalo era (5,40) e o irace
 # escolheu 39 -- a FRONTEIRA SUPERIOR. Um valor de fronteira não é um ótimo, é

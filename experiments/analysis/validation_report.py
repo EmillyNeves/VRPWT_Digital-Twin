@@ -119,6 +119,7 @@ def main():
         w.writerow(["algorithm"] + ROUTE_COLS)
         w.writerows(rows)
 
+    invalidas = sum(1 for r in rows if r[13] == "0")
     if rows:
         cap = [float(r[6]) for r in rows]        # load_slack
         tw = [float(r[11]) for r in rows]        # min_tw_slack
@@ -127,11 +128,21 @@ def main():
         print(f"  folga de capacidade   min={min(cap):8.2f}  (0 = veiculo cheio, ainda valido)")
         print(f"  folga da janela       min={min(tw):8.2f}  (negativo = VIOLACAO)")
         print(f"  folga do horizonte    min={min(hz):8.2f}  (negativo = VIOLACAO)")
-        viol = sum(1 for r in rows if r[13] == "0")
-        print(f"  rotas invalidas       {viol}")
+        print(f"  rotas invalidas       {invalidas}")
 
     print(f"\nartefatos -> {args.out_dir}/validation_summary.csv, validation_routes.csv")
 
+    # O relatorio parcial afirma que TODA solucao e validada quanto a cobertura,
+    # capacidade e janelas de tempo. Imprimir a contagem de violacoes e deixar o
+    # pipeline seguir nao cumpre essa afirmacao -- a contagem some no log. Uma
+    # violacao tem que DERRUBAR a etapa, para que ninguem escreva "todas viaveis"
+    # sobre um resultado que nao foi conferido.
+    if invalidas:
+        print(f"\nFALHA: {invalidas} rota(s) violam janela de tempo, capacidade ou horizonte. "
+              f"Inspecione results/validation_routes.csv (colunas de folga negativa).")
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

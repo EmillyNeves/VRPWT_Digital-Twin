@@ -38,6 +38,7 @@
 | # | Decisão | Fonte | Guarda |
 |---|---|---|---|
 | 3.1 | **Critério de parada: número de iterações sem melhoria (K)** | orientação da orientadora, ago/2026 | ✅ implementado; ver nota |
+| 3.1b | **K = 800, igual para os três métodos** | orçamento declarado; ver nota | `experiments/config/fixed_K.json` |
 | 3.2 | Mesmo teto de tempo por execução para todos | `conformance_audit.md` §6 | — (600 s no pipeline) |
 | 3.3 | Mesmo esquema de sementes por algoritmo | `conformance_audit.md` §6 | — (`runner.py`) |
 | 3.4 | Perfis de tempo por algoritmo (Quadro 3) | parcial, Quadro 3 | ⚠️ uma linha não se sustenta |
@@ -49,6 +50,34 @@
 > O relatório parcial **não menciona critério de parada** — a busca por "critério de parada", "parada", "tempo limite", "iterações", "orçamento" e "sem melhoria" no `.tex` entregue retorna zero ocorrências. A regra de tempo igual aparece apenas em dois documentos internos de planejamento (`irace_calibration_plan.md` §2 e `irace_parameter_justification.md` §4.1), que nunca foram entregues e antecedem esta orientação. **Não há, portanto, desvio a declarar**: o critério é definido pela primeira vez no relatório final.
 >
 > A leitura sob tempo igual (`results/equal_time.csv`, `primal_integral.csv`) permanece como **análise complementar** — não como resultado co-primário. Ela já está implementada e não custa nada reportar.
+
+> ### 3.1b — o valor de K
+>
+> **K = 800 iterações sem melhoria, igual para os três métodos.**
+>
+> Não existe valor ótimo a descobrir: a qualidade do GRASP é monotonicamente não decrescente no número de iterações (Resende & Ribeiro, 2003), e a medição confirma que não há joelho na curva com os parâmetros calibrados. K é, portanto, **orçamento computacional declarado** — que é como a literatura de GRASP e de Busca Tabu trata o assunto.
+>
+> Gap médio nas 28 instâncias de treino, semente única (`results/stopping/convergence.csv`):
+>
+> | K | GRASP | Reativo | Tabu | ranking | GRASP×Reativo | GRASP×Tabu |
+> |---|---|---|---|---|---|---|
+> | 50 | 3,487 | 3,107 | 5,990 | Reativo < GRASP < Tabu | p = 0,2675 | p = 0,0029 |
+> | 100 | 3,150 | 2,713 | 5,471 | Reativo < GRASP < Tabu | p = 0,1531 | p = 0,0015 |
+> | 200 | 2,391 | 2,267 | 4,682 | Reativo < GRASP < Tabu | p = 0,9544 | p = 0,0003 |
+> | 400 | 2,173 | 1,925 | 4,279 | Reativo < GRASP < Tabu | p = 0,9181 | p = 0,0006 |
+> | **800** | **1,863** | **1,652** | **4,042** | Reativo < GRASP < Tabu | p = 0,7060 | p = 0,0009 |
+> | 1600 | 1,674 | 1,524 | 3,636 | Reativo < GRASP < Tabu | p = 0,1591 | p = 0,0012 |
+> | 3200 | 1,469 | 1,201 | 3,284 | Reativo < GRASP < Tabu | p = 0,7481 | p = 0,0005 |
+>
+> Custo por execução em K = 800, medido sem concorrência (`results/stopping/cost.csv`): mediana de **15,6 s** no GRASP, **22,7 s** no Reativo e **6,8 s** na Tabu; pior caso **76 s**, contra o teto de segurança de 600 s. Dobrar para K = 1600 rende 0,19 pp no GRASP e custa 1,8× mais tempo (2,3× no Reativo).
+>
+> **O ranking dos métodos e o resultado dos testes par a par são idênticos numa faixa de 64×** — nenhuma conclusão do estudo depende dessa escolha. Essa invariância vai para o apêndice, como resposta antecipada à objeção "e se outro K desse outra conclusão?".
+>
+> Ressalva a declarar: semente única. O "não significativo" entre GRASP e Reativo pode ser falta de poder, não equivalência — o p-valor oscila entre 0,15 e 0,95, assinatura de ruído. O estudo final, com 30 sementes, é quem decide isso.
+>
+> **Como estes números foram obtidos.** GRASP e Tabu: uma execução em K = 3200 por instância, com os orçamentos menores derivados por truncamento do traço de convergência. Reativo: reexecutado em cada K, porque `--block-frac` faz o intervalo de reponderação escalar com o orçamento e sua trajetória não é truncável. A premissa de truncamento é conferida por `experiments/analysis/stopping_derivation_check.py` — GRASP 24/24, Tabu 24/24, Reativo 22/24 — e a igualdade derivado ≡ executado foi verificada nas 28 instâncias em K = 800.
+>
+> K uniforme entre os métodos preserva a isonomia da regra de parada. A contrapartida é que a iteração custa coisas diferentes em cada método, e o tempo de parede difere — o que é reportado, e complementado pela leitura sob tempo igual.
 
 > ### ⚠️ 3.4 — o Quadro 3 do parcial precisa de um ajuste
 >
@@ -100,16 +129,20 @@
 | 7.2 | Acionamento por limiar configurável | parcial, Quadro 1 | — |
 | 7.3 | Lixeiras ativas viram clientes com janela de tempo | parcial, Quadro 1 | — |
 | 7.4 | Interface com o solver a cada ciclo | parcial, Quadro 1 | — |
-| 7.5 | **Comunicação LoRaWAN (simulada)** | parcial, Quadro 1 | ⚠️ **REQUER DECISÃO** |
+| 7.5 | **Comunicação LoRaWAN (simulada)** | parcial, Quadro 1 | ✅ **decidido: opção A** — implementar |
 
-> ### ⚠️ 7.5 — REQUER DECISÃO
+> ### 7.5 — resolvido: opção A
 >
-> Não existe camada de comunicação: a palavra aparece uma vez, numa string de dashboard.
+> Hoje não existe camada de comunicação — a palavra aparece uma vez, numa string de dashboard.
+> **Decidido implementar** uma camada mínima, para que o Quadro 1 do parcial permaneça
+> verdadeiro sem ressalva. Escopo mínimo suficiente: latência de entrega, perda de pacote e
+> ciclo de *duty* (limite de transmissões por período), aplicados sobre as leituras dos
+> sensores antes de chegarem ao acionamento por limiar.
 >
-> | Opção | Custo |
-> |---|---|
-> | **A** — implementar camada mínima (latência, perda de pacote, ciclo de *duty*) | trabalho novo no 12º mês |
-> | **B** — corrigir o Quadro 1 para "modelo de sensoriamento" e declarar em Limitações | uma linha |
+> **Condição de guarda.** Enquanto não estiver implementado, o Quadro 1 afirma algo que o
+> código não faz. Se a entrega chegar sem a camada, isto volta a ser divergência (D4) e a
+> saída passa a ser a opção B — corrigir o Quadro para "modelo de sensoriamento" e declarar
+> em Limitações. A decisão não pode ficar implícita até o último dia.
 
 ---
 
@@ -118,6 +151,48 @@
 | # | Decisão revogada | Data | Motivo |
 |---|---|---|---|
 | 2.4 | Subconjunto de 4 movimentos (`relocate_intra`, `swap_intra`, `relocate_inter`, `two_opt_inter`) | ago/2026 | 11,388 % de gap contra 8,249 % do conjunto completo (+3,14 pp); descartava o Or-opt, estatisticamente significativo (p = 0,0216 com Holm). Busca exaustiva dos 63 subconjuntos: nenhum domina o completo. Ver `docs/verificacao/03-vizinhancas.md` §3 |
+
+---
+
+## Divergências do relatório parcial ENTREGUE
+
+Distintas das Revogações acima. Uma revogação desfaz decisão de documento interno de
+planejamento e se resolve por escrito, aqui. **Uma divergência do parcial é compromisso
+público**: tem que ser declarada no texto do relatório final, com a evidência que a motivou.
+Confundir as duas foi o modo de falha que originou este registro.
+
+| # | O parcial diz | O trabalho faz | Onde declarar |
+|---|---|---|---|
+| ~~D1~~ | `:200` — oito movimentos avaliados, *"seguida da seleção de um subconjunto mais promissor"* | **não é divergência**: o procedimento de seleção foi executado e sua resposta foi o conjunto completo. Ver nota abaixo | reportar como resultado da seleção |
+| D2 | Quadro 3 — Busca Tabu tem *"resposta mais ágil do que abordagens mais intensivas"* | não se sustenta: a razão Tabu/GRASP vai de 5,62× a 0,58× conforme a instância | Quadro 3 reformulado (decisão 3.4) |
+| D3 | `:295` — Figura da C102, *"o GRASP reativo apresentou o melhor resultado"* | os painéis vêm do solver antigo e não reproduzem; o VND sozinho já chega a 841,1 contra os 903,7 do painel | legenda da figura regerada |
+| ~~D4~~ | Quadro 1 — comunicação **LoRaWAN** no gêmeo digital | **deixa de ser divergência**: decidido implementar (opção A). Vira divergência de novo apenas se não for implementado até a entrega | — |
+
+> ### D1 — por que NÃO é divergência
+>
+> O parcial promete um **procedimento**: avaliar oito movimentos e, a partir deles, selecionar
+> um subconjunto ordenado para compor as vizinhanças do VND. Ele não promete um resultado
+> específico. O procedimento foi executado, e refeito depois que o kit e a ordem mudaram:
+>
+> 1. **Ablação leave-one-out** dos seis operadores, Wilcoxon pareado com correção de Holm, nas
+>    28 instâncias de treino
+> 2. **Busca exaustiva** sobre os $2^6-1 = 63$ subconjuntos próprios
+>
+> **Resposta da seleção: nenhum subconjunto próprio supera o conjunto completo.** O
+> subconjunto de 4 movimentos previamente cogitado custa +3,14 pp e descarta o Or-opt, cuja
+> contribuição é significativa (p = 0,0216 com Holm). O subconjunto selecionado é, portanto, o
+> conjunto todo — os seis operadores que cobrem os oito movimentos.
+>
+> O segundo requisito do parcial, **ordenação por complexidade**, também está cumprido: a
+> ordem vem do custo medido de uma varredura, é garantida por construção
+> (`all_neighborhoods()`) e por teste (`decisao_2_2_ordem_por_complexidade`).
+>
+> **Armadilha de redação a evitar.** Escrever "usamos o conjunto completo" soa como se a
+> seleção não tivesse sido feita. O correto é reportar o procedimento e a resposta: *"a
+> seleção foi conduzida por ablação e busca exaustiva, e indicou que nenhum subconjunto
+> próprio supera o conjunto completo"*. A ablação por família é o dado que sustenta isso e
+> vale como resultado por si — cada operador tem seu regime, e o que é dispensável numa
+> família não é em outra.
 
 ---
 

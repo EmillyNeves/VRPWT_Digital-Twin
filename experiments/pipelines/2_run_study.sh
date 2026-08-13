@@ -22,8 +22,11 @@ RUNS=${2:-30}
 
 SOLVER="$ROOT/solver/build/solve"
 [ -x "$SOLVER" ]          || { echo "ERRO: solver nao compilado. Rode: make -C solver"; exit 1; }
-[ -f config/tuned.json ]  || { echo "ERRO: config/tuned.json ausente (rode 1_calibrate.sh)"; exit 1; }
-echo "=== tuned.json (parâmetros calibrados, incl. K) ==="; cat config/tuned.json; echo
+# study_params.json = parametros FINAIS (pos-portao de aceitacao da calibracao);
+# tuned.json e a saida bruta do irace e permanece como registro de proveniencia.
+PARAMS="${VRPTW_PARAMS:-config/study_params.json}"
+[ -f "$PARAMS" ] || { echo "ERRO: $PARAMS ausente (rode 1_calibrate.sh e o portao de aceitacao)"; exit 1; }
+echo "=== $PARAMS (parâmetros do estudo) ==="; cat "$PARAMS"; echo
 
 INST="$ROOT/data/instances/solomon"
 REFS="$ROOT/data/reference-solutions/dinamics"
@@ -45,7 +48,7 @@ echo "=== figuras didáticas + caracterização das referências ==="
 echo "=== execução: 56 instâncias × 5 algoritmos × $RUNS sementes (jobs=$JOBS) ==="
 "$PY" runner.py --algos i1,vnd,tabu,grasp,rgrasp --runs "$RUNS" \
    --solver "$SOLVER" --instances-dir "$INST" --refs-dir "$REFS" \
-   --params-file config/tuned.json --jobs "$JOBS" \
+   --params-file "${VRPTW_PARAMS:-config/study_params.json}" --jobs "$JOBS" \
    --snapshots-for C101,R101,RC101 \
    --out "$RAW/runs.csv" --sol-dir "$RAW/sol" \
    --trace-dir "$RAW/traces" --snapshots-dir "$RAW/snapshots"
@@ -72,7 +75,12 @@ echo "=== estatística: Wilcoxon pareado + Holm (não depende do conjunto de alg
 "$PY" analysis/stats_paired.py | tee "$ROOT/results/stats_paired.txt" || true
 
 echo "=== prova de viabilidade: janelas de tempo e capacidade, com as margens ==="
-"$PY" analysis/validation_report.py --sol-dir "$RAW/sol" --out-dir "$ROOT/results"
+# SEM `|| true` aqui, de proposito: o relatorio parcial afirma que toda solucao e
+# validada quanto a cobertura, capacidade e janelas de tempo. Uma violacao tem que
+# derrubar a etapa, e nao virar uma linha perdida no log de um pipeline que seguiu.
+"$PY" analysis/validation_report.py --sol-dir "$RAW/sol" --out-dir "$ROOT/results" || {
+    echo "PIPELINE INTERROMPIDO: ha rotas inviaveis. Nenhum resultado deste estudo pode ser reportado."
+    exit 1; }
 
 echo "=== tabela lexicográfica (veículos -> distância) ==="
 "$PY" analysis/lexicographic_table.py || true

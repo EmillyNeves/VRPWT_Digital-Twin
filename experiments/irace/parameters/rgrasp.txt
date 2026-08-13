@@ -1,5 +1,6 @@
 # irace parameter space — GRASP reativo (Prais & Ribeiro, 2000).
-# Calibra APENAS delta e a cadencia de reponderacao; K e FIXADO pela analise de joelho.
+# Calibra APENAS delta e a cadencia de reponderacao; K e um orcamento DECLARADO
+# (experiments/config/fixed_K.json, decisao 3.1b), nao um parametro calibravel.
 #
 # block_frac SUBSTITUI o antigo `block` em iteracoes absolutas. Motivo: com o
 # intervalo (20,200) o irace escolheu 199 -- a fronteira superior -- e com K=250

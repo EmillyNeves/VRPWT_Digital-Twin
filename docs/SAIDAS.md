@@ -38,7 +38,8 @@ results/
 | Ilustração dos operadores | `figures/operadores.png` | `analysis/algo_figures.py` | — (didática, autocontida) |
 | Construção da I1 passo a passo | `figures/construcao_i1.png` | `analysis/algo_figures.py` | — |
 | RCL do GRASP | `figures/grasp_rcl.png` | `analysis/algo_figures.py` | — |
-| Escolha do critério de parada K | `figures/knee_K.png`, `knee_K.csv` | `analysis/knee_K.py` | solver + treino |
+| Sustentação do orçamento K | `stopping/convergence.csv`, `stopping/cost.csv`, `stopping/budget_K.tex` | `analysis/stopping_budget.py`, `analysis/stopping_cost.py` | solver + treino |
+| Guarda do método de medição de K | placar derivado × executado | `analysis/stopping_derivation_check.py` | solver |
 | Calibração (parâmetros e proveniência) | `irace/<algo>/irace.log`, `config/tuned.json` | `pipelines/1_calibrate.sh` | `config/fixed_K.json` |
 
 ### Verificação de fidelidade
@@ -94,8 +95,10 @@ independentes (a qualquer momento)
   analysis/neighborhood_ablation.py   ablação das vizinhanças
 
 calibração
-  analysis/knee_K.py                  -> config/fixed_K.json, figures/knee_K.png
+  analysis/stopping_budget.py         -> results/stopping/convergence.csv
+  analysis/stopping_cost.py           -> results/stopping/cost.csv
   pipelines/1_calibrate.sh            -> irace/, config/tuned.json
+  (config/fixed_K.json é versionado, não gerado — decisão 3.1b)
 
 estudo
   runner.py                           -> raw/runs.csv, sol/, traces/, snapshots/

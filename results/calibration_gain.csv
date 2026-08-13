@@ -1,0 +1,4 @@
+algorithm,n_instances,gap_default,gap_tuned,gain_pp,tuned_better,tuned_worse,tie
+grasp,28,2.0057,2.0278,-0.0221,9,11,8
+rgrasp,28,2.0291,2.0034,0.0257,14,6,8
+tabu,28,5.2994,4.0432,1.2562,13,6,9

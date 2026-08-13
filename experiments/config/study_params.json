@@ -1,0 +1,6 @@
+{
+  "_proveniencia": "Parâmetros FINAIS do estudo, após o portão de aceitação da calibração (docs/verificacao/06-ex-post-calibracao.md). Difere de tuned.json (saída bruta do irace) em UM ponto: o GRASP usa o default da literatura, porque o calibrado não superou o default no holdout (ganho -0,022 pp, Wilcoxon p=0,63) e a regra pré-registrada §6 manda usar o default nesse caso. Reativo e Tabu mantêm os valores calibrados (ganhos +0,026 pp p=0,0496 e +1,256 pp p=0,043).",
+  "grasp": "--alpha 0.3 --max-no-improve 800",
+  "rgrasp": "--delta 1.8517 --block-frac 0.0275 --max-no-improve 800",
+  "tabu": "--tenure 49 --max-no-improve 800"
+}

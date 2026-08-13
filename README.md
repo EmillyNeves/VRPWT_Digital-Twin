@@ -146,12 +146,17 @@ streamlit run dashboard.py               # painel interativo
 (`experiments/config/train.txt` e `test.txt`), estratificadas por família.
 A calibração usa **só** o treino; os resultados reportados usam o teste.
 
-**Critério de parada desacoplado.** O K (iterações sem melhoria) é *fixado*
-pela análise de joelho da curva de convergência
-(`analysis/knee_K.py` → `config/fixed_K.json`), e **não** é calibrado junto com
-os demais parâmetros. O irace então calibra apenas os parâmetros de qualidade,
-com todos os algoritmos parando pelo mesmo critério — comparação em pé de
-igualdade. O tempo (`--budget-ms`) é só teto de segurança.
+**Critério de parada desacoplado.** O K (iterações sem melhoria) é um
+**orçamento declarado**, uniforme entre os métodos (`config/fixed_K.json`), e
+**não** é calibrado: mais iterações sem melhora nunca pioram o gap, então
+calibrar K pelo gap o levaria sempre ao teto do intervalo. O irace calibra
+apenas os parâmetros de qualidade, com todos os algoritmos parando pelo mesmo
+critério — comparação em pé de igualdade. O tempo (`--budget-ms`) é só teto de
+segurança.
+
+O que o valor entrega e o que custa está medido em `analysis/stopping_budget.py`
+→ `results/stopping/`; o ordenamento dos métodos e os testes par a par não mudam
+de K=50 a K=3200. Ver a decisão 3.1b em `docs/DECISOES-DE-PROJETO.md`.
 
 Valores atuais: `grasp` K=250, `rgrasp` K=250, `tabu` K=1400.
 O raciocínio completo está em [experiments/TUNING_RATIONALE.md](experiments/TUNING_RATIONALE.md).

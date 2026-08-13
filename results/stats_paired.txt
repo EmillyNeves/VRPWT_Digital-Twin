@@ -1,0 +1,26 @@
+instancias lidas: 56  (treino 28 / teste 28)
+
+====================================================================================
+FRIEDMAN — conjunto de TESTE (28), resultado primario
+====================================================================================
+chi2 = 94.12 (sem correcao de empates 85.0; C = 0.9036)  p = 1.75e-19  CD(k=5) = 1.1528
+ranks medios: {'GRASP': 1.804, 'GRASP-R': 1.804, 'Tabu': 2.625, 'VND': 3.768, 'I1': 5.0}
+
+====================================================================================
+FRIEDMAN — todas as 56 (inclui as 28 vistas pelo irace)
+====================================================================================
+chi2 = 186.37 (sem correcao de empates 167.7; C = 0.9000)  p = 3.2e-39  CD(k=5) = 0.8151
+ranks medios: {'GRASP': 1.768, 'GRASP-R': 1.857, 'Tabu': 2.643, 'VND': 3.732, 'I1': 5.0}
+
+====================================================================================
+SENSIBILIDADE DO NEMENYI AO POOL (Benavoli et al., 2016)
+====================================================================================
+56 instancias, |rank(GRASP) - rank(Tabu)| = 0.8750
+  k=5 (com I1):  CD = 0.8151  ->  significativo
+  k=4 (sem I1):  CD = 0.6268  ->  SIGNIFICATIVO
+  (os ranks dos demais metodos nao mudam: a I1 e dominada em todas as instancias)
+
+====================================================================================
+WILCOXON + HOLM — conjunto de TESTE (28), resultado PRIMARIO
+====================================================================================
+par                 A melhor  B melhor  empate    p bruto     p Holm  decisao

@@ -18,6 +18,7 @@ import tempfile
 
 from maps import load_solomon, load_wcvrptw, load_vitoria
 from sensors import FillSimulator
+from lorawan import LoRaWANChannel
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 SOLVER = os.environ.get("VRPTW_SOLVER", os.path.join(_HERE, "..", "solver", "build", "solve"))
@@ -127,17 +128,31 @@ def _record(sim, c, period, served, routes, cost):
 
 
 def simulate(cmap, cycles=24, threshold=0.7, algo="grasp", budget_ms=800, capacity=30,
-             horizon=5000, service=5, urgency=True, seed=0, extra="", urgency_coef=0.6):
-    """DYNAMIC scenario: collect bins above the threshold on demand each cycle."""
+             horizon=5000, service=5, urgency=True, seed=0, extra="", urgency_coef=0.6,
+             pdr=0.98, duty_interval=1):
+    """DYNAMIC scenario: collect bins above the threshold on demand each cycle.
+
+    As leituras chegam ao orquestrador pela camada LoRaWAN simulada: o
+    acionamento por limiar, a demanda e a janela de tempo usam a visao PERCEBIDA
+    (ultima leitura recebida), nao o estado fisico. O transbordo continua sendo
+    contado no estado fisico -- e o que acontece na rua. Com pdr=1.0 e
+    duty_interval=1 o canal e transparente e o comportamento e identico ao do
+    twin sem camada de comunicacao (verificado em teste)."""
     sim = FillSimulator(len(cmap.bins), threshold=threshold, seed=seed)
+    radio = LoRaWANChannel(len(cmap.bins), pdr=pdr, duty_interval=duty_interval, seed=seed)
     history = []
     for c in range(cycles):
         sim.step(c)
-        active = sim.active()
-        routes, cost = plan_routes(cmap, active, sim.fill, algo, budget_ms, capacity,
+        perceived = radio.step(c, sim.fill)
+        active = [i for i in range(len(perceived)) if perceived[i] >= threshold]
+        routes, cost = plan_routes(cmap, active, perceived, algo, budget_ms, capacity,
                                    horizon, service, urgency, threshold, extra, urgency_coef)
-        history.append(_record(sim, c, sim.period_label(c), active, routes, cost))
-        sim.collect([b for r in routes for b in r])
+        rec = _record(sim, c, sim.period_label(c), active, routes, cost)
+        rec["lorawan"] = radio.stats(c)
+        history.append(rec)
+        served = [b for r in routes for b in r]
+        sim.collect(served)
+        radio.on_collect(served, c)
     return history
 
 
@@ -161,10 +176,13 @@ def simulate_static(cmap, cycles=24, frequency=3, threshold=0.7, algo="grasp", b
 
 
 def kpis(history):
-    return {"distancia_total": round(sum(h["distance"] for h in history), 1),
-            "coletas": sum(len(h["active"]) for h in history),
-            "transbordos": history[-1]["overflow"] if history else 0,
-            "ciclos_com_rota": sum(1 for h in history if h["routes"])}
+    out = {"distancia_total": round(sum(h["distance"] for h in history), 1),
+           "coletas": sum(len(h["active"]) for h in history),
+           "transbordos": history[-1]["overflow"] if history else 0,
+           "ciclos_com_rota": sum(1 for h in history if h["routes"])}
+    if history and "lorawan" in history[-1]:
+        out["lorawan"] = history[-1]["lorawan"]      # estatisticas acumuladas do canal
+    return out
 
 
 def compare_scenarios(cmap, cycles=24, frequency=3, threshold=0.7, algo="grasp",
@@ -177,8 +195,17 @@ def compare_scenarios(cmap, cycles=24, frequency=3, threshold=0.7, algo="grasp",
 
 
 def load_tuned(path=None):
-    """irace-tuned per-algorithm switches (so the Twin uses the calibrated solver)."""
-    path = path or os.path.join(_HERE, "..", "experiments", "config", "tuned.json")
+    """Parametros por algoritmo para o solver.
+
+    Prefere config/study_params.json -- os parametros FINAIS do estudo, ja
+    passados pelo portao de aceitacao da calibracao (o GRASP, por exemplo,
+    volta ao default da literatura porque o calibrado nao superou o default no
+    holdout). tuned.json e a saida BRUTA do irace e so e usada na ausencia do
+    arquivo de decisao."""
+    if path is None:
+        cfg = os.path.join(_HERE, "..", "experiments", "config")
+        study = os.path.join(cfg, "study_params.json")
+        path = study if os.path.isfile(study) else os.path.join(cfg, "tuned.json")
     try:
         return json.load(open(path))
     except Exception:
@@ -217,6 +244,10 @@ if __name__ == "__main__":
     ap.add_argument("--algo", default="grasp")
     ap.add_argument("--budget-ms", type=int, default=800)
     ap.add_argument("--capacity", type=int, default=30)
+    ap.add_argument("--pdr", type=float, default=0.98,
+                    help="taxa de entrega de uplink LoRaWAN (1.0 = canal perfeito)")
+    ap.add_argument("--duty-interval", type=int, default=1,
+                    help="sensor transmite a cada N ciclos (limite de duty cycle)")
     ap.add_argument("--compare", action="store_true", help="dynamic vs static comparison")
     ap.add_argument("--frequency", type=int, default=3, help="static collection frequency (cycles)")
     ap.add_argument("--compare-algos", action="store_true", help="apply each algorithm in the Twin and compare")
@@ -243,7 +274,13 @@ if __name__ == "__main__":
                   f"{k['transbordos']:>12d} {k['ciclos_com_rota']:>12d}")
     else:
         hist = simulate(cmap, cycles=args.cycles, threshold=args.threshold, algo=args.algo,
-                        budget_ms=args.budget_ms, capacity=args.capacity)
+                        budget_ms=args.budget_ms, capacity=args.capacity,
+                        pdr=args.pdr, duty_interval=args.duty_interval)
         k = kpis(hist)
         print(f"ciclos: {len(hist)} | coletas: {k['coletas']} | "
               f"distancia: {k['distancia_total']} | transbordos: {k['transbordos']}")
+        if "lorawan" in k:
+            lw = k["lorawan"]
+            print(f"lorawan: {lw['uplinks_entregues']}/{lw['uplinks_enviados']} uplinks "
+                  f"(pdr obs. {lw['pdr_observado']}) | defasagem media "
+                  f"{lw['defasagem_media_ciclos']} ciclos")

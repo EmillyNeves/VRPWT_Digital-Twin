@@ -1,0 +1,5 @@
+{
+  "grasp": "--alpha 0.3 --max-no-improve 800",
+  "rgrasp": "--delta 1.0 --block-frac 0.1 --max-no-improve 800",
+  "tabu": "--tenure 15 --max-no-improve 800"
+}

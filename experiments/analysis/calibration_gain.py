@@ -5,8 +5,8 @@ O relatório dedica um capítulo ao irace e não apresenta nenhuma evidência de
 calibrar melhorou alguma coisa. Esta é a comparação que responde isso, e é a
 primeira pergunta que uma banca faz sobre um capítulo de calibração.
 
-DESENHO. Os dois regimes rodam com o MESMO critério de parada (o K fixado pela
-análise de joelho), as MESMAS instâncias e o MESMO número de sementes. A única
+DESENHO. Os dois regimes rodam com o MESMO critério de parada (o K declarado em
+config/fixed_K.json), as MESMAS instâncias e o MESMO número de sementes. A única
 diferença são os hiperparâmetros de qualidade. Sem isso a comparação
 confundiria orçamento com qualidade.
 

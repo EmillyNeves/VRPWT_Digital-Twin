@@ -6,20 +6,25 @@
 
 namespace vrptw {
 
-struct ConvPoint { long ms; double best; };
+// `iter` e a iteracao do metodo em que a melhoria ocorreu (-1 quando o metodo
+// nao tem iteracao numerada, como o VND). Ele e o que permite DERIVAR o
+// resultado sob qualquer criterio "K iteracoes sem melhoria" com K menor a
+// partir de uma unica execucao longa: como a trajetoria e determinista dada a
+// semente, parar antes e apenas truncar. Ver docs/verificacao/04-criterio-de-parada.md.
+struct ConvPoint { long ms; double best; long iter; };
 
 // Records the convergence trace (best-so-far vs elapsed time) and, optionally,
 // per-move solution snapshots for the route-evolution plots. Snapshot line:
 //   idx;ms;cost;movetype;r1c1,r1c2,...|r2c1,r2c2,...|...
 class Logger {
 public:
-    void on_improve(long ms, double best) { conv_.push_back({ms, best}); }
+    void on_improve(long ms, double best, long iter = -1) { conv_.push_back({ms, best, iter}); }
     const std::vector<ConvPoint>& convergence() const { return conv_; }
 
     void write_convergence(const std::string& path) const {
         std::ofstream f(path);
-        f << "elapsed_ms,best\n";
-        for (const auto& p : conv_) f << p.ms << ',' << p.best << '\n';
+        f << "elapsed_ms,best,iter\n";
+        for (const auto& p : conv_) f << p.ms << ',' << p.best << ',' << p.iter << '\n';
     }
 
     void enable_snapshots(const std::string& path, int stride) {

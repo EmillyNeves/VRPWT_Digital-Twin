@@ -15,4 +15,8 @@
 targetRunner        = "./target-runner"
 trainInstancesDir   = ""
 trainInstancesFile  = "../config/train.txt"
-maxExperiments      = 2000
+## maxExperiments: 1500 por cenario (decisao 4.6; o plano previa 1000, o aumento
+## esta pre-registrado em docs/verificacao/05-pre-registro-calibracao.md §5).
+## Os pipelines passam --max-experiments na linha de comando, que TEM PRECEDENCIA
+## sobre este arquivo; os tres valores estao alinhados de proposito.
+maxExperiments      = 1500

@@ -3,9 +3,10 @@
 #   (1) calibra só os parâmetros de qualidade, com K fixo   -> 1_calibrate.sh
 #   (2) executa o estudo completo e regenera tabelas/figuras -> 2_run_study.sh
 #
-# O K fixo vem da análise de joelho (experiments/config/fixed_K.json), que é
-# gerada por `python3 experiments/analysis/knee_K.py` a partir de um estudo
-# anterior — por isso ela NÃO faz parte desta cadeia.
+# O K fixo é um ORÇAMENTO DECLARADO, versionado em experiments/config/fixed_K.json
+# (decisão 3.1b). Não é derivado nem calibrado: um orçamento monótono não pode ser
+# escolhido minimizando o objetivo. A medição que sustenta o valor está em
+# experiments/analysis/stopping_budget.py e em results/stopping/.
 #
 # Pensado para rodar destacado:
 #   nohup bash experiments/pipelines/run_full_study.sh > /tmp/full_study.log 2>&1 &
@@ -19,7 +20,7 @@ ROOT=$(dirname "$EXP")
 
 JOBS=${1:-14}
 RUNS=${2:-30}
-MAXEXP=${3:-1200}
+MAXEXP=${3:-1500}
 
 mkdir -p "$ROOT/results"
 STATUS="$ROOT/results/pipeline_status.txt"
@@ -32,7 +33,7 @@ if [ ! -x "$ROOT/solver/build/solve" ]; then
   make -C "$ROOT/solver" || { log "BUILD FALHOU"; echo PIPELINE_FAILED >> "$STATUS"; exit 1; }
 fi
 [ -f "$EXP/config/fixed_K.json" ] || {
-  log "ERRO: config/fixed_K.json ausente. Rode antes: python3 experiments/analysis/knee_K.py"
+  log "ERRO: config/fixed_K.json ausente. Ele é versionado — restaure-o do repositório (decisão 3.1b)."
   echo PIPELINE_FAILED >> "$STATUS"; exit 1; }
 log "K fixo: $(tr -d '\n' < "$EXP/config/fixed_K.json")"
 

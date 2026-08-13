@@ -1,5 +1,7 @@
 # irace parameter space — GRASP fixo (forma clássica de Feo & Resende).
-# Calibra APENAS o parâmetro de qualidade alpha; o critério de parada K é FIXADO
-# pela análise de convergência (joelho), não calibrado (ver experiments/config/fixed_K.json).
+# Calibra APENAS o parâmetro de qualidade alpha. O critério de parada K NÃO é
+# calibrado: é um orçamento monótono (mais iterações nunca pioram o gap), e
+# calibrá-lo pelo gap o levaria sempre ao teto do intervalo. K é declarado em
+# experiments/config/fixed_K.json — ver a decisão 3.1b em docs/DECISOES-DE-PROJETO.md.
 # nome   switch       tipo   intervalo
 alpha    "--alpha "   r      (0.0, 0.5)

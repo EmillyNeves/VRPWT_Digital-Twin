@@ -44,13 +44,24 @@ def main():
     name = os.path.splitext(os.path.basename(instance))[0]
     inst_path = instance if instance.endswith(".txt") else os.path.join(INPUT, name + ".txt")
 
-    # K (criterio de parada) e FIXADO pela analise de joelho (nao calibrado): vem
-    # do env VRPTW_K. O tempo (budget-ms) e apenas teto de seguranca.
+    # K (criterio de parada) e um ORCAMENTO DECLARADO, nao calibrado: vem do env
+    # VRPTW_K (experiments/config/fixed_K.json, decisao 3.1b). O tempo
+    # (budget-ms) e apenas teto de seguranca.
     fixedK = os.environ.get("VRPTW_K")
     kflag = ["--max-no-improve", fixedK] if fixedK else []
     cmd = [SOLVER, "--algo", ALGO, "--instance", inst_path, "--seed", seed,
            "--budget-ms", BUDGET, "--print-cost"] + kflag + params
     out = subprocess.run(cmd, capture_output=True, text=True)
+
+    # DECISAO 4.4 -- guarda de inviabilidade. solve.cpp imprime o custo ANTES de
+    # sinalizar inviabilidade e sai com codigo 1 nesse caso; sem consultar o
+    # codigo de saida, uma configuracao que violasse janela de tempo ou
+    # capacidade seria PREMIADA por ter custo baixo. A penalidade fixa mantem a
+    # configuracao na corrida (o irace a descarta pelo racing) em vez de
+    # excluir a execucao, o que enviesaria a amostra.
+    if out.returncode != 0:
+        print(PENALTY)
+        return
     try:
         cost = float(out.stdout.strip().splitlines()[-1])
     except (IndexError, ValueError):

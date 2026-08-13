@@ -163,7 +163,11 @@ def main():
     fills = list(sim.fill)
     active = [i for i in range(len(cmap.bins)) if fills[i] >= args.threshold]
 
-    routes, cost = route_road(active, fills, algo=args.algo, capacity=args.capacity)
+    # parametros finais do estudo (pos-portao de aceitacao) -- sem isto o twin
+    # viario rodaria com defaults enquanto o relatorio afirma "calibrados"
+    from twin import load_tuned
+    extra = load_tuned().get(args.algo, "")
+    routes, cost = route_road(active, fills, algo=args.algo, capacity=args.capacity, extra=extra)
     # KPIs reais
     m = load_matrix(); D = m["dist_m"]; T = m["time_s"]
     tot_d = tot_t = 0.0

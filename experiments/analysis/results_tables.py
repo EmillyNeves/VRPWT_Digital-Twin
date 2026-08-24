@@ -38,7 +38,7 @@ def tab_overall():
          r"determinísticos). \emph{Iterações} e \emph{tempo} são médias por execução; a "
          r"iteração tem custo diferente em cada método, e os dois números tornam esse "
          r"esforço explícito.}\label{tab:overall}",
-         r"\begin{tabular}{lccccc}", r"\toprule",
+         r"\small\setlength{\tabcolsep}{4pt}", r"\begin{tabular}{lccccc}", r"\toprule",
          r"\textbf{Algoritmo} & \textbf{Gap médio (\%)} & \textbf{Gap melhor (\%)} & "
          r"\textbf{Veículos} & \textbf{Iterações} & \textbf{Tempo (s)} \\", r"\midrule"]
     melhor = min(float(d[a]["gap_mean"]) for a in ORDEM)
@@ -82,13 +82,16 @@ def tab_lex():
     def media(sel, campo):
         return sum(float(r[campo]) for r in sel) / len(sel)
 
+    # "Dinamics" e corruptela historica de DIMACS (nome de pasta mantido por
+    # compatibilidade); no relatorio a referencia e citada como CVRPLIB sob a
+    # convencao DIMACS -- ver data/reference-solutions/PROVENIENCIA.md.
     L = [r"\begin{table}[H]", r"\centering",
          r"\caption{Visão lexicográfica por família: veículos e distância médios das nossas "
          r"soluções (GRASP, melhor de 30 execuções) e das duas referências --- a de mínima "
-         r"distância (Dinamics/DIMACS) e a de mínimo número de veículos (SINTEF).}"
+         r"distância (CVRPLIB, convenção DIMACS) e a de mínimo número de veículos (SINTEF).}"
          r"\label{tab:lex}",
          r"\begin{tabular}{lcccccc}", r"\toprule",
-         r"& \multicolumn{2}{c}{\textbf{Nosso (GRASP)}} & \multicolumn{2}{c}{\textbf{Dinamics "
+         r"& \multicolumn{2}{c}{\textbf{Nosso (GRASP)}} & \multicolumn{2}{c}{\textbf{CVRPLIB "
          r"(mín.\ dist.)}} & \multicolumn{2}{c}{\textbf{SINTEF (mín.\ veíc.)}} \\",
          r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}",
          r"\textbf{Família} & veíc. & dist. & veíc. & dist. & veíc. & dist. \\", r"\midrule"]
@@ -113,10 +116,11 @@ def tab_gain():
          r"\caption{A calibração valeu a pena? Parâmetros clássicos da literatura "
          r"($\alpha{=}0{,}30$; $\delta{=}1{,}0$, \textit{block\_frac}$=0{,}1$; "
          r"\textit{tenure}$=15$) contra os calibrados pelo \textit{irace}, nas 28 instâncias "
-         r"de \emph{teste} --- nunca vistas pela calibração ---, com 30 sementes e o mesmo "
-         r"$K=800$. Ganho positivo = calibrado melhor; $p$ do teste de Wilcoxon pareado.}"
+         r"de \emph{teste} --- nunca vistas pela calibração ---, com 30 sementes por método "
+         r"estocástico (a Busca Tabu, determinística, executa uma vez por configuração) e o "
+         r"mesmo $K=800$. Ganho positivo = calibrado melhor; $p$ do teste de Wilcoxon pareado.}"
          r"\label{tab:gain}",
-         r"\begin{tabular}{lccccc}", r"\toprule",
+         r"\footnotesize\setlength{\tabcolsep}{4pt}", r"\begin{tabular}{lccccc}", r"\toprule",
          r"\textbf{Cenário} & \textbf{Gap clássico (\%)} & \textbf{Gap calibrado (\%)} & "
          r"\textbf{Ganho (pp)} & \textbf{melhor/pior/empate} & $p$ \\", r"\midrule"]
     for a in ("grasp", "rgrasp", "tabu"):
@@ -136,7 +140,7 @@ def tab_pi():
     ordem = sorted(m, key=m.get)
     frase = ", ".join(f"{NOME[a]} ($\\mathit{{PI}}={num(m[a])}$)" for a in ordem)
     L = [f"% gerado por results_tables.py a partir de primal_integral.csv -- nao editar",
-         f"O integral primal médio ordena os métodos assim: {frase} (menor é melhor)."]
+         f"A integral primal média ordena os métodos assim: {frase} (menor é melhor)."]
     escreve(os.path.join(OUT, "pi_frase.tex"), L)
 
 

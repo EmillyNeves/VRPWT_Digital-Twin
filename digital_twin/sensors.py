@@ -24,6 +24,10 @@ class FillSimulator:
         self.fill = self.rng.uniform(0.0, 0.30, n_bins)
         self.propensity = self.rng.uniform(0.5, 1.5, n_bins)   # heterogeneous bins
         self.overflow_events = 0
+        # Estado de transbordo por lixeira: um EPISODIO conta uma unica vez,
+        # quando f atinge 1 antes da coleta (definicao do relatorio); a lixeira
+        # so volta a poder transbordar depois de coletada.
+        self.overflowing = np.zeros(n_bins, dtype=bool)
 
     def rate(self, cycle):
         """Non-homogeneous Poisson intensity lambda(t): two Gaussian peaks per day."""
@@ -41,7 +45,12 @@ class FillSimulator:
         lam = self.rate(cycle)
         arrivals = self.rng.poisson(lam * self.propensity)      # NHPP arrivals per bin
         new_fill = self.fill + arrivals / self.cap
-        self.overflow_events += int(np.sum(new_fill > 1.0))     # transbordamento
+        # Episodio de transbordo: a lixeira ATINGE a capacidade agora e ainda
+        # nao estava transbordando (nao recontar a mesma lixeira cheia a cada
+        # ciclo; ela so reconta apos ser coletada).
+        newly_full = (new_fill >= 1.0 - 1e-9) & ~self.overflowing
+        self.overflow_events += int(np.sum(newly_full))
+        self.overflowing |= newly_full
         self.fill = np.minimum(new_fill, 1.0)
 
     def active(self):
@@ -54,3 +63,4 @@ class FillSimulator:
     def collect(self, idxs):
         for i in idxs:
             self.fill[i] = 0.0
+            self.overflowing[i] = False

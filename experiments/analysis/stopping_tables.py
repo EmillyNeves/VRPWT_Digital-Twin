@@ -27,6 +27,11 @@ def ler(path, chave, valor):
     return d
 
 
+def dec(x, nd):
+    """Numero com virgula decimal pt-BR na convencao LaTeX do relatorio: 3{,}49."""
+    return f"{x:.{nd}f}".replace(".", "{,}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--conv", default=os.path.join(ROOT, "results/stopping/convergence.csv"))
@@ -47,21 +52,22 @@ def main():
         if not gap.get((a, k)):
             return "---"
         g = statistics.mean(gap[(a, k)])
-        return f"\\textbf{{{g:.2f}}}" if k == args.k_escolhido else f"{g:.2f}"
+        return f"\\textbf{{{dec(g, 2)}}}" if k == args.k_escolhido else dec(g, 2)
 
     def celula_t(a, k):
         v = tempo.get((a, k))
         if not v:
             return "---"
         s = statistics.median(v) / 1000.0
-        return f"\\textbf{{{s:.1f}}}" if k == args.k_escolhido else f"{s:.1f}"
+        return f"\\textbf{{{dec(s, 1)}}}" if k == args.k_escolhido else dec(s, 1)
 
     L = []
     L.append(r"\begin{table}[htbp]")
     L.append(r"\centering")
-    L.append(r"\caption{Efeito do orçamento de parada nas 28 instâncias de treino. "
-             r"\emph{Gap}: distância percentual média ao melhor valor conhecido. "
-             r"\emph{Tempo}: mediana por execução, medida sem concorrência. O valor adotado "
+    L.append(r"\caption{Efeito do orçamento de parada. "
+             r"\emph{Gap}: distância percentual média ao melhor valor conhecido, nas 28 instâncias de treino. "
+             r"\emph{Tempo}: mediana por execução, medida sem concorrência em seis instâncias-amostra "
+             r"(uma por família e tipo). O valor adotado "
              f"($K={args.k_escolhido}$) está em negrito. O gap decresce ao longo de toda a "
              r"faixa medida, sem platô --- razão pela qual $K$ é declarado como orçamento "
              r"computacional, e não derivado de um ponto de convergência.}"
@@ -123,7 +129,7 @@ def escreve_invariancia(conv, ks, out):
                       zero_method="zsplit").pvalue
         p2 = wilcoxon([por[("grasp", k)][i] - por[("tabu", k)][i] for i in insts],
                       zero_method="zsplit").pvalue
-        L.append(f"{k} & {ordem} & {p1:.4f} & {p2:.4f} " + r"\\")
+        L.append(f"{k} & {ordem} & {dec(p1, 4)} & {dec(p2, 4)} " + r"\\")
     L += [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
 
     with open(out, "w") as fh:

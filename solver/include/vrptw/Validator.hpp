@@ -22,6 +22,7 @@ struct ValidationResult {
     bool                     capacity_ok         = true;
     bool                     time_ok             = true;
     bool                     returns_to_depot_ok = true;
+    bool                     fleet_ok            = true;  // <= instance's declared fleet size
     double                   distance            = 0.0;  // full precision, recomputed here
     double                   schedule_time       = 0.0;  // sum over routes of (return - departure)
     double                   waiting_time        = 0.0;  // idle time waiting for windows to open

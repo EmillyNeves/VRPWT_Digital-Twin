@@ -115,15 +115,23 @@ def plan_routes(cmap, active_idx, fills, algo, budget_ms, capacity, horizon, ser
         sol = os.path.join(td, "cycle.sol")
         mapping = write_instance(inst, cmap, active_idx, fills, capacity, horizon, service,
                                  urgency, threshold, urgency_coef)
-        subprocess.run([SOLVER, "--algo", algo, "--instance", inst,
-                        "--budget-ms", str(budget_ms), "--out", sol] + shlex.split(extra),
-                       capture_output=True, text=True)
+        proc = subprocess.run([SOLVER, "--algo", algo, "--instance", inst,
+                               "--budget-ms", str(budget_ms), "--out", sol] + shlex.split(extra),
+                              capture_output=True, text=True)
+        # Portao de viabilidade do estudo estendido ao twin: o binario valida a
+        # solucao internamente e retorna !=0 se inviavel/falha -- tratar como
+        # erro fatal em vez de seguir com rotas vazias e distance=0 silenciosos.
+        if proc.returncode != 0 or not os.path.isfile(sol):
+            raise SystemExit(
+                f"solver falhou no ciclo do twin (algo={algo}, rc={proc.returncode}): "
+                f"{proc.stderr.strip() or proc.stdout.strip()}")
         return parse_sol(sol, mapping)
 
 
-def _record(sim, c, period, served, routes, cost):
+def _record(sim, c, period, active, routes, cost, served=None):
     return {"cycle": c, "period": period, "fills": [float(x) for x in sim.fill],
-            "active": list(served), "full": sim.full_bins(), "routes": [list(r) for r in routes],
+            "active": list(active), "full": sim.full_bins(), "routes": [list(r) for r in routes],
+            "served": list(served) if served is not None else list(active),
             "distance": cost or 0.0, "vehicles": len(routes), "overflow": sim.overflow_events}
 
 
@@ -147,17 +155,17 @@ def simulate(cmap, cycles=24, threshold=0.7, algo="grasp", budget_ms=800, capaci
         active = [i for i in range(len(perceived)) if perceived[i] >= threshold]
         routes, cost = plan_routes(cmap, active, perceived, algo, budget_ms, capacity,
                                    horizon, service, urgency, threshold, extra, urgency_coef)
-        rec = _record(sim, c, sim.period_label(c), active, routes, cost)
+        served = [b for r in routes for b in r]
+        rec = _record(sim, c, sim.period_label(c), active, routes, cost, served=served)
         rec["lorawan"] = radio.stats(c)
         history.append(rec)
-        served = [b for r in routes for b in r]
         sim.collect(served)
         radio.on_collect(served, c)
     return history
 
 
 def simulate_static(cmap, cycles=24, frequency=3, threshold=0.7, algo="grasp", budget_ms=800,
-                    capacity=30, horizon=5000, service=5, seed=0):
+                    capacity=30, horizon=5000, service=5, seed=0, extra=""):
     """STATIC scenario: collect ALL bins every `frequency` cycles, ignoring fill."""
     sim = FillSimulator(len(cmap.bins), threshold=threshold, seed=seed)
     allbins = list(range(len(cmap.bins)))
@@ -166,18 +174,22 @@ def simulate_static(cmap, cycles=24, frequency=3, threshold=0.7, algo="grasp", b
         sim.step(c)
         if c % frequency == 0:
             routes, cost = plan_routes(cmap, allbins, sim.fill, algo, budget_ms, capacity,
-                                       horizon, service, urgency=False, threshold=threshold)
-            served = allbins
+                                       horizon, service, urgency=False, threshold=threshold,
+                                       extra=extra)
+            served = [b for r in routes for b in r]
         else:
             routes, cost, served = [], 0.0, []
-        history.append(_record(sim, c, sim.period_label(c), served, routes, cost))
+        history.append(_record(sim, c, sim.period_label(c), served, routes, cost, served=served))
         sim.collect(served)
     return history
 
 
 def kpis(history):
+    # "coletas" conta as lixeiras efetivamente esvaziadas (served), nao os
+    # acionamentos (active): os dois coincidem enquanto toda lixeira ativa e
+    # roteada, mas a metrica correta e a do que aconteceu na rua.
     out = {"distancia_total": round(sum(h["distance"] for h in history), 1),
-           "coletas": sum(len(h["active"]) for h in history),
+           "coletas": sum(len(h.get("served", h["active"])) for h in history),
            "transbordos": history[-1]["overflow"] if history else 0,
            "ciclos_com_rota": sum(1 for h in history if h["routes"])}
     if history and "lorawan" in history[-1]:
@@ -186,11 +198,17 @@ def kpis(history):
 
 
 def compare_scenarios(cmap, cycles=24, frequency=3, threshold=0.7, algo="grasp",
-                      budget_ms=800, capacity=30, seed=0):
+                      budget_ms=800, capacity=30, seed=0, tuned=None):
+    # Mesmos parametros e criterio de parada do estudo (study_params.json):
+    # a comparacao dinamico x estatico roda o solver exatamente como a Secao 5
+    # do relatorio declara ("com os parametros calibrados"), e nao com defaults.
+    tuned = tuned if tuned is not None else load_tuned()
+    extra = tuned.get(algo, "")
     dyn = simulate(cmap, cycles=cycles, threshold=threshold, algo=algo, budget_ms=budget_ms,
-                   capacity=capacity, seed=seed)
+                   capacity=capacity, seed=seed, extra=extra)
     sta = simulate_static(cmap, cycles=cycles, frequency=frequency, threshold=threshold,
-                          algo=algo, budget_ms=budget_ms, capacity=capacity, seed=seed)
+                          algo=algo, budget_ms=budget_ms, capacity=capacity, seed=seed,
+                          extra=extra)
     return {"dinamico": kpis(dyn), "estatico": kpis(sta)}, dyn, sta
 
 

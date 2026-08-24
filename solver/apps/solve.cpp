@@ -229,7 +229,10 @@ int main(int argc, char** argv) {
 
         const double dist = Evaluator::round1(ev.primary(sol));
         const int veh = ev.vehicles(sol);
-        const ValidationResult vr = validate(inst, dm, sol);
+        ValidationResult vr = validate(inst, dm, sol);
+        // Portao final: alem das quatro restricoes do VRPTW, a solucao entregue
+        // deve respeitar a frota maxima declarada na instancia (regra DIMACS).
+        vr.feasible = vr.feasible && vr.fleet_ok;
 
         if (args.has("out")) write_solution(args.get("out"), sol);
 

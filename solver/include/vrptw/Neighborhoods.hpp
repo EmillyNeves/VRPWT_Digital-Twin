@@ -66,10 +66,10 @@ InsertEval eval_insert(const Instance& inst, const DistanceMatrix& dm,
 
 // Identifiers for the neighborhoods used by VND's variable ordering.
 //
-// TwoOptStar (Potvin & Rousseau 1995) is implemented but NOT in the default
-// order: it is the eighth movement listed in the partial report and was never
-// part of the studied kit. Whether it earns a place is decided empirically by
-// the ablation (docs/verificacao/03-vizinhancas.md), not by assumption.
+// TwoOptStar (Potvin & Rousseau 1995) was the eighth movement listed in the
+// partial report; the ablation (docs/verificacao/03-vizinhancas.md) earned it
+// a place in the kit, and all_neighborhoods() below includes it in the
+// measured-complexity order used by the final study.
 enum class Neighborhood { Relocate, Swap, TwoOpt, OrOpt, CrossExchange, TwoOptStar };
 
 // A UNICA lista do kit, em ordem de complexidade computacional crescente (custo

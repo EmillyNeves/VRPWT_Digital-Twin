@@ -62,6 +62,18 @@ ValidationResult validate(const Instance& inst, const DistanceMatrix& dm, const 
         }
     }
 
+    // Regra DIMACS: a solucao FINAL deve respeitar o numero maximo de veiculos
+    // declarado na instancia (nao ha bonus por usar menos). inst.vehicles == 0
+    // significa "sem limite declarado". fleet_ok fica FORA de `feasible` (as
+    // quatro restricoes do VRPTW) porque estados intermediarios de diagnostico
+    // podem exceder a frota; o portao final do binario (apps/solve.cpp) exige
+    // feasible && fleet_ok.
+    if (inst.vehicles > 0 && res.vehicles > inst.vehicles) {
+        res.fleet_ok = false;
+        res.errors.push_back("frota excedida: " + std::to_string(res.vehicles) +
+                             " veiculos (maximo " + std::to_string(inst.vehicles) + ")");
+    }
+
     res.feasible = res.all_customers_once && res.capacity_ok &&
                    res.time_ok && res.returns_to_depot_ok;
     return res;

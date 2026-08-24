@@ -2,7 +2,7 @@
 """Figuras DIDÁTICAS do funcionamento dos algoritmos (para o artigo).
 
 Gera, de forma reprodutível (matplotlib), ilustrações esquemáticas de:
-  1. operadores.png      — os 5 operadores de vizinhança (antes/depois);
+  1. operadores.png      — os 6 operadores do kit (antes/depois), na ordem do VND;
   2. construcao_i1.png   — a construção por inserção I1, passo a passo;
   3. grasp_rcl.png       — a seleção da Lista Restrita de Candidatos (RCL) do GRASP.
 
@@ -30,7 +30,7 @@ def draw_routes(ax, routes, title, highlight=frozenset(), faint=False):
     dx, dy = COORD[0]
     ax.scatter([dx], [dy], marker="s", s=160, c="#1f4e79", zorder=5, alpha=a)
     if not faint:
-        ax.annotate("D", (dx, dy), color="white", ha="center", va="center", fontsize=8, zorder=6)
+        ax.annotate("D", (dx, dy), color="white", ha="center", va="center", fontsize=10, zorder=6)
     for ri, r in enumerate(routes):
         seq = [0] + r + [0]
         col = R_COLORS[ri % len(R_COLORS)]
@@ -46,32 +46,41 @@ def draw_routes(ax, routes, title, highlight=frozenset(), faint=False):
                        c=("#ffd92f" if hl else "white"),
                        edgecolors=("black" if hl else col), linewidths=1.8 if hl else 1.3,
                        zorder=4, alpha=a)
-            ax.annotate(str(c), (x, y), ha="center", va="center", fontsize=8, zorder=5, alpha=a)
-    ax.set_title(title, fontsize=9)
+            ax.annotate(str(c), (x, y), ha="center", va="center", fontsize=10, zorder=5, alpha=a)
+    ax.set_title(title, fontsize=11)
     ax.set_xlim(-4, 4); ax.set_ylim(-3.6, 3.4); ax.set_aspect("equal"); ax.axis("off")
 
 
 def fig_operadores():
+    # Os SEIS operadores do kit, na ordem de exploracao do VND (complexidade
+    # medida crescente) -- a mesma da Secao 3.4 do relatorio. Cada exemplo e um
+    # movimento de MELHORIA: o painel "antes" tem uma distorcao (cruzamento,
+    # cliente na rota errada) que o operador conserta -- e como a busca local
+    # de fato os aplica, ja que so movimentos melhorantes sao aceitos.
     # (nome, rotas_antes, rotas_depois, destaque)
     ops = [
-        ("Relocate (entre rotas): move o cliente 2",
-         [[1, 2, 3], [4, 5]], [[1, 3], [4, 2, 5]], {2}),
-        ("Swap (entre rotas): troca 2 e 5",
-         [[1, 2, 3], [4, 5, 6]], [[1, 5, 3], [4, 2, 6]], {2, 5}),
-        ("2-opt (intra rota): inverte o trecho 2-3",
-         [[1, 2, 3, 6]], [[1, 3, 2, 6]], {2, 3}),
-        ("Or-opt (entre rotas): move a cadeia 2-3",
-         [[1, 2, 3], [4, 5]], [[1], [4, 2, 3, 5]], {2, 3}),
-        ("Cross-exchange: troca {2} por {5,6}",
-         [[1, 2, 3], [4, 5, 6]], [[1, 5, 6, 3], [4, 2]], {2, 5, 6}),
+        ("2-opt (intra rota): inverte o trecho 3–2 e desfaz o cruzamento",
+         [[1, 3, 2, 6]], [[1, 2, 3, 6]], {2, 3}),
+        ("Swap (entre rotas): troca 5 e 2, cada um para a rota do seu lado",
+         [[1, 5, 3], [4, 2, 6]], [[1, 2, 3], [4, 5, 6]], {2, 5}),
+        ("2-opt* (entre rotas): troca as caudas {6} e {3}",
+         [[1, 2, 6], [4, 5, 3]], [[1, 2, 3], [4, 5, 6]], {3, 6}),
+        ("Relocate: devolve o cliente 2 à rota vizinha",
+         [[1, 3], [4, 2, 5]], [[1, 2, 3], [4, 5]], {2}),
+        ("Or-opt: move a cadeia 2–3 inteira de rota",
+         [[1], [4, 2, 3, 5]], [[1, 2, 3], [4, 5]], {2, 3}),
+        ("Cross-exchange: troca o segmento {5, 6} por {2}",
+         [[1, 5, 6, 3], [4, 2]], [[1, 2, 3], [4, 5, 6]], {2, 5, 6}),
     ]
-    fig, axes = plt.subplots(5, 2, figsize=(7.2, 15.5))
-    for row, (name, before, after, hl) in enumerate(ops):
-        draw_routes(axes[row][0], before, ("antes — " + name), hl)
-        draw_routes(axes[row][1], after, "depois", hl)
-    fig.suptitle("Operadores de vizinhança (kit compartilhado): efeito de cada movimento",
-                 y=0.995, fontsize=12)
-    fig.tight_layout(rect=[0, 0, 1, 0.985])
+    # grade paisagem 3x4: cada linha traz dois operadores (antes|depois, antes|depois)
+    fig, axes = plt.subplots(3, 4, figsize=(14.5, 10.2))
+    for i, (name, before, after, hl) in enumerate(ops):
+        row, col = divmod(i, 2)
+        draw_routes(axes[row][2 * col], before, "antes — " + name, hl)
+        draw_routes(axes[row][2 * col + 1], after, "depois", hl)
+    fig.suptitle("Os seis operadores de vizinhança do kit compartilhado, na ordem do VND",
+                 y=0.995, fontsize=14)
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
     fig.savefig(os.path.join(FIG, "operadores.png"), dpi=150, bbox_inches="tight")
     plt.close()
 

@@ -41,7 +41,7 @@ def main():
          r"instância e o $p$ de Wilcoxon pareado sob correção de Holm. A remoção de qualquer "
          r"operador piora o gap médio; a última coluna mostra que o teste tem poder limitado "
          r"para os operadores que afetam poucas instâncias.}\label{tab:ablacao}",
-         r"\begin{tabular}{lccccc}", r"\toprule",
+         r"\small\setlength{\tabcolsep}{4pt}", r"\begin{tabular}{lccccc}", r"\toprule",
          r"\textbf{Configuração} & \textbf{Gap médio (\%)} & \textbf{$\Delta$ (pp)} & "
          r"\textbf{piora/melhora/empata} & \textbf{$p$ (Holm)} & \textbf{signif.} \\",
          r"\midrule",

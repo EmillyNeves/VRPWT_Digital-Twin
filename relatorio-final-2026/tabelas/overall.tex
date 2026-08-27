@@ -1,0 +1,23 @@
+% Adaptado de results/tables/overall.tex (gerado por results_tables.py).
+% Apenas o envelope (caption/fonte) difere; as linhas de dados sao identicas ao artefato gerado.
+\begin{table}[H]
+\centering\singlespacing
+\begin{minipage}{\textwidth}
+\caption{Desempenho global nas 56 instâncias (gap de distância ao melhor conhecido; 30 execuções por instância para GRASP e GRASP reativo, uma para os determinísticos). \emph{Iterações} e \emph{tempo} são médias por execução; a iteração tem custo diferente em cada método, e os dois números tornam esse esforço explícito}
+\label{tab:overall}
+\centering
+\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Algoritmo} & \textbf{Gap médio (\%)} & \textbf{Gap melhor (\%)} & \textbf{Veículos} & \textbf{Iterações} & \textbf{Tempo (s)} \\
+\midrule
+Solomon I1 & 35{,}97 & --- & 8{,}46 & --- & 0{,}000 \\
+VND & 8{,}43 & --- & 8{,}36 & --- & 0{,}037 \\
+GRASP & 1{,}96 & 0{,}99 & 8{,}30 & 1249 & 57{,}2 \\
+GRASP reativo & \textbf{1{,}88} & 1{,}02 & 8{,}29 & 1249 & 56{,}6 \\
+Busca Tabu & 3{,}95 & --- & 8{,}29 & 1088 & 7{,}6 \\
+\bottomrule
+\end{tabular}
+\fonte{Produção da própria autora.}
+\end{minipage}
+\end{table}

@@ -1,0 +1,21 @@
+% Adaptado de results/digital_twin/compare.tex (gerado por twin_table.py).
+% Apenas o envelope (caption/fonte) difere; as linhas de dados sao identicas ao artefato gerado.
+\begin{table}[H]
+\centering\singlespacing
+\begin{minipage}{\textwidth}
+\caption{Gêmeo digital (Vitória/ES, 16 ciclos, canal LoRaWAN com $\mathit{pdr}=0{,}98$): coleta dinâmica guiada pelos sensores contra coleta estática de frequência fixa (a cada 3 ciclos), sobre 30 realizações independentes de enchimento --- os dois regimes veem a \emph{mesma} realização em cada semente (comparação pareada). Células: média $\pm$ IC95\%. Transbordos contados por \emph{episódio} (a lixeira atinge a capacidade antes da coleta; uma contagem por enchimento). Última linha: $p$ do teste de Wilcoxon pareado sobre as 30 sementes}
+\label{tab:twin}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Regime} & \textbf{Distância} & \textbf{Coletas} & \textbf{Transbordos} & \textbf{Ciclos com rota} \\
+\midrule
+Dinâmico (sob demanda) & $3751{,}0 \pm 72{,}7$ & $123{,}9 \pm 2{,}5$ & $27{,}0 \pm 2{,}0$ & $15{,}0 \pm 0{,}1$ \\
+Estático (a cada 3 ciclos) & $3663{,}6 \pm 36{,}9$ & $228{,}0 \pm 0{,}0$ & $19{,}1 \pm 2{,}1$ & $6{,}0 \pm 0{,}0$ \\
+\midrule
+$p$ (Wilcoxon pareado) & 0{,}0016 & 0{,}0000 & 0{,}0000 & 0{,}0000 \\
+\bottomrule
+\end{tabular}
+\fonte{Produção da própria autora.}
+\end{minipage}
+\end{table}

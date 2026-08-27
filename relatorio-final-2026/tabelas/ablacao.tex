@@ -1,0 +1,25 @@
+% Adaptado de results/neighborhoods/ablacao.tex (gerado por ablation_table.py).
+% Apenas o envelope (caption/fonte) difere; as linhas de dados sao identicas ao artefato gerado.
+\begin{table}[H]
+\centering\singlespacing
+\begin{minipage}{\textwidth}
+\caption{Ablação \emph{leave-one-out} do conjunto de vizinhanças (VND, 28 instâncias de treino): efeito de remover cada operador do kit completo, com o placar por instância e o $p$ de Wilcoxon pareado sob correção de Holm}
+\label{tab:ablacao}
+\centering
+\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Configuração} & \textbf{Gap médio (\%)} & \textbf{$\Delta$ (pp)} & \textbf{piora/melhora/empata} & \textbf{$p$ (Holm)} & \textbf{signif.} \\
+\midrule
+Kit completo (6 operadores) & 8{,}25 & --- & --- & --- & --- \\
+\quad sem Relocate & 11{,}40 & +3{,}15 & 23/4/1 & 0{,}0015 & sim \\
+\quad sem 2-opt\hspace{0.5pt}* & 9{,}67 & +1{,}42 & 16/6/6 & 0{,}1745 & não \\
+\quad sem 2-opt intra & 9{,}25 & +1{,}00 & 8/8/12 & 0{,}7476 & não \\
+\quad sem Swap & 9{,}23 & +0{,}98 & 13/8/7 & 0{,}5349 & não \\
+\quad sem Or-opt & 9{,}01 & +0{,}76 & 12/1/15 & 0{,}0216 & sim \\
+\quad sem Cross-exchange & 8{,}75 & +0{,}50 & 4/0/24 & 0{,}5349 & não \\
+\bottomrule
+\end{tabular}
+\fonte{Produção da própria autora.}
+\end{minipage}
+\end{table}

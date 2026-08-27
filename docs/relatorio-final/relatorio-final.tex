@@ -1,13 +1,6 @@
 % ==============================================================
 % Relatório Final de Iniciação Científica — UFES / PIIC
-% Subprojeto: Otimização Dinâmica de Rotas para Coleta de Resíduos
-%             Sólidos: Adaptação do Algoritmo de Solomon com IoT
 % Estudante: Emilly Lopes Das Neves   Orientadora: Maria Claudia Silva Boeres
-%
-% Relatório completo: formulação, invariantes de viabilidade, pseudocódigos,
-% critérios de aceitação, calibração, estatística, resultados (sob o critério de
-% parada por iterações sem melhora) e aplicação no Digital Twin.
-% Compilar com pdflatex (precisa dos pacotes algorithm e algorithmic); figuras em ../../results.
 % ==============================================================
 \documentclass[12pt, a4paper]{article}
 
@@ -39,7 +32,6 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-% Pseudocódigo em português (pacote algorithmic; mesmo estilo do modelo ex_pseudo_codigo.tex).
 \floatname{algorithm}{Algoritmo}
 \renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
 \renewcommand{\algorithmicensure}{\textbf{Saída:}}
@@ -61,8 +53,7 @@
   \usepackage{helvet}
   \renewcommand{\familydefault}{\sfdefault}
 \else
-  % Arial quando existir (Windows/macOS); Liberation Sans e a equivalente
-  % metrica aberta, presente nas distribuicoes Linux.
+ 
   \IfFontExistsTF{Arial}
     {\setmainfont{Arial}\setsansfont{Arial}}
     {\setmainfont{Liberation Sans}\setsansfont{Liberation Sans}}
@@ -75,9 +66,6 @@
 \titleformat{\section}{\normalfont\fontsize{14}{16}\bfseries}{\thesection}{1em}{}[{\titlerule[0.8pt]}]
 \captionsetup{font={footnotesize}, labelsep=endash, singlelinecheck=false, justification=raggedright}
 
-% Legendas em português (sem babel, é preciso redefinir explicitamente --
-% mesmas duas linhas do relatório parcial aceito; sem elas o PDF sai com
-% "Figure"/"Table" enquanto o texto diz "Figura"/"Tabela").
 \renewcommand{\figurename}{Figura}
 \renewcommand{\tablename}{Tabela}
 
@@ -109,7 +97,6 @@
 \renewcommand{\headrulewidth}{0pt}
 \fancyfoot[R]{\thepage}\renewcommand{\footrulewidth}{0pt}
 
-% Orçamento de parada declarado, uniforme (preenchido a partir de config/fixed_K.json).
 \newcommand{\Kgrasp}{800}
 \newcommand{\Krgrasp}{800}
 \newcommand{\Ktabu}{800}
@@ -157,7 +144,7 @@ A gestão de resíduos sólidos urbanos impõe desafios operacionais, econômico
 
 Este subprojeto de Iniciação Científica combina sensoriamento IoT via LoRaWAN \citep{ramson2021lorawan,de2021plataforma} com heurísticas baseadas no algoritmo de \citet{solomon1987algorithms} para o VRPTW, além de um \textit{Digital Twin} (gêmeo digital, definido na Seção~\ref{sec:twin}) para simulação e visualização. A pergunta de pesquisa é: \emph{de que modo a comparação criteriosa de heurísticas clássicas para o VRPTW pode fundamentar um planejamento de coleta mais responsivo e eficiente, preservando a factibilidade temporal das rotas?}
 
-A contribuição deste relatório é metodológica e experimental, organizada em três camadas: (i) um \textbf{\textit{benchmark} estático} sobre as instâncias clássicas de Solomon, que estabelece a base de comparação justa e calibra os algoritmos; (ii) uma \textbf{análise estatística} do desempenho relativo dos cinco métodos; e (iii) uma \textbf{aplicação dinâmica} (Digital Twin) que transfere os algoritmos calibrados a um cenário de coleta de resíduos. O \textit{benchmark} estático é a base metodológica sobre a qual a aplicação dinâmica se apoia: os mesmos operadores e parâmetros validados nas instâncias de Solomon são reaproveitados no Digital Twin.
+A contribuição deste relatório é metodológica e experimental, organizada em três camadas: (i) um \textbf{\textit{benchmark} estático} sobre as instâncias clássicas de Solomon, que estabelece a base de comparação e calibra os algoritmos; (ii) uma \textbf{análise estatística} do desempenho relativo dos cinco métodos; e (iii) uma \textbf{aplicação dinâmica} (Digital Twin) que transfere os algoritmos calibrados a um cenário de coleta de resíduos. O \textit{benchmark} estático é a base metodológica sobre a qual a aplicação dinâmica se apoia: os mesmos operadores e parâmetros validados nas instâncias de Solomon são reaproveitados no Digital Twin.
 
 % ============================================================
 \section{O Problema de Roteamento com Janelas de Tempo}\label{sec:problema}
@@ -208,7 +195,7 @@ A consequência prática (Seção~\ref{sec:viabilidade}) é que, em todas as exe
 % ============================================================
 \section{Metodologia}\label{sec:metodo}
 
-Todos os algoritmos foram implementados em C++20 sobre um núcleo único: um leitor das instâncias de Solomon, a matriz de distâncias truncadas, o avaliador de viabilidade, o conjunto de vizinhanças e um gerador pseudoaleatório com semente registrada. Compartilhar esse núcleo é o que torna a comparação \textbf{justa}: com leitor, distância, vizinhanças e geração de números aleatórios idênticos, a estratégia de busca passa a ser a única origem possível das diferenças de desempenho. Daqui em diante, quando o contexto for claro, abreviamos GRASP Reativo por \emph{Reativo} e Busca Tabu por \emph{Tabu}.
+Todos os algoritmos foram implementados em C++20 sobre um núcleo único: um leitor das instâncias de Solomon, a matriz de distâncias truncadas, o avaliador de viabilidade, o conjunto de vizinhanças e um gerador pseudoaleatório com semente registrada. Compartilhar esse núcleo é o que torna a comparação pertinente: com leitor, distância, vizinhanças e geração de números aleatórios idênticos, a estratégia de busca passa a ser a única origem possível das diferenças de desempenho. Daqui em diante, quando o contexto for claro, abreviamos GRASP Reativo por \emph{Reativo} e Busca Tabu por \emph{Tabu}.
 
 \subsection{Arquitetura do solver e fluxo de execução}\label{sec:arquitetura}
 O sistema é organizado em um \emph{núcleo compartilhado} e módulos de algoritmo. O núcleo contém: (i) o \textbf{leitor de instâncias}, que interpreta o formato de Solomon (coordenadas, demanda, janela, serviço, capacidade); (ii) a \textbf{matriz de distâncias}, único ponto onde as distâncias são calculadas, garantindo valores idênticos a todos os métodos --- e que admite, no Digital Twin, matrizes \emph{explícitas} de distância e tempo (Seção~\ref{sec:road}); (iii) a estrutura de \textbf{rota}, que mantém em cache os instantes de chegada, início e partida e a \emph{folga} Push Forward de cada cliente, recalculados a cada modificação; (iv) o \textbf{avaliador}, que computa a distância total (objetivo) e a chave de comparação; (v) o \textbf{conjunto de vizinhanças}, com a avaliação de viabilidade de cada movimento candidato; (vi) o \textbf{gerador pseudoaleatório}, semeado de forma determinística; (vii) o \textbf{critério de parada}; e (viii) o \textbf{verificador independente}.
@@ -241,31 +228,31 @@ c_{1}(i,u,j) &= \alpha_1\, c_{11}(i,u,j) + \alpha_2\, c_{12}(i,u,j), & c_{2}(u) 
 em que $c_{11}$ é o acréscimo de \emph{distância} da inserção e $c_{12}$ é o \emph{deslocamento temporal} (push-forward) que $u$ provoca no sucessor --- $b_j$ é o início de serviço em $j$ antes da inserção e $b_{ju}$ o início após inserir $u$. A quantidade $c_1^{\min}(u)=\min_{(i,j)} c_1(i,u,j)$ é o custo da \emph{melhor} inserção de $u$ na rota corrente, com o mínimo tomado apenas sobre as posições $(i,j)$ \emph{viáveis} --- as que respeitam a capacidade e a folga Push Forward (Seção~\ref{sec:invariantes}); se nenhuma posição é viável, $c_1^{\min}(u)$ e $c_2(u)$ ficam indefinidos e $u$ não concorre nesta rodada. Usamos a configuração canônica $\mu=1,\ \lambda=2,\ \alpha_1=1,\ \alpha_2=0$, fixa para todos os métodos (não calibrada). Com $\alpha_2=0$ emprega-se a variante \emph{baseada em distância} de Solomon: o termo temporal $c_{12}$ é anulado pelo peso $\alpha_2=0$, de modo que $c_1(i,u,j)=c_{11}(i,u,j)$ --- coerente com o objetivo DIMACS; $\mu$ pondera a economia de remover o arco $(i,j)$ e $\lambda$ a preferência por clientes distantes do depósito. O Algoritmo~\ref{alg:i1} detalha o procedimento.
 
 \begin{algorithm}[H]
-\caption{Construção por inserção I1 de Solomon (variante de distância)}\label{alg:i1}
+\caption{\textsc{I1-Solomon} --- construção por inserção sequencial}\label{alg:i1}
 \begin{algorithmic}[1]
-\REQUIRE instância; parâmetros $\mu,\lambda,\alpha_1,\alpha_2$
-\ENSURE solução viável $S$ cobrindo todos os clientes
-\STATE $S \gets \emptyset$;\quad $U \gets C$ \label{i1:init}
+\REQUIRE{conjunto de clientes $C$; parâmetros $\mu$, $\lambda$, $\alpha_1$, $\alpha_2$}
+\ENSURE{solução viável $S$ cobrindo todos os clientes}
+\STATE{$S \gets \emptyset$;\quad $U \gets C$}\label{i1:init}
 \WHILE{$U \neq \emptyset$}
-  \STATE $u^\star \gets \arg\max_{u\in U}\, d_{0u}$;\quad $r \gets \langle u^\star \rangle$;\quad $U \gets U \setminus \{u^\star\}$ \label{i1:seed}
+  \STATE{$u^{\star} \gets \arg\max_{u\in U}\, d_{0u}$;\quad $r \gets \langle u^{\star} \rangle$;\quad $U \gets U \setminus \{u^{\star}\}$}\label{i1:seed}
   \REPEAT
-    \STATE $best \gets \textsc{nulo}$;\quad $c_2^\star \gets -\infty$ \label{i1:reset}
-    \FORALL{$u \in U$ com inserção viável em $r$} \label{i1:scan}
-      \IF{$c_2(u) > c_2^\star$}
-        \STATE $c_2^\star \gets c_2(u)$;\quad $best \gets \big(u,\ \arg\min_{(i,j)} c_1(i,u,j)\big)$ \label{i1:best}
+    \STATE{$\mathit{best} \gets \textsc{nulo}$;\quad $c_2^{\star} \gets -\infty$}\label{i1:reset}
+    \FORALL{$u \in U$ com inserção viável em $r$}\label{i1:scan}
+      \IF{$c_2(u) > c_2^{\star}$}
+        \STATE{$c_2^{\star} \gets c_2(u)$;\quad $\mathit{best} \gets \big(u,\ \arg\min_{(i,j)} c_1(i,u,j)\big)$}\label{i1:best}
       \ENDIF
     \ENDFOR
-    \IF{$best \neq \textsc{nulo}$}
-      \STATE \texttt{insere($best$, $r$)};\quad $U \gets U \setminus \{u_{best}\}$ \label{i1:insert}
+    \IF{$\mathit{best} \neq \textsc{nulo}$}
+      \STATE{\texttt{insere}($\mathit{best}$, $r$);\quad $U \gets U \setminus \{u_{\mathit{best}}\}$}\label{i1:insert}
     \ENDIF
-  \UNTIL{$best = \textsc{nulo}$}
-  \STATE $S \gets S \cup \{r\}$ \label{i1:close}
+  \UNTIL{$\mathit{best} = \textsc{nulo}$}
+  \STATE{$S \gets S \cup \{r\}$}\label{i1:close}
 \ENDWHILE
-\RETURN $S$
+\RETURN{$S$}
 \end{algorithmic}
 \end{algorithm}
 
-\textbf{Leitura passo a passo.} Na linha~\ref{i1:init}, a solução começa vazia e o conjunto $U$ de clientes não roteados é inicializado com todos os clientes. Na linha~\ref{i1:seed}, cada nova rota nasce de uma \emph{semente}: o cliente de $U$ mais distante do depósito, escolha que ancora a rota em uma região periférica e tende a reduzir o número total de veículos; a semente é então removida de $U$. O laço interno (linhas~\ref{i1:reset}--\ref{i1:insert}) faz crescer a rota corrente. Na linha~\ref{i1:reset}, o melhor candidato ($best$) e o melhor valor do critério ($c_2^\star$) são reiniciados. A varredura da linha~\ref{i1:scan} percorre apenas os clientes de $U$ que admitem inserção viável em $r$ --- cada posição candidata é testada em $O(1)$ pela folga Push Forward ---, e $c_2(u)$ é avaliado na melhor posição viável, a de custo $c_1^{\min}(u)$; a linha~\ref{i1:best} retém o cliente de maior $c_2$ junto com essa posição. A intuição do critério: $\lambda\,d_{0u}$ aproxima o custo de servir $u$ em uma viagem dedicada, saindo do depósito só para ele; subtraindo o custo $c_1^{\min}(u)$ de inseri-lo agora, $c_2$ mede a \emph{economia} de aproveitá-lo na rota corrente. Vence o cliente para o qual essa economia é maior --- tipicamente um cliente \emph{distante} do depósito cuja inserção é barata, que seria caro atender depois em uma rota própria. Na linha~\ref{i1:insert}, o vencedor é inserido na posição retida e removido de $U$. A rota só se fecha (linha~\ref{i1:close}) quando nenhuma inserção viável resta, e uma nova é aberta. É essa dinâmica gulosa e sequencial que molda a \emph{solução inicial} de todos os métodos: rotas densas e geograficamente coerentes, porém sem nenhuma reotimização entre rotas --- exatamente a lacuna que a busca local explora a seguir.
+ Na linha~\ref{i1:init}, a solução começa vazia e o conjunto $U$ de clientes não roteados é inicializado com todos os clientes. Na linha~\ref{i1:seed}, cada nova rota nasce de uma \emph{semente}: o cliente de $U$ mais distante do depósito, escolha que ancora a rota em uma região periférica e tende a reduzir o número total de veículos; a semente é então removida de $U$. O laço interno (linhas~\ref{i1:reset}--\ref{i1:insert}) faz crescer a rota corrente. Na linha~\ref{i1:reset}, o melhor candidato ($best$) e o melhor valor do critério ($c_2^\star$) são reiniciados. A varredura da linha~\ref{i1:scan} percorre apenas os clientes de $U$ que admitem inserção viável em $r$ --- cada posição candidata é testada em $O(1)$ pela folga Push Forward ---, e $c_2(u)$ é avaliado na melhor posição viável, a de custo $c_1^{\min}(u)$; a linha~\ref{i1:best} retém o cliente de maior $c_2$ junto com essa posição. A intuição do critério: $\lambda\,d_{0u}$ aproxima o custo de servir $u$ em uma viagem dedicada, saindo do depósito só para ele; subtraindo o custo $c_1^{\min}(u)$ de inseri-lo agora, $c_2$ mede a \emph{economia} de aproveitá-lo na rota corrente. Vence o cliente para o qual essa economia é maior --- tipicamente um cliente \emph{distante} do depósito cuja inserção é barata, que seria caro atender depois em uma rota própria. Na linha~\ref{i1:insert}, o vencedor é inserido na posição retida e removido de $U$. A rota só se fecha (linha~\ref{i1:close}) quando nenhuma inserção viável resta, e uma nova é aberta. É essa dinâmica gulosa e sequencial que molda a \emph{solução inicial} de todos os métodos: rotas densas e geograficamente coerentes, porém sem nenhuma reotimização entre rotas --- exatamente a lacuna que a busca local explora a seguir.
 
 A cobertura total é garantida estruturalmente: o laço externo só termina quando $U=\emptyset$, e cada iteração roteia ao menos a semente. A viabilidade é garantida porque a varredura da linha~\ref{i1:scan} só considera inserções que respeitam a folga Push Forward e a capacidade. A Figura~\ref{fig:i1} ilustra a montagem de uma rota.
 
@@ -303,24 +290,24 @@ Cada operador avalia a viabilidade do movimento por uma simulação completa da(
 O VND \citep{hansen2001variable} é o primeiro método que otimiza a Equação~\eqref{eq:obj-dist} diretamente: todo movimento aceito \emph{reduz estritamente} a distância total $D(S)$, e a viabilidade é pré-condição de candidatura (Seção~\ref{sec:aceitacao}) --- de modo que a trajetória de custos é monotônica decrescente e o método para, por definição, em um ótimo local. Ele percorre as vizinhanças em uma ordem fixa, \textbf{da varredura mais barata à mais cara} --- $\langle$2-opt, Swap, 2-opt\hspace{0.5pt}*, Relocate, Or-opt, Cross-exchange$\rangle$, a ordem de complexidade medida apresentada na Seção~\ref{sec:vizinhancas}. Ao encontrar uma melhora (estratégia de \emph{melhor melhora}), aplica-a e reinicia da primeira vizinhança; caso contrário, avança para a próxima. Termina em um ótimo local com relação a \emph{todas} as vizinhanças (Algoritmo~\ref{alg:vnd}). É determinístico dada a solução inicial.
 
 \begin{algorithm}[H]
-\caption{VND --- Descida em Vizinhança Variável}\label{alg:vnd}
+\caption{\textsc{VND} --- Descida em Vizinhança Variável}\label{alg:vnd}
 \begin{algorithmic}[1]
-\REQUIRE solução viável $S$; lista ordenada de vizinhanças $N_1,\dots,N_p$
-\ENSURE ótimo local $S$ em relação a todas as vizinhanças
-\STATE $\ell \gets 1$ \label{vnd:init}
+\REQUIRE{solução viável $S$; vizinhanças ordenadas $N_1,\dots,N_p$}
+\ENSURE{ótimo local $S$ em relação a todas as vizinhanças}
+\STATE{$\ell \gets 1$}\label{vnd:init}
 \WHILE{$\ell \le p$}
-  \STATE $m \gets \texttt{melhor\_movimento}(N_\ell,\ S)$ \COMMENT{viável; \textsc{nulo} se nenhum reduz $D(S)$} \label{vnd:find}
+  \STATE{$m \gets \texttt{melhor\_movimento}(N_{\ell},\ S)$}\label{vnd:find}
   \IF{$m \neq \textsc{nulo}$}
-    \STATE $S \gets \texttt{aplica}(m,\ S)$;\quad $\ell \gets 1$ \label{vnd:apply}
+    \STATE{$S \gets \texttt{aplica}(m,\ S)$;\quad $\ell \gets 1$}\label{vnd:apply}
   \ELSE
-    \STATE $\ell \gets \ell + 1$ \label{vnd:next}
+    \STATE{$\ell \gets \ell + 1$}\label{vnd:next}
   \ENDIF
 \ENDWHILE
-\RETURN $S$
+\RETURN{$S$}
 \end{algorithmic}
 \end{algorithm}
 
-\textbf{Leitura passo a passo.} Na linha~\ref{vnd:init}, o índice $\ell$ aponta a vizinhança ativa. Na linha~\ref{vnd:find}, a função \texttt{melhor\_movimento} varre \emph{toda} a vizinhança $N_\ell$ e retorna o movimento viável de maior redução de distância, ou \textsc{nulo} se nenhum movimento reduz $D(S)$. A estratégia é a de \emph{melhor melhora}: escolhe-se o movimento de maior redução, não o primeiro encontrado. Isso torna a varredura independente da ordem interna de enumeração e, com isso, o resultado determinístico dado o ponto de partida. Se há ganho, a linha~\ref{vnd:apply} aplica o movimento e \textbf{reinicia de $\ell=1$}: voltar à vizinhança mais barata após cada melhoria é o que caracteriza o VND e o que torna a descida sistemática. Sem ganho, a linha~\ref{vnd:next} passa à vizinhança seguinte; o laço encerra quando nenhuma das $p$ vizinhanças melhora $S$. A ordem por complexidade tem efeito prático direto: como cada melhoria reinicia da primeira vizinhança, os operadores de varredura barata (2-opt, Swap) absorvem a maior parte dos movimentos e reduzem o trabalho que sobra para os caros (Or-opt, Cross-exchange). É o mecanismo por trás da recomendação de \citet{hansen2001variable} de explorar primeiro a vizinhança mais simples. Em termos da \emph{formação da solução}, é aqui que a rota rígida da I1 começa a ser reorganizada: o 2-opt desfaz cruzamentos \emph{dentro} de uma rota, o 2-opt\hspace{0.5pt}* recombina as \emph{caudas} de duas rotas (podendo até fundi-las), o Relocate corrige clientes mal alocados e o Or-opt e o Cross-exchange transferem trechos \emph{entre} veículos. O ganho quantitativo sobre a I1 é apresentado na Seção~\ref{sec:comparacao}. O VND permanece, porém, preso ao primeiro ótimo local encontrado, e é dessa limitação que partem as meta-heurísticas a seguir.
+ Na linha~\ref{vnd:init}, o índice $\ell$ aponta a vizinhança ativa. Na linha~\ref{vnd:find}, a função \texttt{melhor\_movimento} varre \emph{toda} a vizinhança $N_\ell$ e retorna o movimento viável de maior redução de distância, ou \textsc{nulo} se nenhum movimento reduz $D(S)$. A estratégia é a de \emph{melhor melhora}: escolhe-se o movimento de maior redução, não o primeiro encontrado. Isso torna a varredura independente da ordem interna de enumeração e, com isso, o resultado determinístico dado o ponto de partida. Se há ganho, a linha~\ref{vnd:apply} aplica o movimento e \textbf{reinicia de $\ell=1$}: voltar à vizinhança mais barata após cada melhoria é o que caracteriza o VND e o que torna a descida sistemática. Sem ganho, a linha~\ref{vnd:next} passa à vizinhança seguinte; o laço encerra quando nenhuma das $p$ vizinhanças melhora $S$. A ordem por complexidade tem efeito prático direto: como cada melhoria reinicia da primeira vizinhança, os operadores de varredura barata (2-opt, Swap) absorvem a maior parte dos movimentos e reduzem o trabalho que sobra para os caros (Or-opt, Cross-exchange). É o mecanismo por trás da recomendação de \citet{hansen2001variable} de explorar primeiro a vizinhança mais simples. Em termos da \emph{formação da solução}, é aqui que a rota rígida da I1 começa a ser reorganizada: o 2-opt desfaz cruzamentos \emph{dentro} de uma rota, o 2-opt\hspace{0.5pt}* recombina as \emph{caudas} de duas rotas (podendo até fundi-las), o Relocate corrige clientes mal alocados e o Or-opt e o Cross-exchange transferem trechos \emph{entre} veículos. O ganho quantitativo sobre a I1 é apresentado na Seção~\ref{sec:comparacao}. O VND permanece, porém, preso ao primeiro ótimo local encontrado, e é dessa limitação que partem as meta-heurísticas a seguir.
 
 A Figura~\ref{fig:evol} ilustra a busca local em ação: cada painel é a solução após um movimento, com a distância caindo monotonicamente até o ótimo local.
 
@@ -344,28 +331,25 @@ Com $\alpha=0$ recupera-se a construção gulosa; com $\alpha=1$, totalmente ale
 \end{figure}
 
 \begin{algorithm}[H]
-\caption{GRASP (Feo \& Resende)}\label{alg:grasp}
+\caption{\textsc{GRASP}}\label{alg:grasp}
 \begin{algorithmic}[1]
-\REQUIRE instância; parâmetro $\alpha$; orçamento $K$ (iterações sem melhora)
-\ENSURE melhor solução $S^\star$
-\STATE $S^\star \gets$ I1 \COMMENT{partida comum a todos os métodos (Seção~\ref{sec:i1})};\quad $k \gets 0$ \label{g:init}
-\WHILE{critério de parada não satisfeito}
-  \STATE $S \gets$ \textsc{ConstruçãoGulosa-Aleatorizada}($\alpha$) \label{g:build}
-  \STATE $S \gets$ \textsc{VND}($S$) \label{g:ls}
-  \IF{distância$(S) <$ distância$(S^\star)$}
-    \STATE $S^\star \gets S$;\quad $k \gets 0$ \label{g:improve}
+\REQUIRE{instância; parâmetro $\alpha$; orçamento $K$}
+\ENSURE{melhor solução $S^{\star}$}
+\STATE{$S^{\star} \gets \textsc{I1-Solomon}$;\quad $k \gets 0$}\label{g:init}
+\WHILE{$k < K$}
+  \STATE{$S \gets \textsc{Construção-Aleatorizada}(\alpha)$}\label{g:build}
+  \STATE{$S \gets \textsc{VND}(S)$}\label{g:ls}
+  \IF{$D(S) < D(S^{\star})$}
+    \STATE{$S^{\star} \gets S$;\quad $k \gets 0$}\label{g:improve}
   \ELSE
-    \STATE $k \gets k+1$ \label{g:noimprove}
-  \ENDIF
-  \IF{$k \ge K$}
-    \STATE \textbf{interrompa} \label{g:stop}
+    \STATE{$k \gets k+1$}\label{g:noimprove}
   \ENDIF
 \ENDWHILE
-\RETURN $S^\star$
+\RETURN{$S^{\star}$}
 \end{algorithmic}
 \end{algorithm}
 
-\textbf{Leitura passo a passo.} Na linha~\ref{g:init}, o algoritmo difere da forma de livro-texto, que parte de incumbente vazio: aqui, o \emph{incumbente} (a melhor solução encontrada até o momento, que será devolvida ao final) é inicializado com a solução da I1 pura, a mesma partida entregue ao VND e à Busca Tabu. Isso garante, por construção, que o resultado do GRASP nunca seja pior que a I1, e põe todos os métodos partindo do mesmo ponto. Cada iteração é então um ciclo \emph{construção $\rightarrow$ busca local}: a linha~\ref{g:build} gera uma solução nova com aleatorização controlada por $\alpha$ (a RCL da Figura~\ref{fig:rcl}), e a linha~\ref{g:ls} a conduz a um ótimo local pelo VND (Algoritmo~\ref{alg:vnd}). A aleatorização age apenas na escolha de qual cliente inserir; a regra de semente e o critério $c_2$ permanecem os da I1, e é por isso que, com $\alpha=0$, o GRASP degenera na construção da I1 --- propriedade verificada por teste automatizado nas 56 instâncias: em 47 a solução é idêntica à da I1 e, nas 9 restantes, o teste confirma que a diferença decorre exclusivamente de \emph{empates} no critério $c_2$, caso em que a lista restrita contém mais de um candidato e a escolha passa pelo gerador aleatório. A linha~\ref{g:improve} retém a melhor solução já vista e zera o contador de estagnação; a linha~\ref{g:noimprove} o incrementa quando não há ganho; e a linha~\ref{g:stop} encerra após $K$ iterações sem melhora. O acréscimo do GRASP é a \emph{diversificação estruturada}: reconstruindo as rotas do zero a cada iteração, ele rompe a dependência da semente única da I1 (cada RCL produz uma topologia de rotas diferente), e o resultado final é a melhor entre centenas de descidas independentes.
+ Na linha~\ref{g:init}, o algoritmo difere da forma de livro-texto, que parte de incumbente vazio: aqui, o \emph{incumbente} (a melhor solução encontrada até o momento, que será devolvida ao final) é inicializado com a solução da I1 pura, a mesma partida entregue ao VND e à Busca Tabu. Isso garante, por construção, que o resultado do GRASP nunca seja pior que a I1, e põe todos os métodos partindo do mesmo ponto. Cada iteração é então um ciclo \emph{construção $\rightarrow$ busca local}: a linha~\ref{g:build} gera uma solução nova com aleatorização controlada por $\alpha$ (a RCL da Figura~\ref{fig:rcl}), e a linha~\ref{g:ls} a conduz a um ótimo local pelo VND (Algoritmo~\ref{alg:vnd}). A aleatorização age apenas na escolha de qual cliente inserir; a regra de semente e o critério $c_2$ permanecem os da I1, e é por isso que, com $\alpha=0$, o GRASP degenera na construção da I1 --- propriedade verificada por teste automatizado nas 56 instâncias: em 47 a solução é idêntica à da I1 e, nas 9 restantes, o teste confirma que a diferença decorre exclusivamente de \emph{empates} no critério $c_2$, caso em que a lista restrita contém mais de um candidato e a escolha passa pelo gerador aleatório. A linha~\ref{g:improve} retém a melhor solução já vista e zera o contador de estagnação; a linha~\ref{g:noimprove} o incrementa quando não há ganho; o laço encerra após $K$ iterações consecutivas sem melhora. O acréscimo do GRASP é a \emph{diversificação estruturada}: reconstruindo as rotas do zero a cada iteração, ele rompe a dependência da semente única da I1 (cada RCL produz uma topologia de rotas diferente), e o resultado final é a melhor entre centenas de descidas independentes.
 
 \subsection{GRASP Reativo}\label{sec:rgrasp}
 O GRASP Reativo \citep{prais2000reactive} otimiza a mesma função-objetivo do GRASP --- Equação~\eqref{eq:obj-dist}, por multipartida --- diferindo apenas em \emph{como} o parâmetro de aleatorização é escolhido: em vez de um $\alpha$ fixo, mantém-se um conjunto discreto $\{\alpha_1,\dots,\alpha_g\}$ (grade $0{,}05,0{,}10,\dots,0{,}50$) com probabilidades $p_i$ de seleção. A cada bloco de \textit{block} iterações, as probabilidades são atualizadas de modo que valores de $\alpha$ que produziram soluções melhores fiquem mais prováveis --- o expoente $\delta$ regula a agressividade desse aprendizado ($\delta$ baixo mantém as probabilidades próximas do uniforme; $\delta$ alto concentra rapidamente no melhor $\alpha$):
@@ -375,72 +359,65 @@ q_i=\left(\frac{Z^\star}{\bar Z_i}\right)^{\!\delta},\qquad p_i=\frac{q_i}{\sum_
 em que $Z^\star$ é o melhor custo encontrado e $\bar Z_i$ o custo médio (acumulado ao longo de toda a execução) das soluções obtidas com $\alpha_i$. Os parâmetros calibrados por \textit{irace} são $\delta$ (expoente) e \textit{block\_frac}: na implementação, o tamanho de bloco é derivado como $\textit{block}=\textit{block\_frac}\cdot K$, para que o número de reponderações independa do orçamento (Seção~\ref{sec:parametrizacao}). O Algoritmo~\ref{alg:rgrasp} detalha o método; nas primeiras $g$ iterações cada $\alpha$ é experimentado uma vez (\emph{aquecimento}) antes de a amostragem por probabilidade começar. Como $\textit{block} \ge 16 > g = 10$ em toda a faixa calibrada, a primeira reponderação só ocorre após o fim do aquecimento, quando todo $\alpha_i$ já tem $n_i \ge 1$ --- as linhas~\ref{rg:q}--\ref{rg:p} nunca encontram $n_i=0$.
 
 \begin{algorithm}[H]
-\caption{GRASP Reativo (Prais \& Ribeiro)}\label{alg:rgrasp}
+\caption{\textsc{GRASP-Reativo}}\label{alg:rgrasp}
 \begin{algorithmic}[1]
-\REQUIRE grade $\{\alpha_1,\dots,\alpha_g\}$; expoente $\delta$; tamanho de bloco \textit{block}; orçamento $K$
-\ENSURE melhor solução $S^\star$
-\STATE $p_i \gets 1/g$,\ $\Sigma_i \gets 0$,\ $n_i \gets 0$ \textbf{para todo} $i$;\quad $S^\star \gets$ I1;\quad $k \gets 0$;\quad $\mathit{it} \gets 0$ \label{rg:init}
-\WHILE{critério de parada não satisfeito}
+\REQUIRE{grade $\{\alpha_1,\dots,\alpha_g\}$; expoente $\delta$; tamanho de bloco \textit{block}; orçamento $K$}
+\ENSURE{melhor solução $S^{\star}$}
+\STATE{$p_i \gets 1/g$,\ $\Sigma_i \gets 0$,\ $n_i \gets 0$ \textbf{para todo} $i$;\quad $S^{\star} \gets \textsc{I1-Solomon}$;\quad $k \gets 0$;\quad $\mathit{it} \gets 0$}\label{rg:init}
+\WHILE{$k < K$}
   \IF{$\mathit{it} < g$}
-    \STATE $j \gets \mathit{it}+1$ \COMMENT{aquecimento: cada $\alpha$ uma vez} \label{rg:warm}
+    \STATE{$j \gets \mathit{it}+1$}\label{rg:warm}
   \ELSE
-    \STATE $j \gets$ amostra de $\{1,\dots,g\}$ segundo as probabilidades $p$ \label{rg:sample}
+    \STATE{$j \gets$ amostra de $\{1,\dots,g\}$ segundo as probabilidades $p$}\label{rg:sample}
   \ENDIF
-  \STATE $S \gets$ \textsc{VND}\big(\textsc{ConstruçãoGulosa-Aleatorizada}($\alpha_j$)\big) \label{rg:build}
-  \STATE $c \gets$ distância$(S)$;\quad $\Sigma_j \gets \Sigma_j + c$;\quad $n_j \gets n_j + 1$ \label{rg:acc}
-  \IF{$c <$ distância$(S^\star)$}
-    \STATE $S^\star \gets S$;\quad $k \gets 0$ \label{rg:improve}
+  \STATE{$S \gets \textsc{VND}\big(\textsc{Construção-Aleatorizada}(\alpha_j)\big)$}\label{rg:build}
+  \STATE{$c \gets D(S)$;\quad $\Sigma_j \gets \Sigma_j + c$;\quad $n_j \gets n_j + 1$}\label{rg:acc}
+  \IF{$c < D(S^{\star})$}
+    \STATE{$S^{\star} \gets S$;\quad $k \gets 0$}\label{rg:improve}
   \ELSE
-    \STATE $k \gets k+1$
+    \STATE{$k \gets k+1$}
   \ENDIF
-  \STATE $\mathit{it} \gets \mathit{it}+1$
-  \IF{$k \ge K$}
-    \STATE \textbf{interrompa}
-  \ENDIF
+  \STATE{$\mathit{it} \gets \mathit{it}+1$}
   \IF{$\mathit{it} \bmod \textit{block} = 0$}
-    \STATE $Z^\star \gets$ distância$(S^\star)$;\quad $\bar Z_i \gets \Sigma_i/n_i$,\ \ $q_i \gets (Z^\star/\bar Z_i)^\delta$ \textbf{para todo} $i$ \label{rg:q}
-    \STATE $p_i \gets q_i / \sum_l q_l$ \textbf{para todo} $i$ \label{rg:p}
+    \STATE{$Z^{\star} \gets D(S^{\star})$;\quad $\bar Z_i \gets \Sigma_i/n_i$,\ \ $q_i \gets (Z^{\star}/\bar Z_i)^{\delta}$ \textbf{para todo} $i$}\label{rg:q}
+    \STATE{$p_i \gets q_i / \sum_l q_l$ \textbf{para todo} $i$}\label{rg:p}
   \ENDIF
 \ENDWHILE
-\RETURN $S^\star$
+\RETURN{$S^{\star}$}
 \end{algorithmic}
 \end{algorithm}
 
-\textbf{Leitura passo a passo.} O reativo difere do GRASP por \emph{aprender} qual $\alpha$ funciona melhor em cada instância. Nas linhas~\ref{rg:warm}--\ref{rg:sample}, escolhe-se o $\alpha$: nas primeiras $g$ iterações cada valor é testado uma vez (aquecimento, para que nenhum $\alpha$ comece com vantagem espúria); depois, $\alpha$ é sorteado conforme as probabilidades $p$. Na linha~\ref{rg:acc}, acumulam-se a soma e a contagem dos custos obtidos por cada $\alpha$ e, a cada \textit{block} iterações, as linhas~\ref{rg:q}--\ref{rg:p} recalculam as probabilidades pela razão $q_i=(Z^\star/\bar Z_i)^\delta$, tomando $Z^\star$ como a distância do incumbente: valores de $\alpha$ que produziram soluções melhores tornam-se mais prováveis. O efeito prático é ajustar automaticamente o equilíbrio guloso$\leftrightarrow$aleatório ao perfil da instância. Resta saber se esse aprendizado se traduz em vantagem mensurável sobre o GRASP de $\alpha$ fixo; a análise estatística da Seção~\ref{sec:comparacao} trata exatamente dessa pergunta.
+ O reativo difere do GRASP por \emph{aprender} qual $\alpha$ funciona melhor em cada instância. Nas linhas~\ref{rg:warm}--\ref{rg:sample}, escolhe-se o $\alpha$: nas primeiras $g$ iterações cada valor é testado uma vez (aquecimento, para que nenhum $\alpha$ comece com vantagem espúria); depois, $\alpha$ é sorteado conforme as probabilidades $p$. Na linha~\ref{rg:acc}, acumulam-se a soma e a contagem dos custos obtidos por cada $\alpha$ e, a cada \textit{block} iterações, as linhas~\ref{rg:q}--\ref{rg:p} recalculam as probabilidades pela razão $q_i=(Z^\star/\bar Z_i)^\delta$, tomando $Z^\star$ como a distância do incumbente: valores de $\alpha$ que produziram soluções melhores tornam-se mais prováveis. O efeito prático é ajustar automaticamente o equilíbrio guloso$\leftrightarrow$aleatório ao perfil da instância. Resta saber se esse aprendizado se traduz em vantagem mensurável sobre o GRASP de $\alpha$ fixo; a análise estatística da Seção~\ref{sec:comparacao} trata exatamente dessa pergunta.
 
 \subsection{Busca Tabu}\label{sec:tabu}
 Adotamos a forma clássica e mais simples da Busca Tabu \citep{glover1989tabu,glover1990tabu}: a cada iteração, move-se para o \emph{melhor vizinho admissível} sobre o kit de vizinhanças, aceitando, se necessário, movimentos que pioram a solução, para escapar de ótimos locais. A função-objetivo é a mesma Equação~\eqref{eq:obj-dist}, com uma distinção operacional: a solução \emph{corrente} pode piorar de um passo para o outro; quem realiza a minimização é o \emph{incumbente} $S^\star$, que retém o menor $D(S)$ visitado ao longo da trajetória única do método. Um movimento é \emph{tabu} se algum dos seus clientes-atributo foi movido nas últimas \textit{tenure} iterações, a menos que satisfaça o critério de \emph{aspiração por objetivo} (produzir um novo melhor global). Adotamos também a \emph{aspiração por omissão} \citep{glover1997tabu}: se \textbf{todos} os movimentos disponíveis estiverem tabu, revoga-se o status do grupo de clientes com prazo de expiração mais próximo e a varredura é refeita, em vez de encerrar a busca --- sem essa salvaguarda, a lista tabu pode esgotar a vizinhança e truncar a execução muito antes do critério de parada. O atributo tabu é, precisamente, o \emph{primeiro cliente de cada segmento movido}: o cliente relocado no Relocate, os dois clientes trocados no Swap, a cabeça da cadeia no Or-opt, os extremos do trecho invertido no 2-opt e o primeiro cliente de cada cauda ou segmento trocado no 2-opt\hspace{0.5pt}* e no Cross-exchange. É uma simplificação deliberada (em vez do arco, ou de todos os clientes tocados), mantida para preservar a forma ``de livro-texto'' com custo de memória mínimo. Não há religação de caminhos (\textit{path relinking}), intensificação ou diversificação por frequência. O único parâmetro é \textit{tenure}, calibrado por \textit{irace} (Algoritmo~\ref{alg:tabu}).
 
 \begin{algorithm}[H]
-\caption{Busca Tabu (Glover, forma clássica)}\label{alg:tabu}
+\caption{\textsc{Busca-Tabu} --- forma clássica}\label{alg:tabu}
 \begin{algorithmic}[1]
-\REQUIRE solução inicial $S$ (da I1); \textit{tenure}; orçamento $K$
-\ENSURE melhor solução $S^\star$
-\STATE $S^\star \gets S$;\quad $k \gets 0$ \label{t:init}
-\WHILE{critério de parada não satisfeito}
-  \STATE $m \gets \texttt{melhor\_movimento\_admissível}(N,\ S)$ \COMMENT{viável; não tabu, ou tabu com aspiração} \label{t:find}
+\REQUIRE{solução inicial $S$ (da I1); \textit{tenure}; orçamento $K$}
+\ENSURE{melhor solução $S^{\star}$}
+\STATE{$S^{\star} \gets S$;\quad $k \gets 0$}\label{t:init}
+\WHILE{$k < K$}
+  \STATE{$m \gets \texttt{melhor\_admissível}(N,\ S)$}\label{t:find}
+  \WHILE{$m = \textsc{nulo}$ \textbf{e} algum cliente está tabu}\label{t:revoke}
+    \STATE{expira o grupo tabu de prazo mais próximo;\quad $m \gets \texttt{melhor\_admissível}(N,\ S)$}\label{t:default}
+  \ENDWHILE
   \IF{$m = \textsc{nulo}$}
-    \IF{nenhum cliente está tabu}
-      \STATE \textbf{interrompa} \COMMENT{não existe movimento viável algum} \label{t:exhaust}
-    \ENDIF
-    \STATE revoga o status tabu do grupo com menor prazo de expiração \label{t:default}
-    \STATE \textbf{volte à linha~\ref{t:find}} \COMMENT{aspiração por omissão; a varredura é refeita sem consumir iteração} \label{t:redo}
+    \RETURN{$S^{\star}$}\label{t:exhaust}
   \ENDIF
-  \STATE $S \gets \texttt{aplica}(m,\ S)$;\quad marque o(s) cliente(s)-atributo de $m$ como tabu por \textit{tenure} iterações \label{t:apply}
-  \IF{distância$(S) <$ distância$(S^\star)$}
-    \STATE $S^\star \gets S$;\quad $k \gets 0$ \label{t:improve}
+  \STATE{$S \gets \texttt{aplica}(m,\ S)$;\quad marca os clientes-atributo de $m$ como tabu por \textit{tenure} iterações}\label{t:apply}
+  \IF{$D(S) < D(S^{\star})$}
+    \STATE{$S^{\star} \gets S$;\quad $k \gets 0$}\label{t:improve}
   \ELSE
-    \STATE $k \gets k+1$ \label{t:noimprove}
-  \ENDIF
-  \IF{$k \ge K$}
-    \STATE \textbf{interrompa}
+    \STATE{$k \gets k+1$}
   \ENDIF
 \ENDWHILE
-\RETURN $S^\star$
+\RETURN{$S^{\star}$}
 \end{algorithmic}
 \end{algorithm}
 
-\textbf{Leitura passo a passo.} A cada iteração, a linha~\ref{t:find} varre todo o kit de vizinhanças e escolhe o melhor movimento \emph{admissível} --- não tabu ou, se tabu, que satisfaça a aspiração por objetivo. Diferentemente do VND, a Tabu \textbf{não} exige que o movimento melhore: a linha~\ref{t:apply} pode aplicar uma piora controlada, e é assim que a busca escapa de ótimos locais. O movimento torna tabu, por \textit{tenure} iterações, o(s) seu(s) cliente(s)-atributo (memória de curto prazo), o que impede a busca de reverter movimentos recentes e ciclar. O \textit{tenure} regula o compromisso central do método: valores pequenos liberam os clientes cedo e intensificam a busca na região atual; valores grandes prolongam as proibições e forçam a exploração de regiões novas. Quando a lista tabu chega a bloquear \emph{todos} os movimentos --- situação comum com \textit{tenure} alto em instâncias pequenas ---, as linhas~\ref{t:default}--\ref{t:redo} aplicam a aspiração por omissão: expiram o grupo de proibições mais antigo e repetem a varredura, sem consumir iteração. O caso-limite da linha~\ref{t:exhaust} encerra a busca apenas se não existir movimento viável algum, tabu ou não --- fora dele, a busca só termina pelo critério de parada. A linha~\ref{t:improve} guarda o melhor já visto. No conjunto, a Tabu percorre uma \emph{única} trajetória contínua e refina a estrutura herdada da I1 sem reinícios; o GRASP, ao contrário, explora múltiplas estruturas independentes.
+ A cada iteração, a linha~\ref{t:find} varre todo o kit de vizinhanças e escolhe o melhor movimento \emph{admissível} --- não tabu ou, se tabu, que satisfaça a aspiração por objetivo. Diferentemente do VND, a Tabu \textbf{não} exige que o movimento melhore: a linha~\ref{t:apply} pode aplicar uma piora controlada, e é assim que a busca escapa de ótimos locais. O movimento torna tabu, por \textit{tenure} iterações, o(s) seu(s) cliente(s)-atributo (memória de curto prazo), o que impede a busca de reverter movimentos recentes e ciclar. O \textit{tenure} regula o compromisso central do método: valores pequenos liberam os clientes cedo e intensificam a busca na região atual; valores grandes prolongam as proibições e forçam a exploração de regiões novas. Quando a lista tabu chega a bloquear \emph{todos} os movimentos --- situação comum com \textit{tenure} alto em instâncias pequenas ---, o laço interno das linhas~\ref{t:revoke}--\ref{t:default} aplica a aspiração por omissão: expira o grupo de proibições mais antigo e repete a varredura, sem consumir iteração. O retorno da linha~\ref{t:exhaust} encerra a busca apenas se não existir movimento viável algum, tabu ou não --- fora dele, a busca só termina pelo critério de parada. A linha~\ref{t:improve} guarda o melhor já visto. No conjunto, a Tabu percorre uma \emph{única} trajetória contínua e refina a estrutura herdada da I1 sem reinícios; o GRASP, ao contrário, explora múltiplas estruturas independentes.
 
 \subsection{Critérios de aceitação}\label{sec:aceitacao}
 Os cinco métodos diferem essencialmente \emph{no que aceitam} a cada passo. Tornamos isso explícito:
@@ -558,7 +535,7 @@ A Tabela~\ref{tab:ablacao} quantifica a contribuição de cada operador por \emp
 
 A remoção de qualquer operador piora o gap médio, o que sustenta a adoção do kit completo como resultado do procedimento de seleção (Seção~\ref{sec:vizinhancas}). O Relocate é o operador dominante: sua remoção custa $+3{,}15$~pp e piora o gap em 23 das 28 instâncias ($p=0{,}0015$). Em seguida vem o 2-opt\hspace{0.5pt}* ($+1{,}42$~pp), cuja ausência pesa sobretudo nas famílias R e RC, onde a recombinação de caudas entre rotas é mais valiosa. Note-se que apenas Relocate e Or-opt atingem significância estatística, e que isso não autoriza remover os demais. O Cross-exchange ilustra o porquê: ele altera o resultado em somente 4 das 28 instâncias (as outras 24 empatam exatamente), e com quatro observações não nulas o teste de Wilcoxon não alcança $p<0{,}05$ nem no melhor cenário possível --- a falta de significância aqui é falta de \emph{poder} do teste, não indício de que o operador seja dispensável. A busca exaustiva sobre os 63 subconjuntos, que não depende de teste de hipótese, aponta na mesma direção: os melhores subconjuntos por família diferem entre si, e sua união é o conjunto completo.
 
-\subsection{A calibração valeu a pena?}\label{sec:gain}
+\subsection{A calibração}\label{sec:gain}
 Uma seção de calibração precisa responder à pergunta que lhe dá sentido: os parâmetros calibrados são de fato melhores que os valores clássicos da literatura? O protocolo foi declarado \emph{antes} da corrida do \textit{irace}: o calibrado é aceito, por cenário, se supera o clássico no conjunto de teste com Wilcoxon pareado a $5\%$; caso contrário, adota-se o valor clássico e reporta-se que a calibração não rendeu ganho demonstrável. A Tabela~\ref{tab:gain} traz o confronto.
 
 \input{../../results/tables/gain}
@@ -578,7 +555,7 @@ A Tabela~\ref{tab:overall} sustenta três leituras. A cadeia construção $\righ
 
 Por família (Tabela~\ref{tab:familia}), o padrão é consistente: na família C, de clientes agrupados, todos os métodos de melhoria chegam perto do ótimo --- a estrutura de \emph{clusters} deixa pouco espaço para reotimização --- enquanto R e RC, de geografia dispersa, separam os métodos com clareza. É nelas que a diferença entre as meta-heurísticas e o VND se acentua.
 
-\paragraph{Significância estatística.} O resultado primário usa o \textbf{conjunto de teste} (28 instâncias que a calibração nunca viu), imune a superajuste. O teste de Friedman rejeita a igualdade entre os cinco métodos com folga ($\chi^2_F=94{,}15$, $p=1{,}7\times10^{-19}$), com ranks médios GRASP $1{,}77$, Reativo $1{,}84$, Tabu $2{,}63$, VND $3{,}77$ e I1 $5{,}00$. As comparações par a par (Wilcoxon com Holm, tabela completa em \texttt{results/stats\_paired.txt}) dão o quadro final: \textbf{todos os pares diferem significativamente, exceto GRASP $\times$ Reativo} ($p=0{,}95$). Em particular, GRASP e Reativo superam a Busca Tabu ($p_{\mathrm{Holm}}=6{,}9\times10^{-4}$, com o GRASP melhor em 18 das 28 instâncias e pior em 3). A hierarquia empírica é, portanto, $\{\text{GRASP} \approx \text{Reativo}\} \succ \text{Tabu} \succ \text{VND} \succ \text{I1}$, sintetizada no diagrama de diferença crítica da Figura~\ref{fig:cd}. Nas 56 instâncias o quadro é o mesmo ($\chi^2_F=185{,}36$, $p=5{,}3\times10^{-39}$). A conclusão é robusta à limitação do pós-teste por ranks discutida na Seção~\ref{sec:estatistica}: nas 56 instâncias, a diferença de rank GRASP--Tabu ($0{,}83$) excede a diferença crítica tanto com a I1 no conjunto comparado ($CD=0{,}815$) quanto sem ela ($CD=0{,}627$).
+O resultado primário usa o \textbf{conjunto de teste} (28 instâncias que a calibração nunca viu), imune a superajuste. O teste de Friedman rejeita a igualdade entre os cinco métodos com folga ($\chi^2_F=94{,}15$, $p=1{,}7\times10^{-19}$), com ranks médios GRASP $1{,}77$, Reativo $1{,}84$, Tabu $2{,}63$, VND $3{,}77$ e I1 $5{,}00$. As comparações par a par (Wilcoxon com Holm, tabela completa em \texttt{results/stats\_paired.txt}) dão o quadro final: \textbf{todos os pares diferem significativamente, exceto GRASP $\times$ Reativo} ($p=0{,}95$). Em particular, GRASP e Reativo superam a Busca Tabu ($p_{\mathrm{Holm}}=6{,}9\times10^{-4}$, com o GRASP melhor em 18 das 28 instâncias e pior em 3). A hierarquia empírica é, portanto, $\{\text{GRASP} \approx \text{Reativo}\} \succ \text{Tabu} \succ \text{VND} \succ \text{I1}$, sintetizada no diagrama de diferença crítica da Figura~\ref{fig:cd}. Nas 56 instâncias o quadro é o mesmo ($\chi^2_F=185{,}36$, $p=5{,}3\times10^{-39}$). A conclusão é robusta à limitação do pós-teste por ranks discutida na Seção~\ref{sec:estatistica}: nas 56 instâncias, a diferença de rank GRASP--Tabu ($0{,}83$) excede a diferença crítica tanto com a I1 no conjunto comparado ($CD=0{,}815$) quanto sem ela ($CD=0{,}627$).
 
 \begin{figure}[H]
 \centering
@@ -634,9 +611,9 @@ Verificamos que essas referências têm distância menor ou igual à das soluç�
 
 Como terceira camada do estudo, aplicamos os algoritmos \emph{calibrados no benchmark} a um cenário de coleta de resíduos por meio de um \textit{Digital Twin} (gêmeo digital): uma representação virtual de um sistema físico, mantida atualizada por leituras de sensores, na qual decisões de operação podem ser ensaiadas e medidas antes de ir às ruas \citep{barth2023data} --- aqui, o sistema é a rede de coleta seletiva de Vitória/ES, os sensores informam o enchimento das lixeiras e a decisão ensaiada é o roteamento dos caminhões. A transferência não exigiu infraestrutura nova: o solver é o mesmo binário do \textit{benchmark} (Seção~\ref{sec:arquitetura}), que passa a receber matrizes explícitas de distância e tempo (Seção~\ref{sec:road}); a cada ciclo de monitoramento, as lixeiras críticas tornam-se uma instância VRPTW e são roteadas com os parâmetros aprovados na Seção~\ref{sec:gain}. Trata-se de uma \textbf{prova de conceito}: as localizações são reais, mas o comportamento de enchimento --- e, portanto, o ``sistema físico'' que o gêmeo espelha --- é simulado.
 
-\paragraph{Transferibilidade dos parâmetros calibrados.} Os parâmetros aplicados aqui são os do estudo estático (Seção~\ref{sec:calibracao}), calibrados nas instâncias euclidianas de Solomon; é preciso justificar por que servem a um cenário de malha viária real e demanda estocástica. O primeiro argumento está no objeto da calibração: o que ela ajusta são parâmetros da \emph{estratégia de busca} (a largura da lista restrita $\alpha$, a memória de proibição \textit{tenure}, a cadência do aprendizado reativo, dada por $\delta$ e \textit{block\_frac}), e nada que dependa da geometria da instância --- o solver recebe as matrizes viárias explícitas, e os operadores e o teste de viabilidade são exatamente os do \textit{benchmark}. O segundo argumento vem dos próprios resultados do estudo, que limitam o risco prático da transferência: a calibração mostrou-se pouco sensível na faixa útil (o GRASP é insensível a $\alpha$ entre $0{,}2$ e $0{,}3$; Seção~\ref{sec:gain}) e, nas instâncias pequenas de cada ciclo, as diferenças entre os métodos de melhoria quase desaparecem. Fica registrada a ressalva: \emph{não} recalibramos no cenário viário, porque isso exigiria um conjunto de treino de cenários simulados e ajustaria os parâmetros ao próprio simulador, não à realidade. Os valores usados devem ser lidos, portanto, como \emph{razoáveis herdados do benchmark}, sem pretensão de serem ótimos no novo cenário; também por isso esta camada se apresenta como prova de conceito.
+Os parâmetros aplicados aqui são os do estudo estático (Seção~\ref{sec:calibracao}), calibrados nas instâncias euclidianas de Solomon; é preciso justificar por que servem a um cenário de malha viária real e demanda estocástica. O primeiro argumento está no objeto da calibração: o que ela ajusta são parâmetros da \emph{estratégia de busca} (a largura da lista restrita $\alpha$, a memória de proibição \textit{tenure}, a cadência do aprendizado reativo, dada por $\delta$ e \textit{block\_frac}), e nada que dependa da geometria da instância --- o solver recebe as matrizes viárias explícitas, e os operadores e o teste de viabilidade são exatamente os do \textit{benchmark}. O segundo argumento vem dos próprios resultados do estudo, que limitam o risco prático da transferência: a calibração mostrou-se pouco sensível na faixa útil (o GRASP é insensível a $\alpha$ entre $0{,}2$ e $0{,}3$; Seção~\ref{sec:gain}) e, nas instâncias pequenas de cada ciclo, as diferenças entre os métodos de melhoria quase desaparecem. Fica registrada a ressalva: \emph{não} recalibramos no cenário viário, porque isso exigiria um conjunto de treino de cenários simulados e ajustaria os parâmetros ao próprio simulador, não à realidade. Os valores usados devem ser lidos, portanto, como \emph{razoáveis herdados do benchmark}, sem pretensão de serem ótimos no novo cenário; também por isso esta camada se apresenta como prova de conceito.
 
-\paragraph{Dados e enquadramento.} Usamos as localizações reais de \textbf{38 pontos de entrega voluntária (PEVs)} de coleta seletiva de Vitória/ES, obtidas do serviço de dados abertos do município, com o depósito na associação de triagem AMARIV. Cada PEV corresponde, no modelo, a uma lixeira monitorada --- o ``cliente'' do VRPTW da Seção~\ref{sec:problema}. O \emph{nível de enchimento} de cada lixeira é gerado por um \textbf{processo de Poisson não homogêneo} (NHPP) discretizado em ciclos ($8$ ciclos/dia $\approx 3$\,h cada). Em cada ciclo $c$, a intensidade é
+ Usamos as localizações reais de \textbf{38 pontos de entrega voluntária (PEVs)} de coleta seletiva de Vitória/ES, obtidas do serviço de dados abertos do município, com o depósito na associação de triagem AMARIV. Cada PEV corresponde, no modelo, a uma lixeira monitorada --- o ``cliente'' do VRPTW da Seção~\ref{sec:problema}. O \emph{nível de enchimento} de cada lixeira é gerado por um \textbf{processo de Poisson não homogêneo} (NHPP) discretizado em ciclos ($8$ ciclos/dia $\approx 3$\,h cada). Em cada ciclo $c$, a intensidade é
 \begin{equation}
 \lambda(c)=\lambda_{\mathrm{off}}+(\lambda_{\mathrm{pico}}-\lambda_{\mathrm{off}})\,\min\!\big(1,\,\rho(c)\big),\qquad
 \rho(c)=e^{-(h-1{,}5)^2}+e^{-(h-5{,}5)^2},\quad h=c\bmod 8,
@@ -747,7 +724,7 @@ Este trabalho construiu uma comparação controlada de cinco heurísticas cláss
 
 Quantitativamente, a hierarquia empírica é $\{\text{GRASP} \approx \text{GRASP reativo}\} \succ \text{Busca Tabu} \succ \text{VND} \succ \text{I1}$: cada camada de refinamento reduz o gap médio de distância --- de $35{,}97\%$ (construção I1 pura) para $8{,}43\%$ (VND) e para menos de $2\%$ nas duas variantes de GRASP, com a Busca Tabu em posição intermediária ($3{,}95\%$). Todas as separações são estatisticamente significativas no conjunto de teste (Wilcoxon com Holm), exceto entre o GRASP fixo e o reativo, indistinguíveis. Sobre a calibração, o resultado varia por método: houve ganho demonstrável para a Busca Tabu ($+1{,}26$~pp), ganho marginal para o Reativo e nenhum para o GRASP --- que se mostrou insensível a $\alpha$ na faixa estudada e, pelo protocolo pré-declarado, usa o valor clássico no estudo final. A verificação reproduziu os $56$ custos de referência e \emph{nenhuma} das $3\,528$ execuções do estudo produziu solução inviável, confirmando que os algoritmos de melhoria respeitam cobertura, capacidade e janelas de tempo a cada passo. Transportados ao Digital Twin de coleta em Vitória/ES, agora incluindo a camada de comunicação LoRaWAN simulada, os algoritmos mostraram um compromisso operacional claro. A coleta dinâmica guiada por sensores realiza pouco mais da metade das coletas do regime de frequência fixa, e o nível de serviço é governado pelo limiar de acionamento: no limiar padrão, os transbordos superam os do regime fixo; limiares mais baixos recuperam o serviço mantendo a economia de coletas. Além do roteamento, a própria qualidade do canal de comunicação limita o serviço.
 
-\paragraph{Limitações.} O objetivo otimizado é a distância (DIMACS); a abordagem lexicográfica de Solomon foi reportada apenas de forma complementar. A Busca Tabu foi mantida na forma mais simples (sem diversificação avançada). No Digital Twin, o enchimento das lixeiras é simulado, não medido; a comunicação LoRaWAN é representada, não validada energeticamente; os hiperparâmetros são herdados do \textit{benchmark} euclidiano, sem recalibração no cenário viário; e a análise de sensibilidade usa uma única realização de enchimento (a comparação dinâmico$\times$estático, por sua vez, usa 30).
+O objetivo otimizado é a distância (DIMACS); a abordagem lexicográfica de Solomon foi reportada apenas de forma complementar. A Busca Tabu foi mantida na forma mais simples (sem diversificação avançada). No Digital Twin, o enchimento das lixeiras é simulado, não medido; a comunicação LoRaWAN é representada, não validada energeticamente; os hiperparâmetros são herdados do \textit{benchmark} euclidiano, sem recalibração no cenário viário; e a análise de sensibilidade usa uma única realização de enchimento (a comparação dinâmico$\times$estático, por sua vez, usa 30).
 
 \paragraph{Trabalhos futuros.} Validação com dados reais de enchimento em Vitória (piloto com sensores); avaliação sob o critério lexicográfico veículos$\rightarrow$distância; variantes mais ricas (Tabu com memória de longo prazo, metaheurísticas híbridas/ILS); planos que atravessam ciclos no Digital Twin; e quantificação de benefícios econômicos e ambientais.
 

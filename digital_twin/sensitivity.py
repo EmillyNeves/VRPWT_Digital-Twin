@@ -27,7 +27,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 OUTDIR = os.path.join(_HERE, "..", "results", "digital_twin")
 
 # valores padrão (centro de cada varredura)
-DEF = dict(threshold=0.70, capacity=25, urgency_coef=0.60)
+DEF = dict(threshold=0.70, capacity=30, urgency_coef=0.60)   # capacidade 30 = a da comparacao pareada (twin.simulate)
 SWEEPS = {
     "threshold":    [0.50, 0.60, 0.70, 0.80, 0.90],
     "capacity":     [15, 20, 25, 30, 40],

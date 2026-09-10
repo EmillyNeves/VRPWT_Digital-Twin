@@ -45,8 +45,9 @@ def tab_overall():
     for a in ORDEM:
         r = d[a]
         g = num(r["gap_mean"])
-        if abs(float(r["gap_mean"]) - melhor) < 1e-9:
-            g = r"\textbf{" + g + "}"
+        # Sem negrito no gap médio (2026-09-10): GRASP e GRASP reativo são
+        # estatisticamente indistinguíveis (Wilcoxon p=0,95); destacar um só
+        # contradiria o texto. `melhor` fica calculado para eventual uso.
         deterministico = a in ("i1", "vnd", "tabu")
         gb = "---" if deterministico else num(r["gap_best"])
         it = "---" if a in ("i1", "vnd") else num(r["iters_mean"], "%.0f")

@@ -52,9 +52,11 @@ def boxplot(runs_csv, fig_dir):
     algos = [a for a in ALGO_ORDER if a in set(df["algorithm"])]
     data = [df[df["algorithm"] == a]["gap_pct"].dropna().values for a in algos]
     plt.figure(figsize=(7, 4.5))
-    plt.boxplot(data, tick_labels=algos, showmeans=True)
-    plt.ylabel("gap% ao best-known")
-    plt.title("Distribuicao do gap% por algoritmo")
+    nomes = {"i1": "Solomon I1", "vnd": "VND", "grasp": "GRASP",
+             "rgrasp": "GRASP reativo", "tabu": "Busca Tabu"}
+    plt.boxplot(data, tick_labels=[nomes.get(a, a) for a in algos], showmeans=True)
+    plt.ylabel("gap de distância ao melhor conhecido (%)")
+    plt.title("Distribuição do gap por algoritmo (todas as execuções, 56 instâncias)")
     plt.grid(axis="y", ls=":", alpha=0.5)
     plt.tight_layout()
     path = os.path.join(fig_dir, "boxplot_gap.png")

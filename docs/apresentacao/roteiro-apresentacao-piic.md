@@ -121,12 +121,12 @@ Visual: `cd_diagram_full.png` em cima e `boxplot_gap.png` ao lado.
 Slide 9: O empate entre GRASP fixo e GRASP Reativo
 
 Texto:
-- Wilcoxon: p = 0,95 no teste, 11 vitórias contra 9
+- Wilcoxon: p = 0,95 no teste, 11 vitórias contra 9 (placar em `results/stats_paired.txt`)
 - Gap 1,96% contra 1,88%: diferença dentro do ruído
 - Calibração já mostrava: GRASP insensível a alfa entre 0,2 e 0,3
 - Escolha: a versão mais simples, alfa fixo em 0,30
 
-Fala: Entre o GRASP fixo e o Reativo não há evidência de diferença: p igual a 0,95 no teste, 11 vitórias contra 9 e 8 empates. O sentido da diferença muda conforme a estatística: o Reativo tem o menor gap médio, mas o fixo tem o melhor gap por instância e o melhor posto médio. A explicação está na calibração: o GRASP é insensível ao alfa nessa faixa, e o alfa fixo de 0,30 já pertence à grade que o Reativo aprende. O mecanismo reativo só rende quando o melhor alfa varia entre instâncias, o que não acontece aqui. Com o mesmo tempo e o mesmo resultado, a decisão é ficar com a versão mais simples.
+Fala: Entre o GRASP fixo e o Reativo não há evidência de diferença: p igual a 0,95 no teste, 11 vitórias contra 9 (placar em `results/stats_paired.txt`) e 8 empates. O sentido da diferença muda conforme a estatística: o Reativo tem o menor gap médio, mas o fixo tem o melhor gap por instância e o melhor posto médio. A explicação está na calibração: o GRASP é insensível ao alfa nessa faixa, e o alfa fixo de 0,30 já pertence à grade que o Reativo aprende. O mecanismo reativo só rende quando o melhor alfa varia entre instâncias, o que não acontece aqui. Com o mesmo tempo e o mesmo resultado, a decisão é ficar com a versão mais simples.
 
 Visual: tabela pequena com duas linhas (GRASP e GRASP Reativo) e colunas gap médio, gap melhor, posto médio, tempo. Ao lado, as duas caixas do boxplot recortadas.
 
@@ -154,7 +154,7 @@ Texto:
 - Transbordos: 27 contra 19 no limiar 0,7
 - Limiar controla o compromisso: com 0,5, transbordos caem para 5
 
-Fala: Comparamos o regime dinâmico com um estático que coleta todas as lixeiras a cada três ciclos, em 30 realizações pareadas de enchimento. O dinâmico faz 46% menos coletas, mas não roda menos: despacha caminhões em 15 dos 16 ciclos, com cerca de 8 lixeiras por saída, e a distância fica comparável. A economia está nos esvaziamentos evitados, não na quilometragem. Em troca, no limiar de 70%, tem mais transbordos, e o motivo está no modelo: entre o limiar e a capacidade cabem 3,6 chegadas, e no pico uma lixeira recebe quatro ou mais chegadas num ciclo com probabilidade 0,57; ela cruza o limiar e transborda antes de ser vista. Baixar o limiar para 0,5 leva os transbordos para 5 na realização analisada, ainda com 167 coletas contra 228. A capacidade do caminhão só muda a distância. A qualidade do rádio também limita o serviço: com perdas e transmissão a cada dois ciclos, os transbordos de um cenário de teste foram de 51 para 96. Na malha viária real, rotear os 38 pontos deu 6 caminhões, 83,7 km e 3,7 horas.
+Fala: Comparamos o regime dinâmico com um estático que coleta todas as lixeiras a cada três ciclos, em 30 realizações pareadas de enchimento. O dinâmico faz 46% menos coletas, mas não roda menos: despacha caminhões em 15 dos 16 ciclos, com cerca de 8 lixeiras por saída, e a distância fica comparável. A economia está nos esvaziamentos evitados, não na quilometragem. Em troca, no limiar de 70%, tem mais transbordos, e o motivo está no modelo: entre o limiar e a capacidade cabem 3,6 chegadas, e no pico uma lixeira recebe quatro ou mais chegadas num ciclo com probabilidade 0,57; ela cruza o limiar e transborda antes de ser vista. Baixar o limiar para 0,5 leva os transbordos para 5 na realização analisada, ainda com 167 coletas contra 228. A capacidade do caminhão só muda a distância. A qualidade do rádio também limita o serviço: com perdas e transmissão a cada dois ciclos, os transbordos de um cenário de teste foram de 51 para 96. Na malha viária real, rotear os 38 pontos deu 6 caminhões, 83,8 km e 3,7 horas.
 
 Visual: `sensitivity.png` com o painel do limiar em destaque e, ao lado, a Tabela 5 do relatório recortada (dinâmico contra estático).
 
@@ -170,4 +170,4 @@ Texto:
 
 Fala: Duas contribuições. Na parte acadêmica, um protocolo reprodutível de comparação de meta-heurísticas, com partida comum, ablação, calibração com portão de aceitação e testes pareados, e a evidência de que o GRASP domina a Busca Tabu clássica nas instâncias de Solomon sob objetivo de distância. Na parte aplicada, a quantificação do compromisso entre coletas e transbordos, com o limiar de acionamento como a alavanca de operação. As limitações são claras: o enchimento é simulado, a comparação entre regimes roda no grafo euclidiano dos pontos, e a sensibilidade usa uma realização. Os próximos passos são um piloto com sensores reais em Vitória, a comparação sobre a malha viária em vários limiares e planos que atravessam ciclos com replanejamento de caminhões em rota. Obrigada.
 
-Visual: `vitoria_road_routes.png` grande, com as três frases de contribuição ao lado e o agradecimento à UFES e ao PIIC no rodapé.
+Visual: `vitoria_road_routes.png` grande, com as três frases de contribuição ao lado e, no rodapé, o agradecimento à UFES e ao Piic/Ufes pela bolsa, ao projeto Fapes n.º 2026-6NX7B, à professora Maria Claudia Silva Boeres e ao professor Renato Elias Nunes de Moraes.

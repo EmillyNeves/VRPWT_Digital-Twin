@@ -134,11 +134,11 @@ sem violar as janelas de tempo?}
 \end{posterbox}
 
 \begin{posterbox}[name=vrptw,column=0,below=problema]{O VRPTW}
-Uma frota de capacidade $Q$ sai de um depósito e visita cada cliente uma única
-vez, dentro da sua \textbf{janela de tempo} $[e_i,\ell_i]$ e sem exceder a carga
-do veículo:
+Veículos de capacidade $Q$ saem de um depósito e visitam cada cliente uma vez.
+Sendo $b_i$ o início do atendimento, $[e_i,\ell_i]$ a \textbf{janela de tempo} e
+$q_i$ a demanda, cada rota $r$ precisa cumprir
 \[
-  b_i \le \ell_i \ \ \forall i, \qquad \textstyle\sum_{i\in r} q_i \le Q .
+  b_i \le \ell_i \ \ \forall i \in r, \qquad \textstyle\sum_{i\in r} q_i \le Q .
 \]
 O objetivo é minimizar a \textbf{distância total} percorrida. O \textbf{gap} é
 a distância percentual entre a solução obtida e a melhor conhecida da instância:
@@ -183,7 +183,7 @@ nenhum método seja avaliado em dados que já viu.
 \vspace{0.4em}
 \textbf{Calibração.} O \textit{irace} ajustou o $\alpha$ do GRASP e a
 \textit{tenure} da Tabu; o valor calibrado só entrava se vencesse o clássico
-no teste. Todos param após \textbf{800 iterações sem melhora}.
+no teste. As meta-heurísticas param após \textbf{800 iterações sem melhora}.
 
 \vspace{0.4em}
 \textbf{Validação.} Um verificador independente recalcula cada solução final:
@@ -224,7 +224,7 @@ $S^\star \gets$ I1-Solomon(instância); $k \gets 0$\;
 \hfill
 \begin{minipage}[t]{0.50\textwidth}
 \centering
-\captionof{figure}{\small Posto médio de cada método (menor é melhor); a barra une os que não diferem.}
+\captionof{figure}{\small Posto médio de cada método nas 56 instâncias (menor é melhor); a barra une os que o teste de Nemenyi, mais conservador, não separa.}
 \vspace{-0.4em}
 \includegraphics[width=\linewidth]{figuras/cd_diagrama.png}
 \fonte
@@ -232,9 +232,9 @@ $S^\star \gets$ I1-Solomon(instância); $k \gets 0$\;
 \vspace{0.5em}
 \raggedright
 Cada camada reduz o gap: \textbf{36\,\%} na I1, \textbf{8,4\,\%} com o VND e
-\textbf{1,9\,\%} no GRASP. Nas 28 de teste, Friedman rejeita a igualdade
-($p = 1{,}7\times10^{-19}$) e o Wilcoxon separa todos os pares, exceto GRASP e
-reativo.
+\textbf{menos de 2\,\%} nos dois GRASP. Nas 28 de teste, o Wilcoxon pareado,
+mais sensível que o Nemenyi, separa todos os pares, exceto GRASP e reativo
+(Friedman: $p = 1{,}7\times10^{-19}$).
 \end{minipage}
 \end{posterbox}
 
@@ -242,7 +242,7 @@ reativo.
 \begin{minipage}[t]{0.46\textwidth}
 \vspace{0pt}
 \centering
-\includegraphics[width=0.97\linewidth]{figuras/mapa_vitoria.png}\\[0.1em]
+\includegraphics[width=0.90\linewidth]{figuras/mapa_vitoria.png}\\[0.1em]
 {\footnotesize
 \begin{tabular}{@{}l@{\ }l@{\quad}l@{\ }l@{\quad}l@{\ }l@{}}
 \amostra{cam1} & Caminhão 1 & \amostra{cam3} & Caminhão 3 & \amostra{cam5} & Caminhão 5\\
@@ -253,14 +253,13 @@ reativo.
 \hfill
 \begin{minipage}[t]{0.51\textwidth}
 \vspace{0pt}
-\textbf{Como funciona.} O enchimento das 38 lixeiras é simulado e lido por
-sensores LoRaWAN. A cada ciclo, só as lixeiras acima do limiar
-$\tau = 0{,}7$ entram no plano, e o GRASP gera as rotas. O regime
-\textbf{estático} coleta todas a cada 3 ciclos.
+\textbf{Como funciona.} Locais e ruas são reais; enchimento e sensores
+LoRaWAN são simulados. A cada ciclo, só lixeiras acima do limiar $\tau=0{,}7$
+entram no plano do GRASP. O regime \textbf{estático} coleta todas a cada 3 ciclos.
 
 \vspace{0.5em}
 \centering
-\captionof{table}{\small Médias de 30 simulações pareadas, 16 ciclos.}
+\captionof{table}{\small Médias de 30 simulações pareadas (16 ciclos). Distância em unidades do grafo, não em km.}
 \vspace{-0.3em}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
@@ -275,8 +274,8 @@ Estático & 3664 & 228 & \textbf{19}\\
 \raggedright
 \textbf{\textcolor{alerta}{Nenhum regime domina o outro.}} O dinâmico faz
 \textbf{46\,\% menos coletas} com distância só 2,4\,\% maior, mas transborda
-mais. O limiar é a alavanca: com $\tau = 0{,}5$, os transbordos caem para
-\textbf{5} e as coletas ficam em 167, ainda bem abaixo das 228.
+mais. O limiar é a alavanca: com $\tau = 0{,}5$, são \textbf{5} transbordos
+e 167 coletas (estático: 228).
 \end{minipage}
 \end{posterbox}
 

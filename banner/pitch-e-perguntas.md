@@ -59,7 +59,7 @@ busca local. Estatisticamente, GRASP e GRASP reativo empatam entre si e ficam
 independente não encontrou uma única solução inviável."
 
 **(5) Gêmeo digital, 50 s.** Aponte o Gêmeo digital (mapa e Tabela 1).
-"Peguei os algoritmos calibrados e coloquei num simulador da coleta seletiva de
+"Peguei o GRASP calibrado e coloquei num simulador da coleta seletiva de
 Vitória, com os 38 PEVs reais e malha viária real. Comparei dois regimes:
 dinâmico, que coleta sob demanda quem passou de 70 % de enchimento, e estático,
 que coleta todo mundo a cada 3 ciclos. O dinâmico faz 46 % menos coletas. Mas
@@ -211,6 +211,18 @@ fidelidade dos algoritmos à literatura. (Seção 4.)
 
 ### D. As perguntas incômodas
 
+**Na Figura 2 a barra une o reativo à Tabu, mas o texto diz que o Wilcoxon separa
+os dois. Qual vale?**
+A barra é do Nemenyi nas 56 instâncias, teste global e conservador; o texto é do
+Wilcoxon pareado com Holm nas 28 de teste, que tem mais poder para comparar pares
+(p de Holm = 6,9×10⁻⁴). As afirmações par a par do banner se apoiam no Wilcoxon,
+e a legenda da figura diz que a barra é do Nemenyi. (Seção 5.)
+
+**Qual a unidade da distância na Tabela 1?**
+Unidade do grafo euclidiano normalizado dos 38 pontos, adimensional. Por isso não
+se compara com os 83,8 km do mapa. (Seção 4.)
+
+
 **Se o dinâmico é melhor, por que ele transborda mais?**
 Porque o gatilho é tarde. Esperar a lixeira chegar a 70 % para agendá-la deixa
 pouca margem. Entre o limiar 0,7 e a capacidade cabem 3,6 chegadas, já que cada
@@ -268,7 +280,7 @@ a distância cai de 6.526 para 3.049 ao passar de 15 para 40 unidades, e os
 transbordos ficam em 27. (Tabela 6.)
 
 **Os 83,8 km do mapa batem com a tabela dos regimes?**
-Não batem porque são coisas diferentes, e isso está dito no pôster. O mapa é uma
+Não batem porque são coisas diferentes; a legenda da Tabela 1 avisa que a distância está em unidades do grafo, não em km. O mapa é uma
 demonstração viária: uma única roteirização dos 38 PEVs, com distância em metros
 e tempo de direção em segundos vindos do OSRM, horizonte de 6 h e serviço de
 120 s. A comparação entre regimes corre sobre o grafo euclidiano normalizado dos
@@ -361,7 +373,7 @@ emissões.
 | Conclusões | |
 | Agradecimentos (rodapé, colunas 1 e 2) | Referências (rodapé, coluna 3) |
 
-O que saiu do banner e agora é só falado (está no banco abaixo): ablação das
+O que saiu do banner e agora é só falado (está no banco acima): ablação das
 vizinhanças, portão do irace em detalhe, Nemenyi contra Wilcoxon, ciclo do gêmeo
 digital (antigo Algoritmo 2), capacidade e κ na sensibilidade, aviso "dois mapas".
 
